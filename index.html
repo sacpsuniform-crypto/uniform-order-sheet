@@ -20,6 +20,7 @@
     })();
   </script>
 
+  <!-- jsPDF and autotable -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
@@ -59,13 +60,6 @@
     header.site-header .heading h1{
       font-size:20px;
       margin:0;
-      color:var(--white);
-      letter-spacing:0.2px;
-    }
-    header.site-header .heading p{
-      margin:3px 0 0 0;
-      font-size:13px;
-      color: rgba(255,255,255,0.9);
     }
 
     .braten-notice{
@@ -74,7 +68,6 @@
       padding:10px 18px;
       margin-bottom:12px;
       font-size:13px;
-      color:#111;
     }
 
     .page {
@@ -95,7 +88,6 @@
       padding:18px;
       box-shadow:0 4px 10px rgba(0,0,0,0.04);
     }
-    .left .section { margin-bottom:14px; }
 
     .form-row { display:flex; gap:12px; margin-bottom:10px; }
     .form-row .field { flex:1; }
@@ -131,19 +123,6 @@
       margin:-10px -10px 10px -10px;
     }
 
-    .size-qty-heading {
-      display:flex;
-      gap:10px;
-      font-weight:700;
-      font-size:13px;
-      margin-bottom:6px;
-      padding:0 0 4px 0;
-      border-bottom:1px solid #e8eef7;
-    }
-    .size-qty-heading div { flex:1; text-align:left; }
-    .size-qty-heading .size-col { width:110px; text-align:center; flex:none; }
-    .size-qty-heading .qty-col { width:70px; text-align:center; flex:none; }
-
     .product-row{
       display:flex;
       gap:10px;
@@ -156,6 +135,32 @@
     .product-row select.size { width:110px; padding:6px; border-radius:6px; border:1px solid #d7dbe0; }
     .product-row input.qty { width:70px; padding:6px; border-radius:6px; border:1px solid #d7dbe0; }
 
+    /* HEADINGS ABOVE SIZE & QTY */
+    .size-qty-heading {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 6px;
+      align-items: flex-end;
+    }
+    .size-qty-heading .item-col {
+      flex: 1;
+      font-weight: 700;
+      font-size: 13px;
+      text-align: left;
+    }
+    .size-qty-heading .size-col {
+      width: 110px;
+      font-weight: 700;
+      font-size: 13px;
+      text-align: center;
+    }
+    .size-qty-heading .qty-col {
+      width: 70px;
+      font-weight: 700;
+      font-size: 13px;
+      text-align: center;
+    }
+
     .cart {
       background:var(--white);
       border-radius:10px;
@@ -164,19 +169,12 @@
       position:sticky;
       top:18px;
       height:fit-content;
-      min-height:200px;
     }
-    .cart h3{ margin-top:0; color:var(--navy); }
     table.cart-table{
       width:100%;
       border-collapse:collapse;
       margin-top:8px;
       font-size:14px;
-    }
-    table.cart-table th, table.cart-table td {
-      padding:8px 6px;
-      border:1px solid #e6e9ee;
-      text-align:left;
     }
     table.cart-table th{
       background:var(--navy);
@@ -200,16 +198,8 @@
       font-weight:700;
       font-size:14px;
     }
-    .btn-primary {
-      background:var(--navy);
-      color:var(--white);
-    }
-    .btn-gold {
-      background:var(--gold);
-      color:#111;
-      margin-top:12px;
-      width:100%;
-    }
+    .btn-primary { background:var(--navy); color:var(--white); }
+    .btn-gold { background:var(--gold); color:#111; margin-top:12px; width:100%; }
 
     @media(max-width:980px){
       form#orderForm { grid-template-columns: 1fr; }
@@ -217,7 +207,6 @@
     }
 
     .muted { color:#6b7280; font-size:13px; }
-    .spaced { margin-top:8px; margin-bottom:8px; }
   </style>
 </head>
 <body>
@@ -236,20 +225,11 @@
   <main class="page">
     <form id="orderForm" autocomplete="off">
       <div class="left">
-        <div class="section" id="infoSection">
+        <div class="section">
           <h2 style="margin-top:0; color:var(--navy)">Parent & Learner Information</h2>
           <div class="form-row">
-            <div class="field"><label for="parentName">Parent Name</label><input id="parentName" type="text" required placeholder="e.g. Thandi Mbeki"></div>
-            <div class="field"><label for="contactNumber">Contact Number</label><input id="contactNumber" type="text" required placeholder="e.g. 072 000 0000"></div>
-          </div>
-          <div class="form-row">
-            <div class="field"><label for="email">Email</label><input id="email" type="email" required placeholder="parent@example.com"></div>
-            <div class="field"><label for="learnerName">Learner Name</label><input id="learnerName" type="text" required placeholder="e.g. Sipho M"></div>
-          </div>
-          <div class="form-row">
-            <div class="field"><label for="grade">Grade</label><input id="grade" type="text" required placeholder="e.g. Grade 7A"></div>
-            <div class="field"><label for="schoolLevel">School Level</label><select id="schoolLevel"><option>Primary</option><option>Highschool</option></select></div>
-            <div class="field"><label for="adminNumber">Admin Number</label><input id="adminNumber" type="text" required placeholder="e.g. 45125"></div>
+            <div class="field"><label for="parentName">Parent Name</label><input id="parentName" type="text" required></div>
+            <div class="field"><label for="contactNumber">Contact Number</label><input id="contactNumber" type="text" required></div>
           </div>
         </div>
 
@@ -257,48 +237,63 @@
         <div class="section" id="productsSection">
           <h2 style="margin-top:0; color:var(--navy)">Uniforms & Sports</h2>
 
-          <!-- Tracksuits -->
-          <div class="category-card" id="cat-tracksuits">
+          <div class="category-card">
             <div class="cat-header">Tracksuits</div>
-            <div class="size-qty-heading"><div>Item</div><div class="size-col">Size</div><div class="qty-col">Quantity</div></div>
+            <div class="size-qty-heading">
+              <div class="item-col">Item</div>
+              <div class="size-col">Size</div>
+              <div class="qty-col">Quantity</div>
+            </div>
             <div class="card-body"></div>
           </div>
 
-          <!-- Jerseys & Pullovers -->
-          <div class="category-card" id="cat-jerseys">
+          <div class="category-card">
             <div class="cat-header">Jerseys & Pullovers</div>
-            <div class="size-qty-heading"><div>Item</div><div class="size-col">Size</div><div class="qty-col">Quantity</div></div>
+            <div class="size-qty-heading">
+              <div class="item-col">Item</div>
+              <div class="size-col">Size</div>
+              <div class="qty-col">Quantity</div>
+            </div>
             <div class="card-body"></div>
           </div>
 
-          <!-- Formal -->
-          <div class="category-card" id="cat-formal">
+          <div class="category-card">
             <div class="cat-header">Formal</div>
-            <div class="size-qty-heading"><div>Item</div><div class="size-col">Size</div><div class="qty-col">Quantity</div></div>
+            <div class="size-qty-heading">
+              <div class="item-col">Item</div>
+              <div class="size-col">Size</div>
+              <div class="qty-col">Quantity</div>
+            </div>
             <div class="card-body"></div>
           </div>
 
-          <!-- Sportswear -->
-          <div class="category-card" id="cat-sports">
+          <div class="category-card">
             <div class="cat-header">Sportswear</div>
-            <div class="size-qty-heading"><div>Item</div><div class="size-col">Size</div><div class="qty-col">Quantity</div></div>
+            <div class="size-qty-heading">
+              <div class="item-col">Item</div>
+              <div class="size-col">Size</div>
+              <div class="qty-col">Quantity</div>
+            </div>
             <div class="card-body"></div>
           </div>
 
-          <!-- Accessories -->
-          <div class="category-card" id="cat-accessories">
+          <div class="category-card">
             <div class="cat-header">Accessories</div>
-            <div class="size-qty-heading"><div>Item</div><div class="size-col">Size</div><div class="qty-col">Quantity</div></div>
+            <div class="size-qty-heading">
+              <div class="item-col">Item</div>
+              <div class="size-col">Size</div>
+              <div class="qty-col">Quantity</div>
+            </div>
             <div class="card-body"></div>
           </div>
+
         </div>
       </div>
 
-      <!-- RIGHT - cart & submit -->
       <aside class="cart">
         <h3>Your Cart</h3>
         <div class="muted">Add quantities for the items on the left and the cart will update automatically.</div>
-        <table class="cart-table" aria-live="polite" id="cartTable">
+        <table class="cart-table" id="cartTable">
           <thead>
             <tr>
               <th style="width:42%;">Item</th>
@@ -314,24 +309,11 @@
         </table>
 
         <div class="total" id="grandTotal">Total: R0.00</div>
-
-        <div id="payment-info" style="margin-top: 30px; border: 2px solid #169179; border-radius: 10px; background-color: #f2faf8; padding: 20px;">
-          <h3 style="background-color: #ba372a; color: white; padding: 10px; border-radius: 8px 8px 0 0; margin-top: 0;">💳 Payment Information</h3>
-          <p>After submitting your order, please make an <strong>EFT payment</strong> to the normal account.</p>
-          <p>Use <strong>“Uniform – [Child’s Name]”</strong> as your payment reference.</p>
-          <p>Then email your <strong>proof of payment and order receipt</strong> to:</p>
-          <p style="margin-left: 20px;">
-            📧 <a href="mailto:admin@sacps.co.za">admin@sacps.co.za</a> or 
-            <a href="mailto:info@sacps.co.za">info@sacps.co.za</a> or 
-            <a href="mailto:uniformsacps@gmail.com">uniformsacps@gmail.com</a>
-          </p>
-        </div>
-
-        <button type="submit" class="btn btn-gold" id="submitBtn" style="margin-top:14px;">Submit Order & Download Receipt</button>
-        <div class="spaced muted" style="font-size:13px;">After submitting, a PDF receipt will download for the parent.</div>
+        <button type="submit" class="btn btn-gold">Submit Order & Download Receipt</button>
       </aside>
     </form>
   </main>
+</body>
 
   <script>
     (function(){
