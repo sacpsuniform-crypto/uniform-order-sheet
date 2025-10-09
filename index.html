@@ -7,6 +7,8 @@
 
   <!-- =========================
        Libraries
+       - EmailJS for sending emails
+       - jsPDF + AutoTable for PDF generation
        ========================= -->
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
   <script>
@@ -41,6 +43,7 @@
       color:#111;
     }
 
+    /* Header */
     header.site-header{
       background: linear-gradient(90deg, rgba(0,39,77,1) 0%, rgba(0,39,77,0.95) 60%);
       color:var(--white);
@@ -57,37 +60,53 @@
       background:var(--white);
       padding:4px;
     }
+    header.site-header .heading{
+      line-height:1.05;
+    }
     header.site-header .heading h1{
       font-size:20px;
       margin:0;
+      color:var(--white);
+      letter-spacing:0.2px;
+    }
+    header.site-header .heading p{
+      margin:3px 0 0 0;
+      font-size:13px;
+      color: rgba(255,255,255,0.9);
     }
 
+    /* Braten notice below header */
     .braten-notice{
       background:#ffc;
       border-left:5px solid var(--gold);
       padding:10px 18px;
       margin-bottom:12px;
       font-size:13px;
+      color:#111;
     }
 
+    /* Page wrapper */
     .page {
       max-width:1200px;
       margin:18px auto;
       padding:10px;
     }
 
+    /* Form layout */
     form#orderForm {
       display: grid;
       grid-template-columns: 1fr 360px;
       gap:18px;
     }
 
+    /* Left column */
     .left {
       background:var(--white);
       border-radius:10px;
       padding:18px;
       box-shadow:0 4px 10px rgba(0,0,0,0.04);
     }
+    .left .section { margin-bottom:14px; }
 
     .form-row { display:flex; gap:12px; margin-bottom:10px; }
     .form-row .field { flex:1; }
@@ -107,6 +126,7 @@
       background:#fff;
     }
 
+    /* Product category cards */
     .category-card {
       border-radius:8px;
       background:linear-gradient(180deg, #ffffff 0%, #fcfcfc 100%);
@@ -122,7 +142,6 @@
       font-weight:700;
       margin:-10px -10px 10px -10px;
     }
-
     .product-row{
       display:flex;
       gap:10px;
@@ -135,32 +154,22 @@
     .product-row select.size { width:110px; padding:6px; border-radius:6px; border:1px solid #d7dbe0; }
     .product-row input.qty { width:70px; padding:6px; border-radius:6px; border:1px solid #d7dbe0; }
 
-    /* HEADINGS ABOVE SIZE & QTY */
+    /* Size & Qty headings above products */
     .size-qty-heading {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 6px;
-      align-items: flex-end;
+      display:flex;
+      gap:10px;
+      font-weight:700;
+      font-size:13px;
+      margin-bottom:6px;
     }
-    .size-qty-heading .item-col {
-      flex: 1;
-      font-weight: 700;
-      font-size: 13px;
-      text-align: left;
+    .size-qty-heading div {
+      width: auto;
+      text-align:left;
     }
-    .size-qty-heading .size-col {
-      width: 110px;
-      font-weight: 700;
-      font-size: 13px;
-      text-align: center;
-    }
-    .size-qty-heading .qty-col {
-      width: 70px;
-      font-weight: 700;
-      font-size: 13px;
-      text-align: center;
-    }
+    .size-qty-heading .size-col { width:110px; text-align:center; }
+    .size-qty-heading .qty-col { width:70px; text-align:center; }
 
+    /* Right column - cart */
     .cart {
       background:var(--white);
       border-radius:10px;
@@ -169,12 +178,19 @@
       position:sticky;
       top:18px;
       height:fit-content;
+      min-height:200px;
     }
+    .cart h3{ margin-top:0; color:var(--navy); }
     table.cart-table{
       width:100%;
       border-collapse:collapse;
       margin-top:8px;
       font-size:14px;
+    }
+    table.cart-table th, table.cart-table td {
+      padding:8px 6px;
+      border:1px solid #e6e9ee;
+      text-align:left;
     }
     table.cart-table th{
       background:var(--navy);
@@ -189,6 +205,7 @@
       color:#111;
     }
 
+    /* Buttons */
     .btn {
       display:inline-block;
       padding:10px 14px;
@@ -198,19 +215,30 @@
       font-weight:700;
       font-size:14px;
     }
-    .btn-primary { background:var(--navy); color:var(--white); }
-    .btn-gold { background:var(--gold); color:#111; margin-top:12px; width:100%; }
+    .btn-primary {
+      background:var(--navy);
+      color:var(--white);
+    }
+    .btn-gold {
+      background:var(--gold);
+      color:#111;
+      margin-top:12px;
+      width:100%;
+    }
 
+    /* Responsive */
     @media(max-width:980px){
       form#orderForm { grid-template-columns: 1fr; }
       .cart { position:relative; top:auto; }
     }
 
     .muted { color:#6b7280; font-size:13px; }
+    .spaced { margin-top:8px; margin-bottom:8px; }
   </style>
 </head>
 <body>
-  <header class="site-header">
+  <!-- Header -->
+  <header class="site-header" role="banner">
     <img class="logo" id="schoolLogo" src="logo.jpg" alt="SA College Private School logo" />
     <div class="heading">
       <h1>SA College Private School</h1>
@@ -218,18 +246,29 @@
     </div>
   </header>
 
+  <!-- Braten notice -->
   <div class="braten-notice">
     SA College private school is using Reaora in an attempt to provide uniforms at a more affordable price to parents. SACPS will still be using Select Outfitters and parents are welcome to use them. All orders placed now will be delivered at school and given to your child before the last day of school, ready for January 2026 with no need to stand in queues.
   </div>
 
-  <main class="page">
+  <!-- Main content -->
+  <main class="page" role="main">
     <form id="orderForm" autocomplete="off">
-      <div class="left">
-        <div class="section">
+      <div class="left" role="region" aria-label="Order and products">
+        <div class="section" id="infoSection">
           <h2 style="margin-top:0; color:var(--navy)">Parent & Learner Information</h2>
           <div class="form-row">
-            <div class="field"><label for="parentName">Parent Name</label><input id="parentName" type="text" required></div>
-            <div class="field"><label for="contactNumber">Contact Number</label><input id="contactNumber" type="text" required></div>
+            <div class="field"><label for="parentName">Parent Name</label><input id="parentName" type="text" required placeholder="e.g. Thandi Mbeki"></div>
+            <div class="field"><label for="contactNumber">Contact Number</label><input id="contactNumber" type="text" required placeholder="e.g. 072 000 0000"></div>
+          </div>
+          <div class="form-row">
+            <div class="field"><label for="email">Email</label><input id="email" type="email" required placeholder="parent@example.com"></div>
+            <div class="field"><label for="learnerName">Learner Name</label><input id="learnerName" type="text" required placeholder="e.g. Sipho M"></div>
+          </div>
+          <div class="form-row">
+            <div class="field"><label for="grade">Grade</label><input id="grade" type="text" required placeholder="e.g. Grade 7A"></div>
+            <div class="field"><label for="schoolLevel">School Level</label><select id="schoolLevel"><option>Primary</option><option>Highschool</option></select></div>
+            <div class="field"><label for="adminNumber">Admin Number</label><input id="adminNumber" type="text" required placeholder="e.g. 45125"></div>
           </div>
         </div>
 
@@ -237,63 +276,49 @@
         <div class="section" id="productsSection">
           <h2 style="margin-top:0; color:var(--navy)">Uniforms & Sports</h2>
 
-          <div class="category-card">
+          <!-- Tracksuits -->
+          <div class="category-card" id="cat-tracksuits">
             <div class="cat-header">Tracksuits</div>
-            <div class="size-qty-heading">
-              <div class="item-col">Item</div>
-              <div class="size-col">Size</div>
-              <div class="qty-col">Quantity</div>
-            </div>
+            <div class="size-qty-heading"><div>Item</div><div class="size-col">Size</div><div class="qty-col">Quantity</div></div>
             <div class="card-body"></div>
           </div>
 
-          <div class="category-card">
+          <!-- Jerseys & Pullovers -->
+          <div class="category-card" id="cat-jerseys">
             <div class="cat-header">Jerseys & Pullovers</div>
-            <div class="size-qty-heading">
-              <div class="item-col">Item</div>
-              <div class="size-col">Size</div>
-              <div class="qty-col">Quantity</div>
-            </div>
+            <div class="size-qty-heading"><div>Item</div><div class="size-col">Size</div><div class="qty-col">Quantity</div></div>
             <div class="card-body"></div>
           </div>
 
-          <div class="category-card">
+          <!-- Formal -->
+          <div class="category-card" id="cat-formal">
             <div class="cat-header">Formal</div>
-            <div class="size-qty-heading">
-              <div class="item-col">Item</div>
-              <div class="size-col">Size</div>
-              <div class="qty-col">Quantity</div>
-            </div>
+            <div class="size-qty-heading"><div>Item</div><div class="size-col">Size</div><div class="qty-col">Quantity</div></div>
             <div class="card-body"></div>
           </div>
 
-          <div class="category-card">
+          <!-- Sportswear -->
+          <div class="category-card" id="cat-sports">
             <div class="cat-header">Sportswear</div>
-            <div class="size-qty-heading">
-              <div class="item-col">Item</div>
-              <div class="size-col">Size</div>
-              <div class="qty-col">Quantity</div>
-            </div>
+            <div class="size-qty-heading"><div>Item</div><div class="size-col">Size</div><div class="qty-col">Quantity</div></div>
             <div class="card-body"></div>
           </div>
 
-          <div class="category-card">
+          <!-- Accessories -->
+          <div class="category-card" id="cat-accessories">
             <div class="cat-header">Accessories</div>
-            <div class="size-qty-heading">
-              <div class="item-col">Item</div>
-              <div class="size-col">Size</div>
-              <div class="qty-col">Quantity</div>
-            </div>
+            <div class="size-qty-heading"><div>Item</div><div class="size-col">Size</div><div class="qty-col">Quantity</div></div>
             <div class="card-body"></div>
           </div>
 
         </div>
       </div>
 
-      <aside class="cart">
+      <!-- RIGHT - cart & submit -->
+      <aside class="cart" role="region" aria-label="Cart and submit">
         <h3>Your Cart</h3>
         <div class="muted">Add quantities for the items on the left and the cart will update automatically.</div>
-        <table class="cart-table" id="cartTable">
+        <table class="cart-table" aria-live="polite" id="cartTable">
           <thead>
             <tr>
               <th style="width:42%;">Item</th>
@@ -309,51 +334,101 @@
         </table>
 
         <div class="total" id="grandTotal">Total: R0.00</div>
-        <button type="submit" class="btn btn-gold">Submit Order & Download Receipt</button>
+ <!-- 💳 Payment Information Section -->
+        <div id="payment-info" style="margin-top: 30px; border: 2px solid #169179; border-radius: 10px; background-color: #f2faf8; padding: 20px; font-family: 'Comic Sans MS', sans-serif;">
+          <h3 style="background-color: #ba372a; color: white; padding: 10px; border-radius: 8px 8px 0 0; margin-top: 0;">
+            💳 Payment Information
+          </h3>
+          <p>After submitting your order, please make an <strong>EFT payment</strong> to the normal account.</p>
+          <p>Use <strong>“Uniform – [Child’s Name]”</strong> as your payment reference.</p>
+          <p>Then email your <strong>proof of payment and order receipt</strong> to:</p>
+          <p style="margin-left: 20px;">
+            📧 <a href="mailto:admin@sacps.co.za">admin@sacps.co.za</a> or 
+            <a href="mailto:info@sacps.co.za">info@sacps.co.za</a>  or <a href="mailto:uniformsacps@gmail.com">uniformsacps@gmail.com</a>  
+          </p>
+          
+        </div>
+        <!-- Submit button -->
+        <button type="submit" class="btn btn-gold" id="submitBtn" style="margin-top:14px;">
+          Submit Order & Download Receipt
+        </button>
+
+        <div class="spaced muted" style="font-size:13px;">
+          After submitting, a PDF receipt will download for the parent .
+        </div>
       </aside>
     </form>
   </main>
-</body>
 
+  <!-- =========================
+       Script: Data, render, cart, PDF, email
+       ========================= -->
   <script>
     (function(){
+      // ---------------------------
+      // Data: sizes & items
+      // ---------------------------
       const primarySizes = ['5-6','6-7','7-8','8-9','9-10','10-11','11-12','12-13','13-14'];
       const highschoolSizes = ['13-14','14-15','15-16','16-17','17-18','18-20'];
       const blazerSizes = ['28','30','32','34','36','38','40','42'];
       const oneSize = ['One Size'];
       const allSizes = [...primarySizes, ...highschoolSizes];
 
+      // All items - unchanged from your working list, grouped here for clarity
       const categories = {
         "Tracksuits": [
           {id:"tracksuit_primary",name:"Primary Tracksuit Set",price:600,sizes:primarySizes},
-          {id:"tracksuit_hs",name:"Highschool Tracksuit Set",price:650,sizes:highschoolSizes}
+          {id:"tracksuit_hs",name:"Highschool Tracksuit Set",price:650,sizes:highschoolSizes},
+          {id:"ts_jacket_primary",name:"Primary Tracksuit Jacket",price:400,sizes:primarySizes},
+          {id:"ts_jacket_hs",name:"Highschool Tracksuit Jacket",price:450,sizes:highschoolSizes},
+          {id:"ts_pants_primary",name:"Primary Tracksuit Pants",price:200,sizes:primarySizes},
+          {id:"ts_pants_hs",name:"Highschool Tracksuit Pants",price:200,sizes:highschoolSizes}
         ],
         "Jerseys & Pullovers": [
           {id:"jersey_hs",name:"Highschool Jersey",price:260,sizes:highschoolSizes},
-          {id:"jersey_primary",name:"Primary Jersey",price:250,sizes:primarySizes}
+          {id:"jersey_primary",name:"Primary Jersey",price:250,sizes:primarySizes},
+          {id:"pullover_hs",name:"Highschool Pullover",price:240,sizes:highschoolSizes},
+          {id:"pullover_primary",name:"Primary Pullover",price:230,sizes:primarySizes}
         ],
         "Formal": [
           {id:"blazer",name:"Blazer",price:700,sizes:blazerSizes},
-          {id:"tie",name:"School Tie",price:80,sizes:oneSize}
+          {id:"tie",name:"School Tie",price:80,sizes:oneSize},
+          {id:"skirt_primary",name:"Primary Girls Skirt",price:340,sizes:primarySizes},
+          {id:"skirt_hs",name:"Highschool Girls Skirt",price:365,sizes:highschoolSizes},
+          {id:"matric_bomber",name:"Matric Bomber Jacket",price:650,sizes:highschoolSizes}
         ],
         "Sportswear": [
-          {id:"sport_shirt",name:"Sport Shirt",price:345,sizes:allSizes}
+          {id:"sport_shirt",name:"Sport Shirt",price:345,sizes:allSizes},
+          {id:"sport_short",name:"Sport Short",price:100,sizes:allSizes},
+          {id:"rugby_jersey",name:"Rugby Jersey",price:350,sizes:allSizes},
+          {id:"netball_dress",name:"Netball Dress",price:350,sizes:allSizes},
+          {id:"basketball_set",name:"Basketball Set (Top & Short)",price:380,sizes:allSizes},
+          {id:"basketball_practice",name:"Basketball Practice Shirt",price:260,sizes:allSizes}
         ],
         "Accessories": [
-          {id:"green_socks",name:"Long Green Socks",price:55,sizes:oneSize}
+          {id:"green_socks",name:"Long Green Socks",price:55,sizes:oneSize},
+          {id:"sport_socks",name:"Sport Socks",price:55,sizes:oneSize},
+          {id:"floppy_hat",name:"Floppy Hat",price:160,sizes:oneSize},
+          {id:"beanie",name:"Beanie",price:50,sizes:oneSize}
         ]
       };
 
+      // ---------------------------
+      // Rendering: inject products into their category cards
+      // ---------------------------
       function createProductRow(item){
+        // container row
         const row = document.createElement('div');
         row.className = 'product-row item-row';
         row.dataset.itemId = item.id;
         row.dataset.price = item.price;
 
+        // name
         const nameSpan = document.createElement('div');
         nameSpan.className = 'pname';
         nameSpan.textContent = `${item.name} — R${item.price}`;
 
+        // size selector
         const sizeSel = document.createElement('select');
         sizeSel.className = 'size';
         item.sizes.forEach(s=>{
@@ -363,11 +438,13 @@
           sizeSel.appendChild(opt);
         });
 
+        // qty input
         const qtyInput = document.createElement('input');
         qtyInput.className = 'qty';
         qtyInput.type = 'number';
         qtyInput.min = 0;
         qtyInput.value = 0;
+        qtyInput.setAttribute('aria-label', `${item.name} quantity`);
 
         row.appendChild(nameSpan);
         row.appendChild(sizeSel);
@@ -376,126 +453,338 @@
         return row;
       }
 
+      // find category card bodies and append items
       document.addEventListener('DOMContentLoaded', function(){
-        const mapping = {
-          "cat-tracksuits": "Tracksuits",
-          "cat-jerseys": "Jerseys & Pullovers",
-          "cat-formal": "Formal",
-          "cat-sports": "Sportswear",
-          "cat-accessories": "Accessories"
-        };
-        Object.entries(mapping).forEach(([cardId,catName])=>{
-          const card = document.getElementById(cardId);
-          const body = card.querySelector('.card-body');
-          categories[catName].forEach(item=>{
-            body.appendChild(createProductRow(item));
+        try {
+          // mapping card ids -> category keys
+          const mapping = {
+            "cat-tracksuits": "Tracksuits",
+            "cat-jerseys": "Jerseys & Pullovers",
+            "cat-formal": "Formal",
+            "cat-sports": "Sportswear",
+            "cat-accessories": "Accessories"
+          };
+
+          Object.entries(mapping).forEach(([cardId, catKey])=>{
+            const el = document.querySelector('#' + cardId + ' .card-body');
+            if(!el) return;
+            categories[catKey].forEach(item=>{
+              el.appendChild(createProductRow(item));
+            });
           });
-        });
-
-        document.querySelectorAll('.qty').forEach(q=>{
-          q.addEventListener('input', updateCart);
-        });
-        document.querySelectorAll('.size').forEach(s=>{
-          s.addEventListener('change', updateCart);
-        });
-
-        document.getElementById('orderForm').addEventListener('submit', handleSubmit);
+        } catch (err) {
+          console.error("Error building product list:", err);
+        }
       });
 
-      function updateCart(){
-        const cartBody = document.getElementById('cartBody');
-        cartBody.innerHTML = '';
-        let total = 0;
+      // ---------------------------
+      // Cart: collect selected items & render
+      // ---------------------------
+      let cart = [];
 
+      function collectCartFromDOM(){
+        cart = [];
         document.querySelectorAll('.item-row').forEach(row=>{
-          const qty = parseInt(row.querySelector('.qty').value,10) || 0;
-          if(qty>0){
-            const name = row.querySelector('.pname').textContent.split(' — ')[0];
+          const qty = parseInt(row.querySelector('.qty').value || 0, 10);
+          if(qty > 0){
+            const fullName = row.querySelector('.pname').textContent || row.querySelector('.item-name')?.textContent;
+            // some rows may use former naming; guard with fallback
+            const name = (fullName || 'Item').split(' — ')[0].trim();
             const size = row.querySelector('.size').value;
             const price = parseFloat(row.dataset.price);
-            const line = qty*price;
-            total += line;
-
-            const tr = document.createElement('tr');
-            tr.innerHTML = `<td>${name}</td><td>${size}</td><td>${qty}</td><td>R${line.toFixed(2)}</td><td><button type="button" class="btn-remove" style="background:none;border:none;cursor:pointer;font-size:16px;">❌</button></td>`;
-            tr.querySelector('.btn-remove').addEventListener('click',()=>{
-              row.querySelector('.qty').value = 0;
-              updateCart();
-            });
-            cartBody.appendChild(tr);
+            cart.push({ name, size, qty, price });
           }
         });
-
-        if(cartBody.innerHTML===''){
-          cartBody.innerHTML = '<tr><td colspan="5" class="muted">No items</td></tr>';
-        }
-
-        document.getElementById('grandTotal').textContent = `Total: R${total.toFixed(2)}`;
       }
 
-      async function handleSubmit(e){
-        e.preventDefault();
+      function renderCart(){
+        const tbody = document.getElementById('cartBody');
+        tbody.innerHTML = '';
+        if(cart.length === 0){
+          const tr = document.createElement('tr');
+          const td = document.createElement('td');
+          td.colSpan = 5;
+          td.className = 'muted';
+          td.textContent = 'No items';
+          tr.appendChild(td);
+          tbody.appendChild(tr);
+          document.getElementById('grandTotal').textContent = "Total: R0.00";
+          return;
+        }
+
+        let grand = 0;
+        cart.forEach((it, idx) => {
+          const tr = document.createElement('tr');
+
+          // item cell
+          const tdItem = document.createElement('td');
+          tdItem.textContent = it.name;
+
+          // size cell
+          const tdSize = document.createElement('td');
+          tdSize.textContent = it.size;
+
+          // qty
+          const tdQty = document.createElement('td');
+          tdQty.textContent = it.qty;
+
+          // line
+          const line = it.qty * it.price;
+          grand += line;
+          const tdLine = document.createElement('td');
+          tdLine.textContent = `R${line.toFixed(2)}`;
+
+          // remove
+          const tdRemove = document.createElement('td');
+          const removeBtn = document.createElement('button');
+          removeBtn.className = 'btn btn-primary';
+          removeBtn.style.padding = '4px 6px';
+          removeBtn.style.background = '#fff';
+          removeBtn.style.color = '#d9534f';
+          removeBtn.style.border = '1px solid #f0a3a3';
+          removeBtn.textContent = 'X';
+          removeBtn.dataset.index = idx;
+          removeBtn.addEventListener('click', function(e){
+            e.preventDefault();
+            cart.splice(this.dataset.index, 1);
+            // Also set the corresponding qty input in the DOM to 0
+            // Find matching item and reset qty (best-effort by name & size)
+            document.querySelectorAll('.item-row').forEach(r=>{
+              const name = r.querySelector('.pname').textContent.split(' — ')[0].trim();
+              const size = r.querySelector('.size').value;
+              if(name === it.name && size === it.size){
+                r.querySelector('.qty').value = 0;
+              }
+            });
+            collectCartFromDOM();
+            renderCart();
+          });
+          tdRemove.appendChild(removeBtn);
+
+          tr.appendChild(tdItem);
+          tr.appendChild(tdSize);
+          tr.appendChild(tdQty);
+          tr.appendChild(tdLine);
+          tr.appendChild(tdRemove);
+          tbody.appendChild(tr);
+        });
+
+        document.getElementById('grandTotal').textContent = `Total: R${grand.toFixed(2)}`;
+      }
+
+      // update cart whenever a qty or size changes
+      document.addEventListener('input', function(e){
+        if(e.target.classList && (e.target.classList.contains('qty') || e.target.classList.contains('size'))){
+          collectCartFromDOM();
+          renderCart();
+        }
+      });
+
+      // ---------------------------
+      // PDF generation
+      // - includes logo if available (attempts to add image)
+      // - uses school colours for header
+      // ---------------------------
+      async function createReceiptPDF(details, cartItems){
+        // details: { parentName, contactNumber, email, learnerName, grade, schoolLevel }
         const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF();
+        const doc = new jsPDF({ unit: 'pt', format: 'a4' });
 
-        const parentName = document.getElementById('parentName').value;
-        const contactNumber = document.getElementById('contactNumber').value;
-        const email = document.getElementById('email').value;
-        const learnerName = document.getElementById('learnerName').value;
-        const grade = document.getElementById('grade').value;
-        const schoolLevel = document.getElementById('schoolLevel').value;
-        const adminNumber = document.getElementById('adminNumber').value;
+        // --- Header band with colours & logo ---
+        const pageWidth = doc.internal.pageSize.getWidth();
+        // draw a navy rectangle
+        doc.setFillColor(0, 39, 77); // navy
+        doc.rect(0, 0, pageWidth, 70, 'F');
 
-        pdf.setFontSize(16);
-        pdf.text("SA College Private School - Uniform Order Receipt", 14, 20);
-        pdf.setFontSize(11);
-        pdf.text(`Parent: ${parentName}`, 14, 30);
-        pdf.text(`Contact: ${contactNumber}`, 14, 36);
-        pdf.text(`Email: ${email}`, 14, 42);
-        pdf.text(`Learner: ${learnerName}`, 14, 48);
-        pdf.text(`Grade: ${grade} (${schoolLevel})`, 14, 54);
-        pdf.text(`Admin #: ${adminNumber}`, 14, 60);
-        pdf.text(`Date: ${new Date().toLocaleDateString()}`, 14, 66);
-
-        const rows = [];
-        let total = 0;
-        document.querySelectorAll('.item-row').forEach(row=>{
-          const qty = parseInt(row.querySelector('.qty').value,10) || 0;
-          if(qty>0){
-            const name = row.querySelector('.pname').textContent.split(' — ')[0];
-            const size = row.querySelector('.size').value;
-            const price = parseFloat(row.dataset.price);
-            const line = qty*price;
-            total += line;
-            rows.push([name,size,qty,`R${price.toFixed(2)}`,`R${line.toFixed(2)}`]);
+        // try to include logo (falls back gracefully)
+        try {
+          const logoImg = document.getElementById('schoolLogo');
+          if(logoImg && logoImg.complete){
+            // convert image to data URL via canvas to ensure compatibility
+            const canvas = document.createElement('canvas');
+            canvas.width = logoImg.naturalWidth;
+            canvas.height = logoImg.naturalHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(logoImg, 0, 0);
+            const imgData = canvas.toDataURL('image/png');
+            doc.addImage(imgData, 'PNG', 18, 12, 46, 46);
           }
+        } catch(err){
+          console.warn('Could not add logo to PDF:', err);
+        }
+
+        // School title
+        doc.setFontSize(16);
+        doc.setTextColor(255,255,255);
+        doc.text("SA College Private School", 80, 28);
+
+        // Receipt title on gold
+        doc.setFillColor(255,193,7); // gold
+        doc.rect(pageWidth - 200, 18, 180, 30, 'F');
+        doc.setFontSize(11);
+        doc.setTextColor(0,0,0);
+        doc.text("Uniform Order Receipt", pageWidth - 190, 38);
+
+        // Body text
+        doc.setFontSize(10);
+        doc.setTextColor(35,35,35);
+        const left = 18;
+        let y = 100;
+        doc.text(`Parent: ${details.parentName}`, left, y); y += 16;
+        doc.text(`Contact: ${details.contactNumber}`, left, y); y += 16;
+        doc.text(`Email: ${details.email}`, left, y); y += 16;
+        doc.text(`Learner: ${details.learnerName}`, left, y); y += 16;
+        doc.text(`Grade: ${details.grade}`, left, y); y += 16;
+        doc.text(`Level: ${details.schoolLevel}`, left, y); y += 26;
+
+        // Build table array for autoTable
+        const tableBody = cartItems.map(it => [it.name, it.size, String(it.qty), `R${it.price}`, `R${(it.qty*it.price).toFixed(2)}`]);
+
+        // If no items, put a placeholder row
+        if(tableBody.length === 0) tableBody.push(['No items','','','','']);
+
+        // Add table using autoTable
+        doc.autoTable({
+          startY: y,
+          head: [['Item', 'Size', 'Qty', 'Unit Price', 'Line Total']],
+          body: tableBody,
+          styles: { fontSize: 10, cellPadding: 6 },
+          headStyles: { fillColor: [0,39,77], textColor: 255, halign: 'center' },
+          theme: 'grid',
+          margin: { left: 12, right: 12 }
         });
 
-        pdf.autoTable({
-          startY: 75,
-          head: [['Item','Size','Qty','Unit Price','Total']],
-          body: rows.length>0?rows:[['(no items)','-','-','-','-']]
-        });
+        // Grand total
+        const finalY = doc.lastAutoTable ? doc.lastAutoTable.finalY : y + 120;
+        const grand = cartItems.reduce((s, it) => s + (it.price * it.qty), 0);
+        doc.setFontSize(11);
+        doc.setTextColor(0,0,0);
+        doc.text(`Grand Total: R${grand.toFixed(2)}`, 18, finalY + 18);
 
-        pdf.setFontSize(14);
-        pdf.text(`Grand Total: R${total.toFixed(2)}`, 14, pdf.lastAutoTable.finalY + 12);
+        // Footer with school contact
+        doc.setFontSize(9);
+        doc.setTextColor(120,120,120);
+        doc.text("SA College Private School • admin@sacps.co.za • Tel: 012 326 4580 / 064 548 9428", 18, doc.internal.pageSize.getHeight() - 30);
 
-        pdf.save(`Uniform-Order-${learnerName}.pdf`);
-
-        const formData = {
-          parentName, contactNumber, email, learnerName, grade, schoolLevel, adminNumber, total, rows
+        // Return the jsPDF doc object and a base64 string for attaching to EmailJS if desired
+        return {
+          doc,
+          dataUrl: doc.output('datauristring'), // datauri (useful for inline preview)
+          base64: doc.output('dataurlstring') // this returns data:application/pdf;filename=generated.pdf;base64,....
         };
+      }
+
+      // ---------------------------
+      // Submit: generate PDF, download, send email via EmailJS
+      // ---------------------------
+      document.getElementById('orderForm').addEventListener('submit', async function(e){
+        e.preventDefault();
+
+        // Disable submit to avoid double submissions
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Processing...';
 
         try {
-          await emailjs.send("service_8uuj8u8","template_vw72z3m",formData);
-          alert("✅ Order submitted successfully. A PDF receipt has been downloaded. Please email your proof of payment.");
-        } catch(err){
-          console.warn("Email failed:",err);
-          alert("Order saved. PDF receipt downloaded. Email sending failed — please send proof of payment manually.");
+          // gather form details and cart
+          const parentName = document.getElementById('parentName').value.trim();
+          const contactNumber = document.getElementById('contactNumber').value.trim();
+          const email = document.getElementById('email').value.trim();
+          const learnerName = document.getElementById('learnerName').value.trim();
+          const grade = document.getElementById('grade').value.trim();
+          const schoolLevel = document.getElementById('schoolLevel').value.trim();
+
+          // collect cart items from DOM
+          collectCartFromDOM();
+          if(cart.length === 0){
+            alert('Please add at least one uniform item before submitting.');
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Submit Order & Download Receipt';
+            return;
+          }
+
+          const details = { parentName, contactNumber, email, learnerName, grade, schoolLevel };
+
+          // create PDF
+          const { doc, dataUrl, base64 } = await createReceiptPDF(details, cart);
+
+          // prompt download for parent
+          try {
+            const fileName = `SACollege_Receipt_${learnerName || 'Order'}.pdf`;
+            // save the file locally for parent
+            doc.save(fileName);
+          } catch (err){
+            console.warn('PDF download failed locally:', err);
+          }
+
+          // Prepare email template parameters for EmailJS
+const cartTotal = cart.reduce((sum, it) => sum + (it.price * it.qty), 0);
+
+// Build a readable orderDetails string from cart items
+const orderDetails = cart.map(it => 
+  `${it.name} | Size: ${it.size} | Qty: ${it.qty} | R${(it.price*it.qty).toFixed(2)}`
+).join('\n');
+
+const emailParams = {
+  parentName: parentName,       // matches {{parentName}}
+  contactNumber: contactNumber, // matches {{contactNumber}}
+  email: email,                 // matches {{email}}
+  parentEmail: email,           // matches {{parentEmail}}
+  learnerName: learnerName,     // matches {{learnerName}}
+  grade: grade,                 // matches {{grade}}
+  schoolLevel: schoolLevel,     // matches {{schoolLevel}}
+  orderDetails: orderDetails,   // matches {{orderDetails}}
+  cartTotal: `R${cartTotal.toFixed(2)}` // matches {{cartTotal}}
+};
+
+
+          // Send email using EmailJS service/template from your account
+          // Service ID: service_fe66puw
+          // Template ID: template_oq150rd
+          // (emailjs.init called earlier with public key)
+          try {
+            const response = await emailjs.send("service_fe66puw", "template_oq150rd", emailParams);
+            console.log("EmailJS response:", response);
+            alert("Order submitted successfully. Receipt downloaded.");
+            // reset form and cart
+            document.getElementById('orderForm').reset();
+            // clear all qty inputs
+            document.querySelectorAll('.item-row .qty').forEach(q => q.value = 0);
+            collectCartFromDOM();
+            renderCart();
+          } catch (sendErr) {
+            console.error("EmailJS send error:", sendErr);
+            // Even if email fails, the parent still gets the downloaded receipt
+            alert("Order saved and receipt downloaded, but sending email notification failed. Please check EmailJS setup.");
+          }
+
+        } catch (err) {
+          console.error("Submit error:", err);
+          alert("An error occurred while submitting. Please try again.");
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Submit Order & Download Receipt';
         }
-      }
+      });
+
+      // Small UX improvement: allow pressing Enter in any field to submit (native form)
+      // handled by form submit above.
+
+      // Ensure cart is rendered initially (shows 'No items')
+      collectCartFromDOM();
+      renderCart();
+
+      // Expose useful functions for debugging from console (optional)
+      window._sa_helpers = {
+        collectCartFromDOM, renderCart, createReceiptPDF, categories, cart
+      };
+
     })();
   </script>
+
+  <!-- =========================
+       End file
+       ========================= -->
 </body>
 </html>
 
