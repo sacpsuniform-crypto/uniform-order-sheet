@@ -92,13 +92,35 @@
       padding:10px;
     }
 
-    /* Form layout */
     form#orderForm {
-      display: grid;
-      grid-template-columns: 1fr 360px;
-      gap:18px;
-    }
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 380px;
+  gap: 24px;
+  align-items: start;
+}
 
+/* Make the cart stick properly and align right */
+.cart {
+  justify-self: end;
+  position: sticky;
+  top: 20px;
+  width: 100%;
+  max-width: 380px;
+  height: fit-content;
+}
+
+/* Responsive */
+@media (max-width: 980px) {
+  form#orderForm {
+    grid-template-columns: 1fr;
+  }
+  .cart {
+    position: relative;
+    justify-self: stretch;
+    max-width: 100%;
+  }
+}
+    
     /* Left column */
     .left {
       background:var(--white);
