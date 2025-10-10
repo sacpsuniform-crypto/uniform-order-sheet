@@ -251,7 +251,7 @@
 <body>
   <!-- Header -->
   <header class="site-header" role="banner">
-    <img class="logo" id="schoolLogo" src="logo.jpg" alt="SA College Private School logo" />
+    <img class="logo" id="schoolLogo" src="logo.png" alt="SA College Private School logo" />
     <div class="heading">
       <h1>SA College Private School</h1>
       <p class="muted">admin@sacps.co.za • info@sacps.co.za • sacpsuniform@gmail.com • Tel: 012 326 4580 / 064 548 9428</p>
@@ -414,48 +414,48 @@
       // Base URL for images hosted on GitHub (update with your repository path)
       const imageBaseUrl = 'https://raw.githubusercontent.com/your-username/sacps-uniforms/main/images/';
 
-      // All items with image paths
+      // All items with image paths updated to .png
       const categories = {
         "Tracksuits": [
-          {id:"tracksuit_primary",name:"Primary Tracksuit Set",price:660,sizes:primarySizes,image:"tracksuit_primary.jpg"},
-          {id:"tracksuit_hs",name:"Highschool Tracksuit Set",price:715,sizes:highschoolSizes,image:"tracksuit_hs.jpg"},
-          {id:"ts_jacket_primary",name:"Primary Tracksuit Jacket",price:440,sizes:primarySizes,image:"ts_jacket_primary.jpg"},
-          {id:"ts_jacket_hs",name:"Highschool Tracksuit Jacket",price:495,sizes:highschoolSizes,image:"ts_jacket_hs.jpg"},
-          {id:"ts_pants_primary",name:"Primary Tracksuit Pants",price:220,sizes:primarySizes,image:"ts_pants_primary.jpg"},
-          {id:"ts_pants_hs",name:"Highschool Tracksuit Pants",price:220,sizes:highschoolSizes,image:"ts_pants_hs.jpg"}
+          {id:"tracksuit_primary",name:"Primary Tracksuit Set",price:660,sizes:primarySizes,image:"tracksuit_primary.png"},
+          {id:"tracksuit_hs",name:"Highschool Tracksuit Set",price:715,sizes:highschoolSizes,image:"tracksuit_hs.png"},
+          {id:"ts_jacket_primary",name:"Primary Tracksuit Jacket",price:440,sizes:primarySizes,image:"ts_jacket_primary.png"},
+          {id:"ts_jacket_hs",name:"Highschool Tracksuit Jacket",price:495,sizes:highschoolSizes,image:"ts_jacket_hs.png"},
+          {id:"ts_pants_primary",name:"Primary Tracksuit Pants",price:220,sizes:primarySizes,image:"ts_pants_primary.png"},
+          {id:"ts_pants_hs",name:"Highschool Tracksuit Pants",price:220,sizes:highschoolSizes,image:"ts_pants_hs.png"}
         ],
         "Jerseys & Pullovers": [
-          {id:"jersey_hs",name:"Highschool Jersey",price:285,sizes:highschoolSizes,image:"jersey_hs.jpg"},
-          {id:"jersey_primary",name:"Primary Jersey",price:275,sizes:primarySizes,image:"jersey_primary.jpg"},
-          {id:"pullover_hs",name:"Highschool Pullover",price:265,sizes:highschoolSizes,image:"pullover_hs.jpg"},
-          {id:"pullover_primary",name:"Primary Pullover",price:255,sizes:primarySizes,image:"pullover_primary.jpg"}
+          {id:"jersey_hs",name:"Highschool Jersey",price:285,sizes:highschoolSizes,image:"jersey_hs.png"},
+          {id:"jersey_primary",name:"Primary Jersey",price:275,sizes:primarySizes,image:"jersey_primary.png"},
+          {id:"pullover_hs",name:"Highschool Pullover",price:265,sizes:highschoolSizes,image:"pullover_hs.png"},
+          {id:"pullover_primary",name:"Primary Pullover",price:255,sizes:primarySizes,image:"pullover_primary.png"}
         ],
         "Formal": [
-          {id:"blazer",name:"Blazer",price:770,sizes:blazerSizes,image:"blazer.jpg"},
-          {id:"tie",name:"School Tie",price:90,sizes:oneSize,image:"tie.jpg"},
-          {id:"skirt_primary",name:"Primary Girls Skirt",price:375,sizes:primarySizes,image:"skirt_primary.jpg"},
-          {id:"skirt_hs",name:"Highschool Girls Skirt",price:400,sizes:highschoolSizes,image:"skirt_hs.jpg"},
-          {id:"sport_shirt",name:"Sport Shirt",price:380,sizes:allSizes,image:"sport_shirt.jpg"},
-          {id:"sport_short",name:"Sport Short",price:110,sizes:allSizes,image:"sport_short.jpg"},
-          {id:"matric_bomber",name:"Matric Bomber Jacket",price:715,sizes:highschoolSizes,image:"matric_bomber.jpg"}
+          {id:"blazer",name:"Blazer",price:770,sizes:blazerSizes,image:"blazer.png"},
+          {id:"tie",name:"School Tie",price:90,sizes:oneSize,image:"tie.png"},
+          {id:"skirt_primary",name:"Primary Girls Skirt",price:375,sizes:primarySizes,image:"skirt_primary.png"},
+          {id:"skirt_hs",name:"Highschool Girls Skirt",price:400,sizes:highschoolSizes,image:"skirt_hs.png"},
+          {id:"sport_shirt",name:"Sport Shirt",price:380,sizes:allSizes,image:"sport_shirt.png"},
+          {id:"sport_short",name:"Sport Short",price:110,sizes:allSizes,image:"sport_short.png"},
+          {id:"matric_bomber",name:"Matric Bomber Jacket",price:715,sizes:highschoolSizes,image:"matric_bomber.png"}
         ],
         "Sportswear": [
-          {id:"soccer_shirt",name:"Soccer Shirt",price:295,sizes:allSizes,image:"soccer_shirt.jpg"},
-          {id:"soccer_short",name:"Soccer Short",price:285,sizes:allSizes,image:"sport_short.jpg"}, // Shared short
-          {id:"soccer_socks",name:"Soccer Socks",price:110,sizes:allSizes,image:"socks.jpg"}, // Shared with rugby
-          {id:"rugby_jersey",name:"Rugby Jersey",price:395,sizes:allSizes,image:"rugby_jersey.jpg"},
-          {id:"rugby_short",name:"Rugby Short",price:275,sizes:allSizes,image:"sport_short.jpg"}, // Shared short
-          {id:"rugby_socks",name:"Rugby Socks",price:110,sizes:allSizes,image:"socks.jpg"}, // Shared with soccer
-          {id:"basketball_shirt",name:"Basketball Shirt",price:285,sizes:allSizes,image:"basketball_shirt.jpg"},
-          {id:"basketball_short",name:"Basketball Short",price:285,sizes:allSizes,image:"sport_short.jpg"}, // Shared short
-          {id:"netball_dress",name:"Netball Dress",price:310,sizes:allSizes,image:"netball_dress.jpg"},
-          {id:"athletics_vest",name:"Athletics Vest",price:275,sizes:allSizes,image:"athletics_vest.jpg"},
-          {id:"athletics_short",name:"Athletics Short",price:265,sizes:allSizes,image:"athletics_short.jpg"}
+          {id:"soccer_shirt",name:"Soccer Shirt",price:295,sizes:allSizes,image:"soccer_shirt.png"},
+          {id:"soccer_short",name:"Soccer Short",price:285,sizes:allSizes,image:"sport_short.png"}, // Shared short
+          {id:"soccer_socks",name:"Soccer Socks",price:110,sizes:allSizes,image:"socks.png"}, // Shared with rugby
+          {id:"rugby_jersey",name:"Rugby Jersey",price:395,sizes:allSizes,image:"rugby_jersey.png"},
+          {id:"rugby_short",name:"Rugby Short",price:275,sizes:allSizes,image:"sport_short.png"}, // Shared short
+          {id:"rugby_socks",name:"Rugby Socks",price:110,sizes:allSizes,image:"socks.png"}, // Shared with soccer
+          {id:"basketball_shirt",name:"Basketball Shirt",price:285,sizes:allSizes,image:"basketball_shirt.png"},
+          {id:"basketball_short",name:"Basketball Short",price:285,sizes:allSizes,image:"sport_short.png"}, // Shared short
+          {id:"netball_dress",name:"Netball Dress",price:310,sizes:allSizes,image:"netball_dress.png"},
+          {id:"athletics_vest",name:"Athletics Vest",price:275,sizes:allSizes,image:"athletics_vest.png"},
+          {id:"athletics_short",name:"Athletics Short",price:265,sizes:allSizes,image:"athletics_short.png"}
         ],
         "Accessories": [
-          {id:"green_socks",name:"Long Green Socks",price:60,sizes:oneSize,image:"green_socks.jpg"},
-          {id:"floppy_hat",name:"Floppy Hat",price:175,sizes:oneSize,image:"floppy_hat.jpg"},
-          {id:"beanie",name:"Beanie",price:55,sizes:oneSize,image:"beanie.jpg"}
+          {id:"green_socks",name:"Long Green Socks",price:60,sizes:oneSize,image:"green_socks.png"},
+          {id:"floppy_hat",name:"Floppy Hat",price:175,sizes:oneSize,image:"floppy_hat.png"},
+          {id:"beanie",name:"Beanie",price:55,sizes:oneSize,image:"beanie.png"}
         ],
       };
 
@@ -472,10 +472,10 @@
         const imgDiv = document.createElement('div');
         const img = document.createElement('img');
         img.className = 'pimage';
-        img.src = item.image ? `${imageBaseUrl}${item.image}` : 'placeholder.jpg';
+        img.src = item.image ? `${imageBaseUrl}${item.image}` : 'placeholder.png';
         img.alt = `${item.name} image`;
         img.loading = 'lazy'; // Lazy load to improve performance
-        img.onerror = function() { this.src = 'placeholder.jpg'; }; // Fallback if image fails
+        img.onerror = function() { this.src = 'placeholder.png'; }; // Fallback if image fails
         imgDiv.appendChild(img);
 
         // Name
