@@ -154,20 +154,21 @@
     .product-row select.size { width:110px; padding:6px; border-radius:6px; border:1px solid #d7dbe0; }
     .product-row input.qty { width:70px; padding:6px; border-radius:6px; border:1px solid #d7dbe0; }
 
-    /* Size & Qty headings above products */
-    .size-qty-heading {
+    /* Size & Qty subheading inside category */
+    .size-qty-subheading{
       display:flex;
       gap:10px;
       font-weight:700;
       font-size:13px;
-      margin-bottom:6px;
+      margin:6px 0;
+      padding-left:6px;
     }
-    .size-qty-heading div {
-      width: auto;
+    .size-qty-subheading div {
+      width:auto;
       text-align:left;
     }
-    .size-qty-heading .size-col { width:110px; text-align:center; }
-    .size-qty-heading .qty-col { width:70px; text-align:center; }
+    .size-qty-subheading .size-col { width:110px; text-align:center; }
+    .size-qty-subheading .qty-col { width:70px; text-align:center; }
 
     /* Right column - cart */
     .cart {
@@ -279,35 +280,35 @@
           <!-- Tracksuits -->
           <div class="category-card" id="cat-tracksuits">
             <div class="cat-header">Tracksuits</div>
-            <div class="size-qty-heading"><div>Item</div><div class="size-col">Size</div><div class="qty-col">Quantity</div></div>
+            <div class="size-qty-subheading"><div>Item</div><div class="size-col">Size</div><div class="qty-col">Quantity</div></div>
             <div class="card-body"></div>
           </div>
 
           <!-- Jerseys & Pullovers -->
           <div class="category-card" id="cat-jerseys">
             <div class="cat-header">Jerseys & Pullovers</div>
-            <div class="size-qty-heading"><div>Item</div><div class="size-col">Size</div><div class="qty-col">Quantity</div></div>
+            <div class="size-qty-subheading"><div>Item</div><div class="size-col">Size</div><div class="qty-col">Quantity</div></div>
             <div class="card-body"></div>
           </div>
 
           <!-- Formal -->
           <div class="category-card" id="cat-formal">
             <div class="cat-header">Formal</div>
-            <div class="size-qty-heading"><div>Item</div><div class="size-col">Size</div><div class="qty-col">Quantity</div></div>
+            <div class="size-qty-subheading"><div>Item</div><div class="size-col">Size</div><div class="qty-col">Quantity</div></div>
             <div class="card-body"></div>
           </div>
 
           <!-- Sportswear -->
           <div class="category-card" id="cat-sports">
             <div class="cat-header">Sportswear</div>
-            <div class="size-qty-heading"><div>Item</div><div class="size-col">Size</div><div class="qty-col">Quantity</div></div>
+            <div class="size-qty-subheading"><div>Item</div><div class="size-col">Size</div><div class="qty-col">Quantity</div></div>
             <div class="card-body"></div>
           </div>
 
           <!-- Accessories -->
           <div class="category-card" id="cat-accessories">
             <div class="cat-header">Accessories</div>
-            <div class="size-qty-heading"><div>Item</div><div class="size-col">Size</div><div class="qty-col">Quantity</div></div>
+            <div class="size-qty-subheading"><div>Item</div><div class="size-col">Size</div><div class="qty-col">Quantity</div></div>
             <div class="card-body"></div>
           </div>
 
@@ -343,448 +344,16 @@
           <p>Use <strong>“Uniform – [Child’s Name]”</strong> as your payment reference.</p>
           <p>Then email your <strong>proof of payment and order receipt</strong> to:</p>
           <p style="margin-left: 20px;">
-            📧 <a href="mailto:admin@sacps.co.za">admin@sacps.co.za</a> or 
-            <a href="mailto:info@sacps.co.za">info@sacps.co.za</a>  or <a href="mailto:uniformsacps@gmail.com">uniformsacps@gmail.com</a>  
+            📧 <a href="mailto:admin@sacps.co.za">admin@sacps.co.za</a> or <a href="mailto:info@sacps.co.za">info@sacps.co.za</a>
           </p>
-          
         </div>
-        <!-- Submit button -->
-        <button type="submit" class="btn btn-gold" id="submitBtn" style="margin-top:14px;">
-          Submit Order & Download Receipt
-        </button>
 
-        <div class="spaced muted" style="font-size:13px;">
-          After submitting, a PDF receipt will download for the parent .
-        </div>
+        <button type="submit" class="btn btn-primary btn-gold">Submit Order</button>
       </aside>
     </form>
   </main>
 
-  <!-- =========================
-       Script: Data, render, cart, PDF, email
-       ========================= -->
-  <script>
-    (function(){
-      // ---------------------------
-      // Data: sizes & items
-      // ---------------------------
-      const primarySizes = ['5-6','6-7','7-8','8-9','9-10','10-11','11-12','12-13','13-14'];
-      const highschoolSizes = ['13-14','14-15','15-16','16-17','17-18','18-20'];
-      const blazerSizes = ['28','30','32','34','36','38','40','42'];
-      const oneSize = ['One Size'];
-      const allSizes = [...primarySizes, ...highschoolSizes];
-
-      // All items - unchanged from your working list, grouped here for clarity
-      const categories = {
-        "Tracksuits": [
-          {id:"tracksuit_primary",name:"Primary Tracksuit Set",price:600,sizes:primarySizes},
-          {id:"tracksuit_hs",name:"Highschool Tracksuit Set",price:650,sizes:highschoolSizes},
-          {id:"ts_jacket_primary",name:"Primary Tracksuit Jacket",price:400,sizes:primarySizes},
-          {id:"ts_jacket_hs",name:"Highschool Tracksuit Jacket",price:450,sizes:highschoolSizes},
-          {id:"ts_pants_primary",name:"Primary Tracksuit Pants",price:200,sizes:primarySizes},
-          {id:"ts_pants_hs",name:"Highschool Tracksuit Pants",price:200,sizes:highschoolSizes}
-        ],
-        "Jerseys & Pullovers": [
-          {id:"jersey_hs",name:"Highschool Jersey",price:260,sizes:highschoolSizes},
-          {id:"jersey_primary",name:"Primary Jersey",price:250,sizes:primarySizes},
-          {id:"pullover_hs",name:"Highschool Pullover",price:240,sizes:highschoolSizes},
-          {id:"pullover_primary",name:"Primary Pullover",price:230,sizes:primarySizes}
-        ],
-        "Formal": [
-          {id:"blazer",name:"Blazer",price:700,sizes:blazerSizes},
-          {id:"tie",name:"School Tie",price:80,sizes:oneSize},
-          {id:"skirt_primary",name:"Primary Girls Skirt",price:340,sizes:primarySizes},
-          {id:"skirt_hs",name:"Highschool Girls Skirt",price:365,sizes:highschoolSizes},
-          {id:"matric_bomber",name:"Matric Bomber Jacket",price:650,sizes:highschoolSizes}
-        ],
-        "Sportswear": [
-          {id:"sport_shirt",name:"Sport Shirt",price:345,sizes:allSizes},
-          {id:"sport_short",name:"Sport Short",price:100,sizes:allSizes},
-          {id:"rugby_jersey",name:"Rugby Jersey",price:350,sizes:allSizes},
-          {id:"netball_dress",name:"Netball Dress",price:350,sizes:allSizes},
-          {id:"basketball_set",name:"Basketball Set (Top & Short)",price:380,sizes:allSizes},
-          {id:"basketball_practice",name:"Basketball Practice Shirt",price:260,sizes:allSizes}
-        ],
-        "Accessories": [
-          {id:"green_socks",name:"Long Green Socks",price:55,sizes:oneSize},
-          {id:"sport_socks",name:"Sport Socks",price:55,sizes:oneSize},
-          {id:"floppy_hat",name:"Floppy Hat",price:160,sizes:oneSize},
-          {id:"beanie",name:"Beanie",price:50,sizes:oneSize}
-        ]
-      };
-
-      // ---------------------------
-      // Rendering: inject products into their category cards
-      // ---------------------------
-      function createProductRow(item){
-        // container row
-        const row = document.createElement('div');
-        row.className = 'product-row item-row';
-        row.dataset.itemId = item.id;
-        row.dataset.price = item.price;
-
-        // name
-        const nameSpan = document.createElement('div');
-        nameSpan.className = 'pname';
-        nameSpan.textContent = `${item.name} — R${item.price}`;
-
-        // size selector
-        const sizeSel = document.createElement('select');
-        sizeSel.className = 'size';
-        item.sizes.forEach(s=>{
-          const opt = document.createElement('option');
-          opt.value = s;
-          opt.textContent = s;
-          sizeSel.appendChild(opt);
-        });
-
-        // qty input
-        const qtyInput = document.createElement('input');
-        qtyInput.className = 'qty';
-        qtyInput.type = 'number';
-        qtyInput.min = 0;
-        qtyInput.value = 0;
-        qtyInput.setAttribute('aria-label', `${item.name} quantity`);
-
-        row.appendChild(nameSpan);
-        row.appendChild(sizeSel);
-        row.appendChild(qtyInput);
-
-        return row;
-      }
-
-      // find category card bodies and append items
-      document.addEventListener('DOMContentLoaded', function(){
-        try {
-          // mapping card ids -> category keys
-          const mapping = {
-            "cat-tracksuits": "Tracksuits",
-            "cat-jerseys": "Jerseys & Pullovers",
-            "cat-formal": "Formal",
-            "cat-sports": "Sportswear",
-            "cat-accessories": "Accessories"
-          };
-
-          Object.entries(mapping).forEach(([cardId, catKey])=>{
-            const el = document.querySelector('#' + cardId + ' .card-body');
-            if(!el) return;
-            categories[catKey].forEach(item=>{
-              el.appendChild(createProductRow(item));
-            });
-          });
-        } catch (err) {
-          console.error("Error building product list:", err);
-        }
-      });
-
-      // ---------------------------
-      // Cart: collect selected items & render
-      // ---------------------------
-      let cart = [];
-
-      function collectCartFromDOM(){
-        cart = [];
-        document.querySelectorAll('.item-row').forEach(row=>{
-          const qty = parseInt(row.querySelector('.qty').value || 0, 10);
-          if(qty > 0){
-            const fullName = row.querySelector('.pname').textContent || row.querySelector('.item-name')?.textContent;
-            // some rows may use former naming; guard with fallback
-            const name = (fullName || 'Item').split(' — ')[0].trim();
-            const size = row.querySelector('.size').value;
-            const price = parseFloat(row.dataset.price);
-            cart.push({ name, size, qty, price });
-          }
-        });
-      }
-
-      function renderCart(){
-        const tbody = document.getElementById('cartBody');
-        tbody.innerHTML = '';
-        if(cart.length === 0){
-          const tr = document.createElement('tr');
-          const td = document.createElement('td');
-          td.colSpan = 5;
-          td.className = 'muted';
-          td.textContent = 'No items';
-          tr.appendChild(td);
-          tbody.appendChild(tr);
-          document.getElementById('grandTotal').textContent = "Total: R0.00";
-          return;
-        }
-
-        let grand = 0;
-        cart.forEach((it, idx) => {
-          const tr = document.createElement('tr');
-
-          // item cell
-          const tdItem = document.createElement('td');
-          tdItem.textContent = it.name;
-
-          // size cell
-          const tdSize = document.createElement('td');
-          tdSize.textContent = it.size;
-
-          // qty
-          const tdQty = document.createElement('td');
-          tdQty.textContent = it.qty;
-
-          // line
-          const line = it.qty * it.price;
-          grand += line;
-          const tdLine = document.createElement('td');
-          tdLine.textContent = `R${line.toFixed(2)}`;
-
-          // remove
-          const tdRemove = document.createElement('td');
-          const removeBtn = document.createElement('button');
-          removeBtn.className = 'btn btn-primary';
-          removeBtn.style.padding = '4px 6px';
-          removeBtn.style.background = '#fff';
-          removeBtn.style.color = '#d9534f';
-          removeBtn.style.border = '1px solid #f0a3a3';
-          removeBtn.textContent = 'X';
-          removeBtn.dataset.index = idx;
-          removeBtn.addEventListener('click', function(e){
-            e.preventDefault();
-            cart.splice(this.dataset.index, 1);
-            // Also set the corresponding qty input in the DOM to 0
-            // Find matching item and reset qty (best-effort by name & size)
-            document.querySelectorAll('.item-row').forEach(r=>{
-              const name = r.querySelector('.pname').textContent.split(' — ')[0].trim();
-              const size = r.querySelector('.size').value;
-              if(name === it.name && size === it.size){
-                r.querySelector('.qty').value = 0;
-              }
-            });
-            collectCartFromDOM();
-            renderCart();
-          });
-          tdRemove.appendChild(removeBtn);
-
-          tr.appendChild(tdItem);
-          tr.appendChild(tdSize);
-          tr.appendChild(tdQty);
-          tr.appendChild(tdLine);
-          tr.appendChild(tdRemove);
-          tbody.appendChild(tr);
-        });
-
-        document.getElementById('grandTotal').textContent = `Total: R${grand.toFixed(2)}`;
-      }
-
-      // update cart whenever a qty or size changes
-      document.addEventListener('input', function(e){
-        if(e.target.classList && (e.target.classList.contains('qty') || e.target.classList.contains('size'))){
-          collectCartFromDOM();
-          renderCart();
-        }
-      });
-
-      // ---------------------------
-      // PDF generation
-      // - includes logo if available (attempts to add image)
-      // - uses school colours for header
-      // ---------------------------
-      async function createReceiptPDF(details, cartItems){
-        // details: { parentName, contactNumber, email, learnerName, grade, schoolLevel }
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF({ unit: 'pt', format: 'a4' });
-
-        // --- Header band with colours & logo ---
-        const pageWidth = doc.internal.pageSize.getWidth();
-        // draw a navy rectangle
-        doc.setFillColor(0, 39, 77); // navy
-        doc.rect(0, 0, pageWidth, 70, 'F');
-
-        // try to include logo (falls back gracefully)
-        try {
-          const logoImg = document.getElementById('schoolLogo');
-          if(logoImg && logoImg.complete){
-            // convert image to data URL via canvas to ensure compatibility
-            const canvas = document.createElement('canvas');
-            canvas.width = logoImg.naturalWidth;
-            canvas.height = logoImg.naturalHeight;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(logoImg, 0, 0);
-            const imgData = canvas.toDataURL('image/png');
-            doc.addImage(imgData, 'PNG', 18, 12, 46, 46);
-          }
-        } catch(err){
-          console.warn('Could not add logo to PDF:', err);
-        }
-
-        // School title
-        doc.setFontSize(16);
-        doc.setTextColor(255,255,255);
-        doc.text("SA College Private School", 80, 28);
-
-        // Receipt title on gold
-        doc.setFillColor(255,193,7); // gold
-        doc.rect(pageWidth - 200, 18, 180, 30, 'F');
-        doc.setFontSize(11);
-        doc.setTextColor(0,0,0);
-        doc.text("Uniform Order Receipt", pageWidth - 190, 38);
-
-        // Body text
-        doc.setFontSize(10);
-        doc.setTextColor(35,35,35);
-        const left = 18;
-        let y = 100;
-        doc.text(`Parent: ${details.parentName}`, left, y); y += 16;
-        doc.text(`Contact: ${details.contactNumber}`, left, y); y += 16;
-        doc.text(`Email: ${details.email}`, left, y); y += 16;
-        doc.text(`Learner: ${details.learnerName}`, left, y); y += 16;
-        doc.text(`Grade: ${details.grade}`, left, y); y += 16;
-        doc.text(`Level: ${details.schoolLevel}`, left, y); y += 26;
-
-        // Build table array for autoTable
-        const tableBody = cartItems.map(it => [it.name, it.size, String(it.qty), `R${it.price}`, `R${(it.qty*it.price).toFixed(2)}`]);
-
-        // If no items, put a placeholder row
-        if(tableBody.length === 0) tableBody.push(['No items','','','','']);
-
-        // Add table using autoTable
-        doc.autoTable({
-          startY: y,
-          head: [['Item', 'Size', 'Qty', 'Unit Price', 'Line Total']],
-          body: tableBody,
-          styles: { fontSize: 10, cellPadding: 6 },
-          headStyles: { fillColor: [0,39,77], textColor: 255, halign: 'center' },
-          theme: 'grid',
-          margin: { left: 12, right: 12 }
-        });
-
-        // Grand total
-        const finalY = doc.lastAutoTable ? doc.lastAutoTable.finalY : y + 120;
-        const grand = cartItems.reduce((s, it) => s + (it.price * it.qty), 0);
-        doc.setFontSize(11);
-        doc.setTextColor(0,0,0);
-        doc.text(`Grand Total: R${grand.toFixed(2)}`, 18, finalY + 18);
-
-        // Footer with school contact
-        doc.setFontSize(9);
-        doc.setTextColor(120,120,120);
-        doc.text("SA College Private School • admin@sacps.co.za • Tel: 012 326 4580 / 064 548 9428", 18, doc.internal.pageSize.getHeight() - 30);
-
-        // Return the jsPDF doc object and a base64 string for attaching to EmailJS if desired
-        return {
-          doc,
-          dataUrl: doc.output('datauristring'), // datauri (useful for inline preview)
-          base64: doc.output('dataurlstring') // this returns data:application/pdf;filename=generated.pdf;base64,....
-        };
-      }
-
-      // ---------------------------
-      // Submit: generate PDF, download, send email via EmailJS
-      // ---------------------------
-      document.getElementById('orderForm').addEventListener('submit', async function(e){
-        e.preventDefault();
-
-        // Disable submit to avoid double submissions
-        const submitBtn = document.getElementById('submitBtn');
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Processing...';
-
-        try {
-          // gather form details and cart
-          const parentName = document.getElementById('parentName').value.trim();
-          const contactNumber = document.getElementById('contactNumber').value.trim();
-          const email = document.getElementById('email').value.trim();
-          const learnerName = document.getElementById('learnerName').value.trim();
-          const grade = document.getElementById('grade').value.trim();
-          const schoolLevel = document.getElementById('schoolLevel').value.trim();
-
-          // collect cart items from DOM
-          collectCartFromDOM();
-          if(cart.length === 0){
-            alert('Please add at least one uniform item before submitting.');
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Submit Order & Download Receipt';
-            return;
-          }
-
-          const details = { parentName, contactNumber, email, learnerName, grade, schoolLevel };
-
-          // create PDF
-          const { doc, dataUrl, base64 } = await createReceiptPDF(details, cart);
-
-          // prompt download for parent
-          try {
-            const fileName = `SACollege_Receipt_${learnerName || 'Order'}.pdf`;
-            // save the file locally for parent
-            doc.save(fileName);
-          } catch (err){
-            console.warn('PDF download failed locally:', err);
-          }
-
-          // Prepare email template parameters for EmailJS
-const cartTotal = cart.reduce((sum, it) => sum + (it.price * it.qty), 0);
-
-// Build a readable orderDetails string from cart items
-const orderDetails = cart.map(it => 
-  `${it.name} | Size: ${it.size} | Qty: ${it.qty} | R${(it.price*it.qty).toFixed(2)}`
-).join('\n');
-
-const emailParams = {
-  parentName: parentName,       // matches {{parentName}}
-  contactNumber: contactNumber, // matches {{contactNumber}}
-  email: email,                 // matches {{email}}
-  parentEmail: email,           // matches {{parentEmail}}
-  learnerName: learnerName,     // matches {{learnerName}}
-  grade: grade,                 // matches {{grade}}
-  schoolLevel: schoolLevel,     // matches {{schoolLevel}}
-  orderDetails: orderDetails,   // matches {{orderDetails}}
-  cartTotal: `R${cartTotal.toFixed(2)}` // matches {{cartTotal}}
-};
-
-
-          // Send email using EmailJS service/template from your account
-          // Service ID: service_fe66puw
-          // Template ID: template_oq150rd
-          // (emailjs.init called earlier with public key)
-          try {
-            const response = await emailjs.send("service_fe66puw", "template_oq150rd", emailParams);
-            console.log("EmailJS response:", response);
-            alert("Order submitted successfully. Receipt downloaded.");
-            // reset form and cart
-            document.getElementById('orderForm').reset();
-            // clear all qty inputs
-            document.querySelectorAll('.item-row .qty').forEach(q => q.value = 0);
-            collectCartFromDOM();
-            renderCart();
-          } catch (sendErr) {
-            console.error("EmailJS send error:", sendErr);
-            // Even if email fails, the parent still gets the downloaded receipt
-            alert("Order saved and receipt downloaded, but sending email notification failed. Please check EmailJS setup.");
-          }
-
-        } catch (err) {
-          console.error("Submit error:", err);
-          alert("An error occurred while submitting. Please try again.");
-        } finally {
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'Submit Order & Download Receipt';
-        }
-      });
-
-      // Small UX improvement: allow pressing Enter in any field to submit (native form)
-      // handled by form submit above.
-
-      // Ensure cart is rendered initially (shows 'No items')
-      collectCartFromDOM();
-      renderCart();
-
-      // Expose useful functions for debugging from console (optional)
-      window._sa_helpers = {
-        collectCartFromDOM, renderCart, createReceiptPDF, categories, cart
-      };
-
-    })();
-  </script>
-
-  <!-- =========================
-       End file
-       ========================= -->
+<script src="uniform_order.js"></script>
 </body>
 </html>
 
