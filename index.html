@@ -276,42 +276,61 @@
         <div class="section" id="productsSection">
           <h2 style="margin-top:0; color:var(--navy)">Uniforms & Sports</h2>
 
-          <!-- Tracksuits -->
-          <div class="category-card" id="cat-tracksuits">
-            <div class="cat-header">Tracksuits</div>
-            <div class="size-qty-heading"><div>Item</div><div class="size-col">Size</div><div class="qty-col">Quantity</div></div>
-            <div class="card-body"></div>
-          </div>
+<!-- Tracksuits -->
+<div class="category-card" id="cat-tracksuits">
+  <div class="cat-header">Tracksuits</div>
+  <div style="display:flex; gap:16px; font-weight:700; font-size:13px; margin-bottom:8px;">
+    <div style="flex:1; text-align:left;">Item</div>
+    <div style="width:120px; text-align:center;">Size</div>
+    <div style="width:80px; text-align:center;">Quantity</div>
+  </div>
+  <div class="card-body"></div>
+</div>
 
-          <!-- Jerseys & Pullovers -->
-          <div class="category-card" id="cat-jerseys">
-            <div class="cat-header">Jerseys & Pullovers</div>
-            <div class="size-qty-heading"><div>Item</div><div class="size-col">Size</div><div class="qty-col">Quantity</div></div>
-            <div class="card-body"></div>
-          </div>
+<!-- Jerseys & Pullovers -->
+<div class="category-card" id="cat-jerseys">
+  <div class="cat-header">Jerseys & Pullovers</div>
+  <div style="display:flex; gap:16px; font-weight:700; font-size:13px; margin-bottom:8px;">
+    <div style="flex:1; text-align:left;">Item</div>
+    <div style="width:120px; text-align:center;">Size</div>
+    <div style="width:80px; text-align:center;">Quantity</div>
+  </div>
+  <div class="card-body"></div>
+</div>
 
-          <!-- Formal -->
-          <div class="category-card" id="cat-formal">
-            <div class="cat-header">Formal</div>
-            <div class="size-qty-heading"><div>Item</div><div class="size-col">Size</div><div class="qty-col">Quantity</div></div>
-            <div class="card-body"></div>
-          </div>
+<!-- Formal -->
+<div class="category-card" id="cat-formal">
+  <div class="cat-header">Formal</div>
+  <div style="display:flex; gap:16px; font-weight:700; font-size:13px; margin-bottom:8px;">
+    <div style="flex:1; text-align:left;">Item</div>
+    <div style="width:120px; text-align:center;">Size</div>
+    <div style="width:80px; text-align:center;">Quantity</div>
+  </div>
+  <div class="card-body"></div>
+</div>
 
-          <!-- Sportswear -->
-          <div class="category-card" id="cat-sports">
-            <div class="cat-header">Sportswear</div>
-            <div class="size-qty-heading"><div>Item</div><div class="size-col">Size</div><div class="qty-col">Quantity</div></div>
-            <div class="card-body"></div>
-          </div>
+<!-- Sportswear -->
+<div class="category-card" id="cat-sports">
+  <div class="cat-header">Sportswear</div>
+  <div style="display:flex; gap:16px; font-weight:700; font-size:13px; margin-bottom:8px;">
+    <div style="flex:1; text-align:left;">Item</div>
+    <div style="width:120px; text-align:center;">Size</div>
+    <div style="width:80px; text-align:center;">Quantity</div>
+  </div>
+  <div class="card-body"></div>
+</div>
 
-          <!-- Accessories -->
-          <div class="category-card" id="cat-accessories">
-            <div class="cat-header">Accessories</div>
-            <div class="size-qty-heading"><div>Item</div><div class="size-col">Size</div><div class="qty-col">Quantity</div></div>
-            <div class="card-body"></div>
-          </div>
+<!-- Accessories -->
+<div class="category-card" id="cat-accessories">
+  <div class="cat-header">Accessories</div>
+  <div style="display:flex; gap:16px; font-weight:700; font-size:13px; margin-bottom:8px;">
+    <div style="flex:1; text-align:left;">Item</div>
+    <div style="width:120px; text-align:center;">Size</div>
+    <div style="width:80px; text-align:center;">Quantity</div>
+  </div>
+  <div class="card-body"></div>
+</div>
 
-        </div>
       </div>
 
       <!-- RIGHT - cart & submit -->
@@ -781,6 +800,19 @@ const emailParams = {
 
     })();
   </script>
+
+  <script>
+  // Increase all product prices by 10%
+  document.querySelectorAll('.product-row').forEach(row => {
+    const priceEl = row.querySelector('[data-price]');
+    if(priceEl){
+      let price = parseFloat(priceEl.dataset.price);
+      price = (price * 1.10).toFixed(2); // Increase by 10%
+      priceEl.dataset.price = price;      // Update data-price
+      priceEl.textContent = `R${price}`;  // Update visible price if needed
+    }
+  });
+</script>
 
   <!-- =========================
        End file
