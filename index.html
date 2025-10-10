@@ -142,6 +142,22 @@
       font-weight:700;
       margin:-10px -10px 10px -10px;
     }
+
+    /* Size & Qty subheading above products */
+    .subheading-size-qty {
+      font-weight:700;
+      font-size:13px;
+      margin:8px 0;
+      display:flex;
+      gap:10px;
+    }
+    .subheading-size-qty div {
+      width:auto;
+      text-align:left;
+    }
+    .subheading-size-qty .size-col { width:110px; text-align:center; }
+    .subheading-size-qty .qty-col { width:70px; text-align:center; }
+
     .product-row{
       display:flex;
       gap:10px;
@@ -153,22 +169,6 @@
     .product-row .pname { flex:1; font-weight:600; color:#222; font-size:14px; }
     .product-row select.size { width:110px; padding:6px; border-radius:6px; border:1px solid #d7dbe0; }
     .product-row input.qty { width:70px; padding:6px; border-radius:6px; border:1px solid #d7dbe0; }
-
-    /* Size & Qty subheading inside category */
-    .size-qty-subheading{
-      display:flex;
-      gap:10px;
-      font-weight:700;
-      font-size:13px;
-      margin:6px 0;
-      padding-left:6px;
-    }
-    .size-qty-subheading div {
-      width:auto;
-      text-align:left;
-    }
-    .size-qty-subheading .size-col { width:110px; text-align:center; }
-    .size-qty-subheading .qty-col { width:70px; text-align:center; }
 
     /* Right column - cart */
     .cart {
@@ -280,35 +280,35 @@
           <!-- Tracksuits -->
           <div class="category-card" id="cat-tracksuits">
             <div class="cat-header">Tracksuits</div>
-            <div class="size-qty-subheading"><div>Item</div><div class="size-col">Size</div><div class="qty-col">Quantity</div></div>
+            <div class="subheading-size-qty"><div>Item</div><div class="size-col">Size</div><div class="qty-col">Quantity</div></div>
             <div class="card-body"></div>
           </div>
 
           <!-- Jerseys & Pullovers -->
           <div class="category-card" id="cat-jerseys">
             <div class="cat-header">Jerseys & Pullovers</div>
-            <div class="size-qty-subheading"><div>Item</div><div class="size-col">Size</div><div class="qty-col">Quantity</div></div>
+            <div class="subheading-size-qty"><div>Item</div><div class="size-col">Size</div><div class="qty-col">Quantity</div></div>
             <div class="card-body"></div>
           </div>
 
           <!-- Formal -->
           <div class="category-card" id="cat-formal">
             <div class="cat-header">Formal</div>
-            <div class="size-qty-subheading"><div>Item</div><div class="size-col">Size</div><div class="qty-col">Quantity</div></div>
+            <div class="subheading-size-qty"><div>Item</div><div class="size-col">Size</div><div class="qty-col">Quantity</div></div>
             <div class="card-body"></div>
           </div>
 
           <!-- Sportswear -->
           <div class="category-card" id="cat-sports">
             <div class="cat-header">Sportswear</div>
-            <div class="size-qty-subheading"><div>Item</div><div class="size-col">Size</div><div class="qty-col">Quantity</div></div>
+            <div class="subheading-size-qty"><div>Item</div><div class="size-col">Size</div><div class="qty-col">Quantity</div></div>
             <div class="card-body"></div>
           </div>
 
           <!-- Accessories -->
           <div class="category-card" id="cat-accessories">
             <div class="cat-header">Accessories</div>
-            <div class="size-qty-subheading"><div>Item</div><div class="size-col">Size</div><div class="qty-col">Quantity</div></div>
+            <div class="subheading-size-qty"><div>Item</div><div class="size-col">Size</div><div class="qty-col">Quantity</div></div>
             <div class="card-body"></div>
           </div>
 
@@ -336,24 +336,137 @@
 
         <div class="total" id="grandTotal">Total: R0.00</div>
  <!-- 💳 Payment Information Section -->
-        <div id="payment-info" style="margin-top: 30px; border: 2px solid #169179; border-radius: 10px; background-color: #f2faf8; padding: 20px; font-family: 'Comic Sans MS', sans-serif;">
-          <h3 style="background-color: #ba372a; color: white; padding: 10px; border-radius: 8px 8px 0 0; margin-top: 0;">
-            💳 Payment Information
-          </h3>
-          <p>After submitting your order, please make an <strong>EFT payment</strong> to the normal account.</p>
-          <p>Use <strong>“Uniform – [Child’s Name]”</strong> as your payment reference.</p>
-          <p>Then email your <strong>proof of payment and order receipt</strong> to:</p>
-          <p style="margin-left: 20px;">
-            📧 <a href="mailto:admin@sacps.co.za">admin@sacps.co.za</a> or <a href="mailto:info@sacps.co.za">info@sacps.co.za</a>
-          </p>
+        <div id="paymentNotice" class="spaced muted">
+          Orders will be collected and paid at school. The total will be sent to your email.
         </div>
 
-        <button type="submit" class="btn btn-primary btn-gold">Submit Order</button>
+        <button type="button" id="generatePDF" class="btn btn-primary">Generate PDF</button>
+        <button type="button" id="sendEmail" class="btn btn-gold">Send Order</button>
       </aside>
     </form>
   </main>
 
-<script src="uniform_order.js"></script>
+  <script>
+    // =======================
+    // Product data (prices +10%)
+    const products = {
+      "Primary Tracksuit Set": {category:"cat-tracksuits", price:660, sizes:["5-6","6-7","7-8","8-9","9-10","10-11","11-12","12-13","13-14"]},
+      "Highschool Tracksuit Set": {category:"cat-tracksuits", price:715, sizes:["13-14","14-15","15-16","16-17","17-18","18-20"]},
+      "Primary Jersey": {category:"cat-jerseys", price:220, sizes:["5-6","6-7","7-8","8-9","9-10","10-11","11-12","12-13","13-14"]},
+      "Highschool Jersey": {category:"cat-jerseys", price:275, sizes:["13-14","14-15","15-16","16-17","17-18","18-20"]},
+      "Formal Shirt Primary": {category:"cat-formal", price:220, sizes:["5-6","6-7","7-8","8-9","9-10","10-11","11-12","12-13","13-14"]},
+      "Formal Shirt Highschool": {category:"cat-formal", price:330, sizes:["13-14","14-15","15-16","16-17","17-18","18-20"]},
+      "Sports Short": {category:"cat-sports", price:165, sizes:["5-6","6-7","7-8","8-9","9-10","10-11","11-12","12-13","13-14","14-15","15-16","16-17","17-18","18-20"]},
+      "Cap": {category:"cat-accessories", price:55, sizes:["S","M","L","XL"]}
+    };
+
+    // =======================
+    // Generate product UI
+    for(const [name, info] of Object.entries(products)){
+      const catDiv = document.querySelector("#"+info.category+" .card-body");
+      if(!catDiv) continue;
+      const row = document.createElement("div");
+      row.className = "product-row";
+      row.innerHTML = `<div class="pname">${name} (R${info.price})</div>
+      <select class="size">${info.sizes.map(s=>`<option>${s}</option>`).join('')}</select>
+      <input type="number" class="qty" min="0" value="0">`;
+      catDiv.appendChild(row);
+    }
+
+    // =======================
+    // Cart logic
+    const cart = [];
+    function updateCart(){
+      const cartBody = document.getElementById("cartBody");
+      cartBody.innerHTML="";
+      let total=0;
+      document.querySelectorAll(".product-row").forEach(row=>{
+        const pname=row.querySelector(".pname").innerText.split(" (")[0];
+        const size=row.querySelector(".size").value;
+        const qty=parseInt(row.querySelector(".qty").value);
+        if(qty>0){
+          const price = products[pname].price;
+          const line=price*qty;
+          total+=line;
+          cartBody.innerHTML+=`<tr>
+            <td>${pname}</td>
+            <td>${size}</td>
+            <td>${qty}</td>
+            <td>R${line.toFixed(2)}</td>
+            <td><button type="button" class="remove-btn" data-item="${pname}">X</button></td>
+          </tr>`;
+        }
+      });
+      if(cartBody.innerHTML===""){ cartBody.innerHTML='<tr><td colspan="5" class="muted">No items</td></tr>'; }
+      document.getElementById("grandTotal").innerText=`Total: R${total.toFixed(2)}`;
+    }
+
+    document.querySelectorAll(".qty").forEach(input=>{
+      input.addEventListener("input",updateCart);
+    });
+
+    document.addEventListener("click",function(e){
+      if(e.target.classList.contains("remove-btn")){
+        const item = e.target.dataset.item;
+        document.querySelectorAll(".product-row").forEach(row=>{
+          if(row.querySelector(".pname").innerText.split(" (")[0]===item){
+            row.querySelector(".qty").value=0;
+          }
+        });
+        updateCart();
+      }
+    });
+
+    // =======================
+    // PDF generation
+    document.getElementById("generatePDF").addEventListener("click", async ()=>{
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      doc.text("SA College Private School - Uniform Order", 14, 16);
+      const rows=[];
+      document.querySelectorAll(".product-row").forEach(row=>{
+        const pname=row.querySelector(".pname").innerText.split(" (")[0];
+        const size=row.querySelector(".size").value;
+        const qty=parseInt(row.querySelector(".qty").value);
+        if(qty>0){
+          rows.push([pname, size, qty]);
+        }
+      });
+      if(rows.length>0){
+        doc.autoTable({ head:[["Item","Size","Qty"]], body:rows, startY:25 });
+        doc.save("Uniform_Order.pdf");
+      } else {
+        alert("No items in cart to generate PDF");
+      }
+    });
+
+    // =======================
+    // Send email (EmailJS)
+    document.getElementById("sendEmail").addEventListener("click",()=>{
+      const parentName=document.getElementById("parentName").value;
+      const contactNumber=document.getElementById("contactNumber").value;
+      const email=document.getElementById("email").value;
+      const learnerName=document.getElementById("learnerName").value;
+      const grade=document.getElementById("grade").value;
+      const schoolLevel=document.getElementById("schoolLevel").value;
+      const adminNumber=document.getElementById("adminNumber").value;
+
+      const orderDetails = Array.from(document.querySelectorAll(".product-row"))
+        .filter(r=>parseInt(r.querySelector(".qty").value)>0)
+        .map(r=>`${r.querySelector(".pname").innerText} | Size: ${r.querySelector(".size").value} | Qty: ${r.querySelector(".qty").value}`)
+        .join("<br>");
+
+      if(!orderDetails){ alert("No items selected"); return; }
+
+      const templateParams = {
+        parentName, contactNumber, email, learnerName, grade, schoolLevel, adminNumber,
+        orderDetails
+      };
+
+      emailjs.send('default_service', 'uniform_order', templateParams)
+      .then(()=>alert("Order email sent successfully!"))
+      .catch(e=>alert("Failed to send order: "+e));
+    });
+  </script>
 </body>
 </html>
-
