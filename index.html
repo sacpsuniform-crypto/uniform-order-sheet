@@ -333,49 +333,75 @@
 
       </div>
 
-      <!-- RIGHT - cart & submit -->
-      <aside class="cart" role="region" aria-label="Cart and submit">
-        <h3>Your Cart</h3>
-        <div class="muted">Add quantities for the items on the left and the cart will update automatically.</div>
-        <table class="cart-table" aria-live="polite" id="cartTable">
-          <thead>
-            <tr>
-              <th style="width:42%;">Item</th>
-              <th style="width:18%;">Size</th>
-              <th style="width:10%;">Qty</th>
-              <th style="width:14%;">Line</th>
-              <th style="width:10%;">Remove</th>
-            </tr>
-          </thead>
-          <tbody id="cartBody">
-            <tr><td colspan="5" class="muted">No items</td></tr>
-          </tbody>
-        </table>
+     <!-- RIGHT - cart & submit -->
+<aside class="cart sticky-cart" role="region" aria-label="Cart and submit">
+  <div class="cart-inner">
+    <h3>Your Cart</h3>
+    <div class="muted">Add quantities for the items on the left and the cart will update automatically.</div>
 
-        <div class="total" id="grandTotal">Total: R0.00</div>
- <!-- 💳 Payment Information Section -->
-        <div id="payment-info" style="margin-top: 30px; border: 2px solid #169179; border-radius: 10px; background-color: #f2faf8; padding: 20px; font-family: 'Comic Sans MS', sans-serif;">
-          <h3 style="background-color: #ba372a; color: white; padding: 10px; border-radius: 8px 8px 0 0; margin-top: 0;">
-            💳 Payment Information
-          </h3>
-          <p>After submitting your order, please make an <strong>EFT payment</strong> to the normal account.</p>
-          <p>Use <strong>“Uniform – [Child’s Name]”</strong> as your payment reference.</p>
-          <p>Then email your <strong>proof of payment and order receipt</strong> to:</p>
-          <p style="margin-left: 20px;">
-            📧 <a href="mailto:admin@sacps.co.za">admin@sacps.co.za</a> or 
-            <a href="mailto:info@sacps.co.za">info@sacps.co.za</a>  or <a href="mailto:uniformsacps@gmail.com">uniformsacps@gmail.com</a>  
-          </p>
-          
-        </div>
-        <!-- Submit button -->
-        <button type="submit" class="btn btn-gold" id="submitBtn" style="margin-top:14px;">
-          Submit Order & Download Receipt
-        </button>
+    <table class="cart-table" aria-live="polite" id="cartTable">
+      <thead>
+        <tr>
+          <th style="width:42%;">Item</th>
+          <th style="width:18%;">Size</th>
+          <th style="width:10%;">Qty</th>
+          <th style="width:14%;">Line</th>
+          <th style="width:10%;">Remove</th>
+        </tr>
+      </thead>
+      <tbody id="cartBody">
+        <tr><td colspan="5" class="muted">No items</td></tr>
+      </tbody>
+    </table>
 
-        <div class="spaced muted" style="font-size:13px;">
-          After submitting, a PDF receipt will download for the parent .
-        </div>
-      </aside>
+    <div class="total" id="grandTotal">Total: R0.00</div>
+
+    <!-- 💳 Payment Information Section -->
+    <div id="payment-info" style="margin-top: 30px; border: 2px solid #169179; border-radius: 10px; background-color: #f2faf8; padding: 20px; font-family: 'Comic Sans MS', sans-serif;">
+      <h3 style="background-color: #ba372a; color: white; padding: 10px; border-radius: 8px 8px 0 0; margin-top: 0;">
+        💳 Payment Information
+      </h3>
+      <p>After submitting your order, please make an <strong>EFT payment</strong> to the normal account.</p>
+      <p>Use <strong>“Uniform – [Child’s Name]”</strong> as your payment reference.</p>
+      <p>Then email your <strong>proof of payment and order receipt</strong> to:</p>
+      <p style="margin-left: 20px;">
+        📧 <a href="mailto:admin@sacps.co.za">admin@sacps.co.za</a> or 
+        <a href="mailto:info@sacps.co.za">info@sacps.co.za</a> or 
+        <a href="mailto:uniformsacps@gmail.com">uniformsacps@gmail.com</a>  
+      </p>
+    </div>
+
+    <!-- Submit button -->
+    <button type="submit" class="btn btn-gold" id="submitBtn" style="margin-top:14px;">
+      Submit Order & Download Receipt
+    </button>
+
+    <div class="spaced muted" style="font-size:13px;">
+      After submitting, a PDF receipt will download for the parent.
+    </div>
+  </div>
+</aside>
+
+<style>
+  /* ✅ Makes the cart stick on the right while scrolling */
+  .sticky-cart {
+    position: sticky;
+    top: 20px;
+    align-self: start;
+    height: fit-content;
+  }
+  .sticky-cart .cart-inner {
+    position: sticky;
+    top: 20px;
+  }
+
+  @media(max-width: 980px) {
+    .sticky-cart {
+      position: relative;
+      top: auto;
+    }
+  }
+</style>
     </form>
   </main>
 
