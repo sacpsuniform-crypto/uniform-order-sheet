@@ -92,35 +92,13 @@
       padding:10px;
     }
 
+    /* Form layout */
     form#orderForm {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 380px;
-  gap: 24px;
-  align-items: start;
-}
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap:18px;
+    }
 
-/* Make the cart stick properly and align right */
-.cart {
-  justify-self: end;
-  position: sticky;
-  top: 20px;
-  width: 100%;
-  max-width: 380px;
-  height: fit-content;
-}
-
-/* Responsive */
-@media (max-width: 980px) {
-  form#orderForm {
-    grid-template-columns: 1fr;
-  }
-  .cart {
-    position: relative;
-    justify-self: stretch;
-    max-width: 100%;
-  }
-}
-    
     /* Left column */
     .left {
       background:var(--white);
@@ -355,75 +333,51 @@
 
       </div>
 
-     <!-- RIGHT - cart & submit -->
-<aside class="cart sticky-cart" role="region" aria-label="Cart and submit">
-  <div class="cart-inner">
-    <h3>Your Cart</h3>
-    <div class="muted">Add quantities for the items on the left and the cart will update automatically.</div>
+      </div>
 
-    <table class="cart-table" aria-live="polite" id="cartTable">
-      <thead>
-        <tr>
-          <th style="width:42%;">Item</th>
-          <th style="width:18%;">Size</th>
-          <th style="width:10%;">Qty</th>
-          <th style="width:14%;">Line</th>
-          <th style="width:10%;">Remove</th>
-        </tr>
-      </thead>
-      <tbody id="cartBody">
-        <tr><td colspan="5" class="muted">No items</td></tr>
-      </tbody>
-    </table>
+      <!-- RIGHT - cart & submit -->
+      <aside class="cart" role="region" aria-label="Cart and submit">
+        <h3>Your Cart</h3>
+        <div class="muted">Add quantities for the items on the left and the cart will update automatically.</div>
+        <table class="cart-table" aria-live="polite" id="cartTable">
+          <thead>
+            <tr>
+              <th style="width:42%;">Item</th>
+              <th style="width:18%;">Size</th>
+              <th style="width:10%;">Qty</th>
+              <th style="width:14%;">Line</th>
+              <th style="width:10%;">Remove</th>
+            </tr>
+          </thead>
+          <tbody id="cartBody">
+            <tr><td colspan="5" class="muted">No items</td></tr>
+          </tbody>
+        </table>
 
-    <div class="total" id="grandTotal">Total: R0.00</div>
+        <div class="total" id="grandTotal">Total: R0.00</div>
+ <!-- 💳 Payment Information Section -->
+        <div id="payment-info" style="margin-top: 30px; border: 2px solid #169179; border-radius: 10px; background-color: #f2faf8; padding: 20px; font-family: 'Comic Sans MS', sans-serif;">
+          <h3 style="background-color: #ba372a; color: white; padding: 10px; border-radius: 8px 8px 0 0; margin-top: 0;">
+            💳 Payment Information
+          </h3>
+          <p>After submitting your order, please make an <strong>EFT payment</strong> to the normal account.</p>
+          <p>Use <strong>“Uniform – [Child’s Name]”</strong> as your payment reference.</p>
+          <p>Then email your <strong>proof of payment and order receipt</strong> to:</p>
+          <p style="margin-left: 20px;">
+            📧 <a href="mailto:admin@sacps.co.za">admin@sacps.co.za</a> or 
+            <a href="mailto:info@sacps.co.za">info@sacps.co.za</a>  or <a href="mailto:uniformsacps@gmail.com">uniformsacps@gmail.com</a>  
+          </p>
+          
+        </div>
+        <!-- Submit button -->
+        <button type="submit" class="btn btn-gold" id="submitBtn" style="margin-top:14px;">
+          Submit Order & Download Receipt
+        </button>
 
-    <!-- 💳 Payment Information Section -->
-    <div id="payment-info" style="margin-top: 30px; border: 2px solid #169179; border-radius: 10px; background-color: #f2faf8; padding: 20px; font-family: 'Comic Sans MS', sans-serif;">
-      <h3 style="background-color: #ba372a; color: white; padding: 10px; border-radius: 8px 8px 0 0; margin-top: 0;">
-        💳 Payment Information
-      </h3>
-      <p>After submitting your order, please make an <strong>EFT payment</strong> to the normal account.</p>
-      <p>Use <strong>“Uniform – [Child’s Name]”</strong> as your payment reference.</p>
-      <p>Then email your <strong>proof of payment and order receipt</strong> to:</p>
-      <p style="margin-left: 20px;">
-        📧 <a href="mailto:admin@sacps.co.za">admin@sacps.co.za</a> or 
-        <a href="mailto:info@sacps.co.za">info@sacps.co.za</a> or 
-        <a href="mailto:uniformsacps@gmail.com">uniformsacps@gmail.com</a>  
-      </p>
-    </div>
-
-    <!-- Submit button -->
-    <button type="submit" class="btn btn-gold" id="submitBtn" style="margin-top:14px;">
-      Submit Order & Download Receipt
-    </button>
-
-    <div class="spaced muted" style="font-size:13px;">
-      After submitting, a PDF receipt will download for the parent.
-    </div>
-  </div>
-</aside>
-
-<style>
-  /* ✅ Makes the cart stick on the right while scrolling */
-  .sticky-cart {
-    position: sticky;
-    top: 20px;
-    align-self: start;
-    height: fit-content;
-  }
-  .sticky-cart .cart-inner {
-    position: sticky;
-    top: 20px;
-  }
-
-  @media(max-width: 980px) {
-    .sticky-cart {
-      position: relative;
-      top: auto;
-    }
-  }
-</style>
+        <div class="spaced muted" style="font-size:13px;">
+          After submitting, a PDF receipt will download for the parent .
+        </div>
+      </aside>
     </form>
   </main>
 
@@ -441,45 +395,45 @@
       const oneSize = ['One Size'];
       const allSizes = [...primarySizes, ...highschoolSizes];
 
-      // All items - price increased by 10%
+      function increase10pct(price){ return Math.round(price * 1.1); }
+      // All items - unchanged from your working list, grouped here for clarity
       const categories = {
         "Tracksuits": [
-          {id:"tracksuit_primary",name:"Primary Tracksuit Set",price:660,sizes:primarySizes},
-          {id:"tracksuit_hs",name:"Highschool Tracksuit Set",price:715,sizes:highschoolSizes},
-          {id:"ts_jacket_primary",name:"Primary Tracksuit Jacket",price:440,sizes:primarySizes},
-          {id:"ts_jacket_hs",name:"Highschool Tracksuit Jacket",price:495,sizes:highschoolSizes},
-          {id:"ts_pants_primary",name:"Primary Tracksuit Pants",price:220,sizes:primarySizes},
-          {id:"ts_pants_hs",name:"Highschool Tracksuit Pants",price:220,sizes:highschoolSizes}
+          {id:"tracksuit_primary",name:"Primary Tracksuit Set",price:600,sizes:primarySizes},
+          {id:"tracksuit_hs",name:"Highschool Tracksuit Set",price:650,sizes:highschoolSizes},
+          {id:"ts_jacket_primary",name:"Primary Tracksuit Jacket",price:400,sizes:primarySizes},
+          {id:"ts_jacket_hs",name:"Highschool Tracksuit Jacket",price:450,sizes:highschoolSizes},
+          {id:"ts_pants_primary",name:"Primary Tracksuit Pants",price:200,sizes:primarySizes},
+          {id:"ts_pants_hs",name:"Highschool Tracksuit Pants",price:200,sizes:highschoolSizes}
         ],
         "Jerseys & Pullovers": [
-          {id:"jersey_hs",name:"Highschool Jersey",price:286,sizes:highschoolSizes},
-          {id:"jersey_primary",name:"Primary Jersey",price:275,sizes:primarySizes},
-          {id:"pullover_hs",name:"Highschool Pullover",price:264,sizes:highschoolSizes},
-          {id:"pullover_primary",name:"Primary Pullover",price:253,sizes:primarySizes}
+          {id:"jersey_hs",name:"Highschool Jersey",price:260,sizes:highschoolSizes},
+          {id:"jersey_primary",name:"Primary Jersey",price:250,sizes:primarySizes},
+          {id:"pullover_hs",name:"Highschool Pullover",price:240,sizes:highschoolSizes},
+          {id:"pullover_primary",name:"Primary Pullover",price:230,sizes:primarySizes}
         ],
         "Formal": [
-          {id:"blazer",name:"Blazer",price:770,sizes:blazerSizes},
-          {id:"tie",name:"School Tie",price:88,sizes:oneSize},
-          {id:"skirt_primary",name:"Primary Girls Skirt",price:374,sizes:primarySizes},
-          {id:"skirt_hs",name:"Highschool Girls Skirt",price:402,sizes:highschoolSizes},
-          {id:"matric_bomber",name:"Matric Bomber Jacket",price:715,sizes:highschoolSizes}
+          {id:"blazer",name:"Blazer",price:700,sizes:blazerSizes},
+          {id:"tie",name:"School Tie",price:80,sizes:oneSize},
+          {id:"skirt_primary",name:"Primary Girls Skirt",price:340,sizes:primarySizes},
+          {id:"skirt_hs",name:"Highschool Girls Skirt",price:365,sizes:highschoolSizes},
+          {id:"matric_bomber",name:"Matric Bomber Jacket",price:650,sizes:highschoolSizes}
         ],
         "Sportswear": [
-          {id:"sport_shirt",name:"Sport Shirt",price:379.5,sizes:allSizes},
-          {id:"sport_short",name:"Sport Short",price:110,sizes:allSizes},
-          {id:"rugby_jersey",name:"Rugby Jersey",price:385,sizes:allSizes},
-          {id:"netball_dress",name:"Netball Dress",price:385,sizes:allSizes},
-          {id:"basketball_set",name:"Basketball Set (Top & Short)",price:418,sizes:allSizes},
-          {id:"basketball_practice",name:"Basketball Practice Shirt",price:286,sizes:allSizes}
+          {id:"sport_shirt",name:"Sport Shirt",price:345,sizes:allSizes},
+          {id:"sport_short",name:"Sport Short",price:100,sizes:allSizes},
+          {id:"rugby_jersey",name:"Rugby Jersey",price:350,sizes:allSizes},
+          {id:"netball_dress",name:"Netball Dress",price:350,sizes:allSizes},
+          {id:"basketball_set",name:"Basketball Set (Top & Short)",price:380,sizes:allSizes},
+          {id:"basketball_practice",name:"Basketball Practice Shirt",price:260,sizes:allSizes}
         ],
         "Accessories": [
-          {id:"green_socks",name:"Long Green Socks",price:60.5,sizes:oneSize},
-          {id:"sport_socks",name:"Sport Socks",price:60.5,sizes:oneSize},
-          {id:"floppy_hat",name:"Floppy Hat",price:176,sizes:oneSize},
-          {id:"beanie",name:"Beanie",price:55,sizes:oneSize}
+          {id:"green_socks",name:"Long Green Socks",price:55,sizes:oneSize},
+          {id:"sport_socks",name:"Sport Socks",price:55,sizes:oneSize},
+          {id:"floppy_hat",name:"Floppy Hat",price:160,sizes:oneSize},
+          {id:"beanie",name:"Beanie",price:50,sizes:oneSize}
         ]
       };
-
 
       // ---------------------------
       // Rendering: inject products into their category cards
