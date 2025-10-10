@@ -482,28 +482,26 @@
       }
 
       // find category card bodies and append items
-      document.addEventListener('DOMContentLoaded', function(){
-        try {
-          // mapping card ids -> category keys
-          const mapping = {
-            "cat-tracksuits": "Tracksuits",
-            "cat-jerseys": "Jerseys & Pullovers",
-            "cat-formal": "Formal",
-            "cat-sports": "Sportswear",
-            "cat-accessories": "Accessories"
-          };
+      try {
+        // mapping card ids -> category keys
+        const mapping = {
+          "cat-tracksuits": "Tracksuits",
+          "cat-jerseys": "Jerseys & Pullovers",
+          "cat-formal": "Formal",
+          "cat-sports": "Sportswear",
+          "cat-accessories": "Accessories"
+        };
 
-          Object.entries(mapping).forEach(([cardId, catKey])=>{
-            const el = document.querySelector('#' + cardId + ' .card-body');
-            if(!el) return;
-            categories[catKey].forEach(item=>{
-              el.appendChild(createProductRow(item));
-            });
+        Object.entries(mapping).forEach(([cardId, catKey])=>{
+          const el = document.querySelector('#' + cardId + ' .card-body');
+          if(!el) return;
+          categories[catKey].forEach(item=>{
+            el.appendChild(createProductRow(item));
           });
-        } catch (err) {
-          console.error("Error building product list:", err);
-        }
-      });
+        });
+      } catch (err) {
+        console.error("Error building product list:", err);
+      }
 
       // ---------------------------
       // Cart: collect selected items & render
