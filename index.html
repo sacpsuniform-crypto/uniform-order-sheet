@@ -154,7 +154,7 @@
     .product-row select.size { width:110px; padding:6px; border-radius:6px; border:1px solid #d7dbe0; }
     .product-row input.qty { width:70px; padding:6px; border-radius:6px; border:1px solid #d7dbe0; }
 
-    /* Size & Qty headings above products as subheadings */
+    /* Size & Qty headings above products */
     .size-qty-heading {
       display:flex;
       gap:10px;
@@ -366,7 +366,7 @@
   <script>
     (function(){
       // ---------------------------
-      // Data: sizes & items with 10% price increase
+      // Data: sizes & items
       // ---------------------------
       const primarySizes = ['5-6','6-7','7-8','8-9','9-10','10-11','11-12','12-13','13-14'];
       const highschoolSizes = ['13-14','14-15','15-16','16-17','17-18','18-20'];
@@ -374,43 +374,42 @@
       const oneSize = ['One Size'];
       const allSizes = [...primarySizes, ...highschoolSizes];
 
-      function increase10pct(price){ return Math.round(price * 1.1); }
-
+      // All items - unchanged from your working list, grouped here for clarity
       const categories = {
         "Tracksuits": [
-          {id:"tracksuit_primary",name:"Primary Tracksuit Set",price:increase10pct(600),sizes:primarySizes},
-          {id:"tracksuit_hs",name:"Highschool Tracksuit Set",price:increase10pct(650),sizes:highschoolSizes},
-          {id:"ts_jacket_primary",name:"Primary Tracksuit Jacket",price:increase10pct(400),sizes:primarySizes},
-          {id:"ts_jacket_hs",name:"Highschool Tracksuit Jacket",price:increase10pct(450),sizes:highschoolSizes},
-          {id:"ts_pants_primary",name:"Primary Tracksuit Pants",price:increase10pct(200),sizes:primarySizes},
-          {id:"ts_pants_hs",name:"Highschool Tracksuit Pants",price:increase10pct(200),sizes:highschoolSizes}
+          {id:"tracksuit_primary",name:"Primary Tracksuit Set",price:600,sizes:primarySizes},
+          {id:"tracksuit_hs",name:"Highschool Tracksuit Set",price:650,sizes:highschoolSizes},
+          {id:"ts_jacket_primary",name:"Primary Tracksuit Jacket",price:400,sizes:primarySizes},
+          {id:"ts_jacket_hs",name:"Highschool Tracksuit Jacket",price:450,sizes:highschoolSizes},
+          {id:"ts_pants_primary",name:"Primary Tracksuit Pants",price:200,sizes:primarySizes},
+          {id:"ts_pants_hs",name:"Highschool Tracksuit Pants",price:200,sizes:highschoolSizes}
         ],
         "Jerseys & Pullovers": [
-          {id:"jersey_hs",name:"Highschool Jersey",price:increase10pct(260),sizes:highschoolSizes},
-          {id:"jersey_primary",name:"Primary Jersey",price:increase10pct(250),sizes:primarySizes},
-          {id:"pullover_hs",name:"Highschool Pullover",price:increase10pct(240),sizes:highschoolSizes},
-          {id:"pullover_primary",name:"Primary Pullover",price:increase10pct(230),sizes:primarySizes}
+          {id:"jersey_hs",name:"Highschool Jersey",price:260,sizes:highschoolSizes},
+          {id:"jersey_primary",name:"Primary Jersey",price:250,sizes:primarySizes},
+          {id:"pullover_hs",name:"Highschool Pullover",price:240,sizes:highschoolSizes},
+          {id:"pullover_primary",name:"Primary Pullover",price:230,sizes:primarySizes}
         ],
         "Formal": [
-          {id:"blazer",name:"Blazer",price:increase10pct(700),sizes:blazerSizes},
-          {id:"tie",name:"School Tie",price:increase10pct(80),sizes:oneSize},
-          {id:"skirt_primary",name:"Primary Girls Skirt",price:increase10pct(340),sizes:primarySizes},
-          {id:"skirt_hs",name:"Highschool Girls Skirt",price:increase10pct(365),sizes:highschoolSizes},
-          {id:"matric_bomber",name:"Matric Bomber Jacket",price:increase10pct(650),sizes:highschoolSizes}
+          {id:"blazer",name:"Blazer",price:700,sizes:blazerSizes},
+          {id:"tie",name:"School Tie",price:80,sizes:oneSize},
+          {id:"skirt_primary",name:"Primary Girls Skirt",price:340,sizes:primarySizes},
+          {id:"skirt_hs",name:"Highschool Girls Skirt",price:365,sizes:highschoolSizes},
+          {id:"matric_bomber",name:"Matric Bomber Jacket",price:650,sizes:highschoolSizes}
         ],
         "Sportswear": [
-          {id:"sport_shirt",name:"Sport Shirt",price:increase10pct(345),sizes:allSizes},
-          {id:"sport_short",name:"Sport Short",price:increase10pct(100),sizes:allSizes},
-          {id:"rugby_jersey",name:"Rugby Jersey",price:increase10pct(350),sizes:allSizes},
-          {id:"netball_dress",name:"Netball Dress",price:increase10pct(350),sizes:allSizes},
-          {id:"basketball_set",name:"Basketball Set (Top & Short)",price:increase10pct(380),sizes:allSizes},
-          {id:"basketball_practice",name:"Basketball Practice Shirt",price:increase10pct(260),sizes:allSizes}
+          {id:"sport_shirt",name:"Sport Shirt",price:345,sizes:allSizes},
+          {id:"sport_short",name:"Sport Short",price:100,sizes:allSizes},
+          {id:"rugby_jersey",name:"Rugby Jersey",price:350,sizes:allSizes},
+          {id:"netball_dress",name:"Netball Dress",price:350,sizes:allSizes},
+          {id:"basketball_set",name:"Basketball Set (Top & Short)",price:380,sizes:allSizes},
+          {id:"basketball_practice",name:"Basketball Practice Shirt",price:260,sizes:allSizes}
         ],
         "Accessories": [
-          {id:"green_socks",name:"Long Green Socks",price:increase10pct(55),sizes:oneSize},
-          {id:"sport_socks",name:"Sport Socks",price:increase10pct(55),sizes:oneSize},
-          {id:"floppy_hat",name:"Floppy Hat",price:increase10pct(160),sizes:oneSize},
-          {id:"beanie",name:"Beanie",price:increase10pct(50),sizes:oneSize}
+          {id:"green_socks",name:"Long Green Socks",price:55,sizes:oneSize},
+          {id:"sport_socks",name:"Sport Socks",price:55,sizes:oneSize},
+          {id:"floppy_hat",name:"Floppy Hat",price:160,sizes:oneSize},
+          {id:"beanie",name:"Beanie",price:50,sizes:oneSize}
         ]
       };
 
@@ -418,15 +417,18 @@
       // Rendering: inject products into their category cards
       // ---------------------------
       function createProductRow(item){
+        // container row
         const row = document.createElement('div');
         row.className = 'product-row item-row';
         row.dataset.itemId = item.id;
         row.dataset.price = item.price;
 
+        // name
         const nameSpan = document.createElement('div');
         nameSpan.className = 'pname';
         nameSpan.textContent = `${item.name} — R${item.price}`;
 
+        // size selector
         const sizeSel = document.createElement('select');
         sizeSel.className = 'size';
         item.sizes.forEach(s=>{
@@ -436,6 +438,7 @@
           sizeSel.appendChild(opt);
         });
 
+        // qty input
         const qtyInput = document.createElement('input');
         qtyInput.className = 'qty';
         qtyInput.type = 'number';
@@ -450,24 +453,31 @@
         return row;
       }
 
+      // find category card bodies and append items
       document.addEventListener('DOMContentLoaded', function(){
-        const mapping = {
-          "cat-tracksuits": "Tracksuits",
-          "cat-jerseys": "Jerseys & Pullovers",
-          "cat-formal": "Formal",
-          "cat-sports": "Sportswear",
-          "cat-accessories": "Accessories"
-        };
-        Object.entries(mapping).forEach(([cardId, catKey])=>{
-          const el = document.querySelector('#' + cardId + ' .card-body');
-          if(!el) return;
-          categories[catKey].forEach(item=>{
-            el.appendChild(createProductRow(item));
+        try {
+          // mapping card ids -> category keys
+          const mapping = {
+            "cat-tracksuits": "Tracksuits",
+            "cat-jerseys": "Jerseys & Pullovers",
+            "cat-formal": "Formal",
+            "cat-sports": "Sportswear",
+            "cat-accessories": "Accessories"
+          };
+
+          Object.entries(mapping).forEach(([cardId, catKey])=>{
+            const el = document.querySelector('#' + cardId + ' .card-body');
+            if(!el) return;
+            categories[catKey].forEach(item=>{
+              el.appendChild(createProductRow(item));
+            });
           });
-        });
+        } catch (err) {
+          console.error("Error building product list:", err);
+        }
       });
 
-       // ---------------------------
+      // ---------------------------
       // Cart: collect selected items & render
       // ---------------------------
       let cart = [];
@@ -777,3 +787,4 @@ const emailParams = {
        ========================= -->
 </body>
 </html>
+
