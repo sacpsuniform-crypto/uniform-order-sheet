@@ -267,7 +267,6 @@
           </div>
           <div class="form-row">
             <div class="field"><label for="grade">Grade</label><input id="grade" type="text" required placeholder="e.g. Grade 7A"></div>
-            <div class="field"><label for="schoolLevel">School Level</label><select id="schoolLevel"><option>Primary</option><option>Highschool</option></select></div>
             <div class="field"><label for="adminNumber">Admin Number</label><input id="adminNumber" type="text" required placeholder="e.g. 45125"></div>
           </div>
         </div>
@@ -441,6 +440,20 @@
         ],
       };
 
+      const imageMap = {
+        "athletics_short": "athletics short.jpg",
+        "athletics_vest": "athletics vest.jpg",
+        "basketball_shirt": "basketball shirt.jpg",
+        "basketball_short": "basketball shorts.jpg",
+        "netball_dress": "netball dress.jpg",
+        "rugby_jersey": "rugby jersey.jpg",
+        "rugby_short": "rugby short.jpg",
+        "rugby_socks": "rugby socks.jpg",
+        "soccer_shirt": "soccer shirt.jpg",
+        "soccer_short": "soccer short.jpg",
+        "soccer_socks": "soccer socks.jpg"
+      };
+
       // ---------------------------
       // Rendering: inject products into their category cards
       // ---------------------------
@@ -455,6 +468,16 @@
         const nameSpan = document.createElement('div');
         nameSpan.className = 'pname';
         nameSpan.textContent = `${item.name} — R${item.price}`;
+
+        if(imageMap[item.id]){
+          const img = document.createElement('img');
+          img.src = imageMap[item.id];
+          img.alt = `${item.name} image`;
+          img.style.height = '40px';
+          img.style.marginLeft = '10px';
+          img.style.verticalAlign = 'middle';
+          nameSpan.appendChild(img);
+        }
 
         // size selector
         const sizeSel = document.createElement('select');
@@ -612,7 +635,7 @@
       // - uses school colours for header
       // ---------------------------
       async function createReceiptPDF(details, cartItems){
-        // details: { parentName, contactNumber, email, learnerName, grade, schoolLevel }
+        // details: { parentName, contactNumber, email, learnerName, grade, adminNumber }
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF({ unit: 'pt', format: 'a4' });
 
@@ -661,7 +684,7 @@
         doc.text(`Email: ${details.email}`, left, y); y += 16;
         doc.text(`Learner: ${details.learnerName}`, left, y); y += 16;
         doc.text(`Grade: ${details.grade}`, left, y); y += 16;
-        doc.text(`Level: ${details.schoolLevel}`, left, y); y += 26;
+        doc.text(`Admin Number: ${details.adminNumber}`, left, y); y += 26;
 
         // Build table array for autoTable
         const tableBody = cartItems.map(it => [it.name, it.size, String(it.qty), `R${it.price}`, `R${(it.qty*it.price).toFixed(2)}`]);
@@ -718,7 +741,7 @@
           const email = document.getElementById('email').value.trim();
           const learnerName = document.getElementById('learnerName').value.trim();
           const grade = document.getElementById('grade').value.trim();
-          const schoolLevel = document.getElementById('schoolLevel').value.trim();
+          const adminNumber = document.getElementById('adminNumber').value.trim();
 
           // collect cart items from DOM
           collectCartFromDOM();
@@ -729,7 +752,7 @@
             return;
           }
 
-          const details = { parentName, contactNumber, email, learnerName, grade, schoolLevel };
+          const details = { parentName, contactNumber, email, learnerName, grade, adminNumber };
 
           // create PDF
           const { doc, dataUrl, base64 } = await createReceiptPDF(details, cart);
@@ -758,7 +781,7 @@ const emailParams = {
   parentEmail: email,           // matches {{parentEmail}}
   learnerName: learnerName,     // matches {{learnerName}}
   grade: grade,                 // matches {{grade}}
-  schoolLevel: schoolLevel,     // matches {{schoolLevel}}
+  adminNumber: adminNumber,     // matches {{adminNumber}}
   orderDetails: orderDetails,   // matches {{orderDetails}}
   cartTotal: `R${cartTotal.toFixed(2)}` // matches {{cartTotal}}
 };
