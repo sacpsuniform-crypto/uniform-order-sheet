@@ -1,3 +1,4 @@
+```html
 <!doctype html>
 <html lang="en">
 <head>
@@ -242,7 +243,7 @@
     <img class="logo" id="schoolLogo" src="logo.jpg" alt="SA College Private School logo" />
     <div class="heading">
       <h1>SA College Private School</h1>
-      <p class="muted">admin@sacps.co.za • info@sacps.co.za • sacpsuniform@gmail.com • Tel: 012 326 4580 / 064 548 9428</p>
+      <p class="muted">finance@sacps.co.za • info@sacps.co.za • sacpsuniform@gmail.com • Tel: 012 326 4580 / 064 548 9428</p>
     </div>
   </header>
 
@@ -275,62 +276,29 @@
         <div class="section" id="productsSection">
           <h2 style="margin-top:0; color:var(--navy)">Uniforms & Sports</h2>
 
-          <!-- Tracksuits -->
-<div class="category-card" id="cat-tracksuits">
-  <div class="cat-header">Tracksuits</div>
-  <div style="display:flex; gap:16px; font-weight:700; font-size:13px; margin-bottom:8px;">
-    <div style="flex:1; text-align:left;">Item</div>
-    <div style="width:120px; text-align:center;">Size</div>
-    <div style="width:80px; text-align:center;">Quantity</div>
-  </div>
-  <div class="card-body"></div>
-</div>
+          <!-- Reaora -->
+          <div class="category-card" id="cat-reaora">
+            <div class="cat-header">Reaora</div>
+            <div style="display:flex; gap:16px; font-weight:700; font-size:13px; margin-bottom:8px;">
+              <div style="flex:1; text-align:left;">Item</div>
+              <div style="width:120px; text-align:center;">Size</div>
+              <div style="width:80px; text-align:center;">Quantity</div>
+            </div>
+            <div class="card-body"></div>
+          </div>
 
-<!-- Jerseys & Pullovers -->
-<div class="category-card" id="cat-jerseys">
-  <div class="cat-header">Jerseys & Pullovers</div>
-  <div style="display:flex; gap:16px; font-weight:700; font-size:13px; margin-bottom:8px;">
-    <div style="flex:1; text-align:left;">Item</div>
-    <div style="width:120px; text-align:center;">Size</div>
-    <div style="width:80px; text-align:center;">Quantity</div>
-  </div>
-  <div class="card-body"></div>
-</div>
+          <!-- N2S -->
+          <div class="category-card" id="cat-n2s">
+            <div class="cat-header">N2S</div>
+            <div style="display:flex; gap:16px; font-weight:700; font-size:13px; margin-bottom:8px;">
+              <div style="flex:1; text-align:left;">Item</div>
+              <div style="width:120px; text-align:center;">Size</div>
+              <div style="width:80px; text-align:center;">Quantity</div>
+            </div>
+            <div class="card-body"></div>
+          </div>
 
-<!-- Formal -->
-<div class="category-card" id="cat-formal">
-  <div class="cat-header">Formal</div>
-  <div style="display:flex; gap:16px; font-weight:700; font-size:13px; margin-bottom:8px;">
-    <div style="flex:1; text-align:left;">Item</div>
-    <div style="width:120px; text-align:center;">Size</div>
-    <div style="width:80px; text-align:center;">Quantity</div>
-  </div>
-  <div class="card-body"></div>
-</div>
-
-<!-- Sportswear N2S -->
-<div class="category-card" id="cat-sports">
-  <div class="cat-header">Sportswear</div>
-  <div style="display:flex; gap:16px; font-weight:700; font-size:13px; margin-bottom:8px;">
-    <div style="flex:1; text-align:left;">Item</div>
-    <div style="width:120px; text-align:center;">Size</div>
-    <div style="width:80px; text-align:center;">Quantity</div>
-  </div>
-  <div class="card-body"></div>
-</div>
-
-<!-- Accessories -->
-<div class="category-card" id="cat-accessories">
-  <div class="cat-header">Accessories</div>
-  <div style="display:flex; gap:16px; font-weight:700; font-size:13px; margin-bottom:8px;">
-    <div style="flex:1; text-align:left;">Item</div>
-    <div style="width:120px; text-align:center;">Size</div>
-    <div style="width:80px; text-align:center;">Quantity</div>
-  </div>
-  <div class="card-body"></div>
-</div>
-
-      </div>
+        </div>
 
       </div>
 
@@ -363,7 +331,7 @@
           <p>Use <strong>“Uniform – [Child’s Name]”</strong> as your payment reference.</p>
           <p>Then email your <strong>proof of payment and order receipt</strong> to:</p>
           <p style="margin-left: 20px;">
-            📧 <a href="mailto:admin@sacps.co.za">admin@sacps.co.za</a> or 
+            📧 <a href="mailto:finance@sacps.co.za">finance@sacps.co.za</a> or 
             <a href="mailto:info@sacps.co.za">info@sacps.co.za</a>  or <a href="mailto:sacpsuniform@gmail.com">sacpsuniform@gmail.com</a>  
           </p>
           
@@ -397,30 +365,29 @@
       function increase10pct(price){ return Math.round(price * 1.1); }
       // All items - unchanged from your working list, grouped here for clarity
       const categories = {
-        "Tracksuits": [
+        "Reaora": [
           {id:"tracksuit_primary",name:"Primary Tracksuit Set",price:660,sizes:primarySizes},
           {id:"tracksuit_hs",name:"Highschool Tracksuit Set",price:715,sizes:highschoolSizes},
           {id:"ts_jacket_primary",name:"Primary Tracksuit Jacket",price:440,sizes:primarySizes},
           {id:"ts_jacket_hs",name:"Highschool Tracksuit Jacket",price:495,sizes:highschoolSizes},
           {id:"ts_pants_primary",name:"Primary Tracksuit Pants",price:220,sizes:primarySizes},
-          {id:"ts_pants_hs",name:"Highschool Tracksuit Pants",price:220,sizes:highschoolSizes}
-        ],
-        "Jerseys & Pullovers": [
+          {id:"ts_pants_hs",name:"Highschool Tracksuit Pants",price:220,sizes:highschoolSizes},
           {id:"jersey_hs",name:"Highschool Jersey",price:285,sizes:highschoolSizes},
           {id:"jersey_primary",name:"Primary Jersey",price:275,sizes:primarySizes},
           {id:"pullover_hs",name:"Highschool Pullover",price:265,sizes:highschoolSizes},
-          {id:"pullover_primary",name:"Primary Pullover",price:255,sizes:primarySizes}
-        ],
-        "Formal": [
+          {id:"pullover_primary",name:"Primary Pullover",price:255,sizes:primarySizes},
           {id:"blazer",name:"Blazer",price:770,sizes:blazerSizes},
           {id:"tie",name:"School Tie",price:90,sizes:oneSize},
           {id:"skirt_primary",name:"Primary Girls Skirt",price:375,sizes:primarySizes},
           {id:"skirt_hs",name:"Highschool Girls Skirt",price:400,sizes:highschoolSizes},
           {id:"sport_shirt",name:"Sport Shirt",price:380,sizes:allSizes},
           {id:"sport_short",name:"Sport Short",price:110,sizes:allSizes},
-          {id:"matric_bomber",name:"Matric Bomber Jacket",price:715,sizes:highschoolSizes}
+          {id:"matric_bomber",name:"Matric Bomber Jacket",price:715,sizes:highschoolSizes},
+          {id:"green_socks",name:"Long Green Socks",price:60,sizes:oneSize},
+          {id:"floppy_hat",name:"Floppy Hat",price:175,sizes:oneSize},
+          {id:"beanie",name:"Beanie",price:55,sizes:oneSize}
         ],
-        "Sportswear": [
+        "N2S": [
           {id:"soccer_shirt",name:"Soccer Shirt",price:295,sizes:allSizes},
           {id:"soccer_short",name:"Soccer Short",price:285,sizes:allSizes},
           {id:"soccer_socks",name:"Soccer Socks",price:110,sizes:allSizes},
@@ -432,12 +399,7 @@
           {id:"netball_dress",name:"Netball Dress",price:310,sizes:allSizes},
           {id:"athletics_vest",name:"Athletics Vest",price:275,sizes:allSizes},
           {id:"athletics_short",name:"Athletics Short",price:265,sizes:allSizes}
-        ],
-        "Accessories": [
-          {id:"green_socks",name:"Long Green Socks",price:60,sizes:oneSize},
-          {id:"floppy_hat",name:"Floppy Hat",price:175,sizes:oneSize},
-          {id:"beanie",name:"Beanie",price:55,sizes:oneSize}
-        ],
+        ]
       };
 
       const imageMap = {
@@ -473,7 +435,7 @@
           const img = document.createElement('img');
           img.src = imageMap[item.id];
           img.alt = `${item.name} image`;
-          img.style.height = '40px';
+          img.style.height = '80px';
           img.style.marginLeft = '10px';
           img.style.verticalAlign = 'middle';
           nameSpan.appendChild(img);
@@ -508,11 +470,8 @@
       try {
         // mapping card ids -> category keys
         const mapping = {
-          "cat-tracksuits": "Tracksuits",
-          "cat-jerseys": "Jerseys & Pullovers",
-          "cat-formal": "Formal",
-          "cat-sports": "Sportswear",
-          "cat-accessories": "Accessories"
+          "cat-reaora": "Reaora",
+          "cat-n2s": "N2S"
         };
 
         Object.entries(mapping).forEach(([cardId, catKey])=>{
@@ -713,7 +672,7 @@
         // Footer with school contact
         doc.setFontSize(9);
         doc.setTextColor(120,120,120);
-        doc.text("SA College Private School • admin@sacps.co.za • Tel: 012 326 4580 / 064 548 9428", 18, doc.internal.pageSize.getHeight() - 30);
+        doc.text("SA College Private School • finance@sacps.co.za • Tel: 012 326 4580 / 064 548 9428", 18, doc.internal.pageSize.getHeight() - 30);
 
         // Return the jsPDF doc object and a base64 string for attaching to EmailJS if desired
         return {
@@ -786,6 +745,14 @@ const emailParams = {
   cartTotal: `R${cartTotal.toFixed(2)}` // matches {{cartTotal}}
 };
 
+emailParams.attachments = [
+  {
+    name: `SACollege_Receipt_${learnerName || 'Order'}.pdf`,
+    data: base64.split(';base64,')[1],
+    type: 'application/pdf'
+  }
+];
+
 
           // Send email using EmailJS service/template from your account
           // Service ID: service_fe66puw
@@ -836,3 +803,4 @@ const emailParams = {
        ========================= -->
 </body>
 </html>
+```
