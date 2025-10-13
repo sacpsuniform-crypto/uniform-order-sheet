@@ -5,11 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>SA College Private School - Uniform Order</title>
 
-  <!-- =========================
-       Libraries
-       - EmailJS for sending emails
-       - jsPDF + AutoTable for PDF generation
-       ========================= -->
+  <!-- Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
   <script>
     (function(){
@@ -21,8 +17,6 @@
       }
     })();
   </script>
-
-  <!-- jsPDF and autotable -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
@@ -42,8 +36,6 @@
       background: var(--muted);
       color:#111;
     }
-
-    /* Header */
     header.site-header{
       background: linear-gradient(90deg, rgba(0,39,77,1) 0%, rgba(0,39,77,0.95) 60%);
       color:var(--white);
@@ -74,8 +66,6 @@
       font-size:13px;
       color: rgba(255,255,255,0.9);
     }
-
-    /* Braten notice below header */
     .braten-notice{
       background:#ffc;
       border-left:5px solid var(--gold);
@@ -84,22 +74,16 @@
       font-size:13px;
       color:#111;
     }
-
-    /* Page wrapper */
     .page {
       max-width:1200px;
       margin:18px auto;
       padding:10px;
     }
-
-    /* Form layout */
     form#orderForm {
       display: grid;
       grid-template-columns: 1fr 360px;
       gap:18px;
     }
-
-    /* Left column */
     .left {
       background:var(--white);
       border-radius:10px;
@@ -107,7 +91,6 @@
       box-shadow:0 4px 10px rgba(0,0,0,0.04);
     }
     .left .section { margin-bottom:14px; }
-
     .form-row { display:flex; gap:12px; margin-bottom:10px; }
     .form-row .field { flex:1; }
     label{
@@ -125,14 +108,14 @@
       box-sizing:border-box;
       background:#fff;
     }
-
-    /* Product category cards */
     .category-card {
       border-radius:8px;
       background:linear-gradient(180deg, #ffffff 0%, #fcfcfc 100%);
       border:1px solid #e8eef7;
       padding:10px;
       margin-bottom:12px;
+      overflow: hidden;
+      min-height: 100px;
     }
     .category-card .cat-header{
       background:var(--navy);
@@ -148,6 +131,9 @@
       align-items:center;
       padding:8px 0;
       border-bottom:1px dashed #eef3fb;
+      min-height: 70px;
+      box-sizing: border-box;
+      transition: all 0.2s ease;
     }
     .product-row:last-child{ border-bottom:none; }
     .product-row .pimage {
@@ -155,15 +141,14 @@
       height:60px;
       object-fit: cover;
       border-radius:6px;
-      background:var(--white);
+      background:#f0f0f0;
       padding:4px;
       box-shadow:0 2px 5px rgba(0,0,0,0.1);
+      display: block;
     }
     .product-row .pname { flex:1; font-weight:600; color:#222; font-size:14px; }
     .product-row select.size { width:110px; padding:6px; border-radius:6px; border:1px solid #d7dbe0; }
     .product-row input.qty { width:70px; padding:6px; border-radius:6px; border:1px solid #d7dbe0; }
-
-    /* Size & Qty headings above products */
     .size-qty-heading {
       display:flex;
       gap:10px;
@@ -178,8 +163,6 @@
     .size-qty-heading .img-col { width:60px; text-align:center; }
     .size-qty-heading .size-col { width:110px; text-align:center; }
     .size-qty-heading .qty-col { width:70px; text-align:center; }
-
-    /* Right column - cart */
     .cart {
       background:var(--white);
       border-radius:10px;
@@ -214,8 +197,6 @@
       font-size:16px;
       color:#111;
     }
-
-    /* Buttons */
     .btn {
       display:inline-block;
       padding:10px 14px;
@@ -235,21 +216,18 @@
       margin-top:12px;
       width:100%;
     }
-
-    /* Responsive */
     @media(max-width:980px){
       form#orderForm { grid-template-columns: 1fr; }
-      .cart { position:relative; top:auto; }
-      .product-row .pimage { width:50px; height:50px; }
-      .size-qty-heading .img-col { width:50px; }
+      .cart { position: relative; top: auto; }
+      .product-row .pimage { width: 50px; height: 50px; }
+      .size-qty-heading .img-col { width: 50px; }
+      .product-row { min-height: 60px; }
     }
-
     .muted { color:#6b7280; font-size:13px; }
     .spaced { margin-top:8px; margin-bottom:8px; }
   </style>
 </head>
 <body>
-  <!-- Header -->
   <header class="site-header" role="banner">
     <img class="logo" id="schoolLogo" src="logo.png" alt="SA College Private School logo" />
     <div class="heading">
@@ -257,13 +235,9 @@
       <p class="muted">admin@sacps.co.za • info@sacps.co.za • sacpsuniform@gmail.com • Tel: 012 326 4580 / 064 548 9428</p>
     </div>
   </header>
-
-  <!-- Braten notice -->
   <div class="braten-notice">
     SA College Private School is using Reaora and N2S Suppliers in an attempt to provide uniforms at a more affordable price to parents. SACPS will still be using Select Outfitters and parents are welcome to use them. All orders placed now will be delivered at school and given to your child before the last day of school, ready for January 2026 with no need to stand in queues.
   </div>
-
-  <!-- Main content -->
   <main class="page" role="main">
     <form id="orderForm" autocomplete="off">
       <div class="left" role="region" aria-label="Order and products">
@@ -283,12 +257,8 @@
             <div class="field"><label for="adminNumber">Admin Number</label><input id="adminNumber" type="text" required placeholder="e.g. 45125"></div>
           </div>
         </div>
-
-        <!-- Products -->
         <div class="section" id="productsSection">
           <h2 style="margin-top:0; color:var(--navy)">Uniforms & Sports</h2>
-
-          <!-- Tracksuits -->
           <div class="category-card" id="cat-tracksuits">
             <div class="cat-header">Tracksuits</div>
             <div class="size-qty-heading">
@@ -299,8 +269,6 @@
             </div>
             <div class="card-body"></div>
           </div>
-
-          <!-- Jerseys & Pullovers -->
           <div class="category-card" id="cat-jerseys">
             <div class="cat-header">Jerseys & Pullovers</div>
             <div class="size-qty-heading">
@@ -311,8 +279,6 @@
             </div>
             <div class="card-body"></div>
           </div>
-
-          <!-- Formal -->
           <div class="category-card" id="cat-formal">
             <div class="cat-header">Formal</div>
             <div class="size-qty-heading">
@@ -323,8 +289,6 @@
             </div>
             <div class="card-body"></div>
           </div>
-
-          <!-- Sportswear N2S -->
           <div class="category-card" id="cat-sports">
             <div class="cat-header">Sportswear</div>
             <div class="size-qty-heading">
@@ -335,8 +299,6 @@
             </div>
             <div class="card-body"></div>
           </div>
-
-          <!-- Accessories -->
           <div class="category-card" id="cat-accessories">
             <div class="cat-header">Accessories</div>
             <div class="size-qty-heading">
@@ -349,8 +311,6 @@
           </div>
         </div>
       </div>
-
-      <!-- RIGHT - cart & submit -->
       <aside class="cart" role="region" aria-label="Cart and submit">
         <h3>Your Cart</h3>
         <div class="muted">Add quantities for the items on the left and the cart will update automatically.</div>
@@ -368,9 +328,7 @@
             <tr><td colspan="5" class="muted">No items</td></tr>
           </tbody>
         </table>
-
         <div class="total" id="grandTotal">Total: R0.00</div>
-        <!-- 💳 Payment Information Section -->
         <div id="payment-info" style="margin-top: 30px; border: 2px solid #169179; border-radius: 10px; background-color: #f2faf8; padding: 20px; font-family: 'Comic Sans MS', sans-serif;">
           <h3 style="background-color: #ba372a; color: white; padding: 10px; border-radius: 8px 8px 0 0; margin-top: 0;">
             💳 Payment Information
@@ -380,41 +338,32 @@
           <p>Then email your <strong>proof of payment and order receipt</strong> to:</p>
           <p style="margin-left: 20px;">
             📧 <a href="mailto:admin@sacps.co.za">admin@sacps.co.za</a> or 
-            <a href="mailto:info@sacps.co.za">info@sacps.co.za</a> or <a href="mailto:sacpsuniform@gmail.com">sacpsuniform@gmail.com</a>  
+            <a href="mailto:info@sacps.co.za">info@sacps.co.za</a> or 
+            <a href="mailto:sacpsuniform@gmail.com">sacpsuniform@gmail.com</a>
           </p>
         </div>
-        <!-- Submit button -->
         <button type="submit" class="btn btn-gold" id="submitBtn" style="margin-top:14px;">
           Submit Order & Download Receipt
         </button>
-
         <div class="spaced muted" style="font-size:13px;">
           After submitting, a PDF receipt will download for the parent.
         </div>
       </aside>
     </form>
   </main>
-
-  <!-- =========================
-       Script: Data, render, cart, PDF, email
-       ========================= -->
   <script>
     (function(){
-      // ---------------------------
+      // Base64 placeholder image (gray square)
+      const placeholderImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+      
       // Data: sizes & items
-      // ---------------------------
       const primarySizes = ['5-6','6-7','7-8','8-9','9-10','10-11','11-12','12-13','13-14'];
       const highschoolSizes = ['13-14','14-15','15-16','16-17','17-18','18-20'];
       const blazerSizes = ['28','30','32','34','36','38','40','42'];
       const oneSize = ['One Size'];
       const allSizes = [...primarySizes, ...highschoolSizes];
-
       function increase10pct(price){ return Math.round(price * 1.1); }
-
-      // Base URL for images hosted on GitHub (update with your repository path)
       const imageBaseUrl = 'https://raw.githubusercontent.com/your-username/sacps-uniforms/main/images/';
-
-      // All items with image paths updated to match your .png files
       const categories = {
         "Tracksuits": [
           {id:"tracksuit_primary",name:"Primary Tracksuit Set",price:660,sizes:primarySizes,image:"tracksuit_primary.png"},
@@ -440,17 +389,17 @@
           {id:"matric_bomber",name:"Matric Bomber Jacket",price:715,sizes:highschoolSizes,image:"matric_bomber.png"}
         ],
         "Sportswear": [
-          {id:"soccer_shirt",name:"Soccer Shirt",price:295,sizes:allSizes,image:"soccer shirt.png"},
-          {id:"soccer_short",name:"Soccer Short",price:285,sizes:allSizes,image:"soccer short.png"},
-          {id:"soccer_socks",name:"Soccer Socks",price:110,sizes:allSizes,image:"soccer socks.png"},
-          {id:"rugby_jersey",name:"Rugby Jersey",price:395,sizes:allSizes,image:"rugby jersey.png"},
-          {id:"rugby_short",name:"Rugby Short",price:275,sizes:allSizes,image:"rugby short.png"},
-          {id:"rugby_socks",name:"Rugby Socks",price:110,sizes:allSizes,image:"rugby socks.png"},
-          {id:"basketball_shirt",name:"Basketball Shirt",price:285,sizes:allSizes,image:"basketball shirt.png"},
-          {id:"basketball_short",name:"Basketball Short",price:285,sizes:allSizes,image:"basketball shorts.png"},
-          {id:"netball_dress",name:"Netball Dress",price:310,sizes:allSizes,image:"netball dress.png"},
-          {id:"athletics_vest",name:"Athletics Vest",price:275,sizes:allSizes,image:"athletics vest.png"},
-          {id:"athletics_short",name:"Athletics Short",price:265,sizes:allSizes,image:"athletics short.png"}
+          {id:"soccer_shirt",name:"Soccer Shirt",price:295,sizes:allSizes,image:"soccer_shirt.png"},
+          {id:"soccer_short",name:"Soccer Short",price:285,sizes:allSizes,image:"soccer_short.png"},
+          {id:"soccer_socks",name:"Soccer Socks",price:110,sizes:allSizes,image:"soccer_socks.png"},
+          {id:"rugby_jersey",name:"Rugby Jersey",price:395,sizes:allSizes,image:"rugby_jersey.png"},
+          {id:"rugby_short",name:"Rugby Short",price:275,sizes:allSizes,image:"rugby_short.png"},
+          {id:"rugby_socks",name:"Rugby Socks",price:110,sizes:allSizes,image:"rugby_socks.png"},
+          {id:"basketball_shirt",name:"Basketball Shirt",price:295,sizes:allSizes,image:"basketball_shirt.png"},
+          {id:"basketball_short",name:"Basketball Short",price:285,sizes:allSizes,image:"basketball_short.png"},
+          {id:"netball_dress",name:"Netball Dress",price:310,sizes:allSizes,image:"netball_dress.png"},
+          {id:"athletics_vest",name:"Athletics Vest",price:275,sizes:allSizes,image:"athletics_vest.png"},
+          {id:"athletics_short",name:"Athletics Short",price:265,sizes:allSizes,image:"athletics_short.png"}
         ],
         "Accessories": [
           {id:"green_socks",name:"Long Green Socks",price:60,sizes:oneSize,image:"green_socks.png"},
@@ -459,31 +408,41 @@
         ],
       };
 
-      // ---------------------------
-      // Rendering: inject products into their category cards
-      // ---------------------------
+      // Preload images to stabilize rendering
+      function preloadImages() {
+        Object.values(categories).flat().forEach(item => {
+          if (item.image) {
+            const img = new Image();
+            img.src = `${imageBaseUrl}${item.image}`;
+            img.onerror = () => {
+              console.warn(`Failed to load image: ${item.image}`);
+              img.src = placeholderImage;
+            };
+          }
+        });
+      }
+
       function createProductRow(item){
         const row = document.createElement('div');
         row.className = 'product-row item-row';
         row.dataset.itemId = item.id;
         row.dataset.price = item.price;
-
-        // Image
         const imgDiv = document.createElement('div');
         const img = document.createElement('img');
         img.className = 'pimage';
-        img.src = item.image ? `${imageBaseUrl}${item.image}` : 'placeholder.png';
+        img.src = item.image ? `${imageBaseUrl}${item.image}` : placeholderImage;
         img.alt = `${item.name} image`;
-        img.loading = 'lazy'; // Lazy load to improve performance
-        img.onerror = function() { this.src = 'placeholder.png'; }; // Fallback if image fails
+        img.width = 60;
+        img.height = 60;
+        img.loading = 'lazy';
+        img.onerror = function() {
+          console.warn(`Image load failed for ${item.name}: ${item.image}`);
+          this.src = placeholderImage;
+        };
         imgDiv.appendChild(img);
-
-        // Name
         const nameSpan = document.createElement('div');
         nameSpan.className = 'pname';
         nameSpan.textContent = `${item.name} — R${item.price}`;
-
-        // Size selector
         const sizeSel = document.createElement('select');
         sizeSel.className = 'size';
         item.sizes.forEach(s=>{
@@ -492,49 +451,44 @@
           opt.textContent = s;
           sizeSel.appendChild(opt);
         });
-
-        // Qty input
         const qtyInput = document.createElement('input');
         qtyInput.className = 'qty';
         qtyInput.type = 'number';
         qtyInput.min = 0;
         qtyInput.value = 0;
         qtyInput.setAttribute('aria-label', `${item.name} quantity`);
-
         row.appendChild(imgDiv);
         row.appendChild(nameSpan);
         row.appendChild(sizeSel);
         row.appendChild(qtyInput);
-
         return row;
       }
-
-      // Find category card bodies and append items
-      try {
-        const mapping = {
-          "cat-tracksuits": "Tracksuits",
-          "cat-jerseys": "Jerseys & Pullovers",
-          "cat-formal": "Formal",
-          "cat-sports": "Sportswear",
-          "cat-accessories": "Accessories"
-        };
-
-        Object.entries(mapping).forEach(([cardId, catKey])=>{
+      const mapping = {
+        "cat-tracksuits": "Tracksuits",
+        "cat-jerseys": "Jerseys & Pullovers",
+        "cat-formal": "Formal",
+        "cat-sports": "Sportswear",
+        "cat-accessories": "Accessories"
+      };
+      Object.entries(mapping).forEach(([cardId, catKey])=>{
+        try {
           const el = document.querySelector('#' + cardId + ' .card-body');
-          if(!el) return;
+          if(!el) {
+            console.warn(`Card body not found for ${cardId}`);
+            return;
+          }
           categories[catKey].forEach(item=>{
-            el.appendChild(createProductRow(item));
+            try {
+              el.appendChild(createProductRow(item));
+            } catch (err) {
+              console.error(`Error rendering item ${item.id}:`, err);
+            }
           });
-        });
-      } catch (err) {
-        console.error("Error building product list:", err);
-      }
-
-      // ---------------------------
-      // Cart: collect selected items & render
-      // ---------------------------
+        } catch (err) {
+          console.error(`Error processing category ${catKey}:`, err);
+        }
+      });
       let cart = [];
-
       function collectCartFromDOM(){
         cart = [];
         document.querySelectorAll('.item-row').forEach(row=>{
@@ -548,7 +502,6 @@
           }
         });
       }
-
       function renderCart(){
         const tbody = document.getElementById('cartBody');
         tbody.innerHTML = '';
@@ -563,30 +516,19 @@
           document.getElementById('grandTotal').textContent = "Total: R0.00";
           return;
         }
-
         let grand = 0;
         cart.forEach((it, idx) => {
           const tr = document.createElement('tr');
-
-          // Item cell
           const tdItem = document.createElement('td');
           tdItem.textContent = it.name;
-
-          // Size cell
           const tdSize = document.createElement('td');
           tdSize.textContent = it.size;
-
-          // Qty
           const tdQty = document.createElement('td');
           tdQty.textContent = it.qty;
-
-          // Line
           const line = it.qty * it.price;
           grand += line;
           const tdLine = document.createElement('td');
           tdLine.textContent = `R${line.toFixed(2)}`;
-
-          // Remove
           const tdRemove = document.createElement('td');
           const removeBtn = document.createElement('button');
           removeBtn.className = 'btn btn-primary';
@@ -610,7 +552,6 @@
             renderCart();
           });
           tdRemove.appendChild(removeBtn);
-
           tr.appendChild(tdItem);
           tr.appendChild(tdSize);
           tr.appendChild(tdQty);
@@ -618,32 +559,24 @@
           tr.appendChild(tdRemove);
           tbody.appendChild(tr);
         });
-
         document.getElementById('grandTotal').textContent = `Total: R${grand.toFixed(2)}`;
       }
-
-      // Update cart whenever a qty or size changes
+      let debounceTimeout;
       document.addEventListener('input', function(e){
         if(e.target.classList && (e.target.classList.contains('qty') || e.target.classList.contains('size'))){
-          collectCartFromDOM();
-          renderCart();
+          clearTimeout(debounceTimeout);
+          debounceTimeout = setTimeout(() => {
+            collectCartFromDOM();
+            renderCart();
+          }, 300);
         }
       });
-
-      // ---------------------------
-      // PDF generation
-      // - includes logo if available (attempts to add image)
-      // - uses school colours for header
-      // ---------------------------
       async function createReceiptPDF(details, cartItems){
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF({ unit: 'pt', format: 'a4' });
-
-        // --- Header band with colours & logo ---
         const pageWidth = doc.internal.pageSize.getWidth();
-        doc.setFillColor(0, 39, 77); // navy
+        doc.setFillColor(0, 39, 77);
         doc.rect(0, 0, pageWidth, 70, 'F');
-
         try {
           const logoImg = document.getElementById('schoolLogo');
           if(logoImg && logoImg.complete){
@@ -658,17 +591,14 @@
         } catch(err){
           console.warn('Could not add logo to PDF:', err);
         }
-
         doc.setFontSize(16);
         doc.setTextColor(255,255,255);
         doc.text("SA College Private School", 80, 28);
-
-        doc.setFillColor(255,193,7); // gold
+        doc.setFillColor(255,193,7);
         doc.rect(pageWidth - 200, 18, 180, 30, 'F');
         doc.setFontSize(11);
         doc.setTextColor(0,0,0);
         doc.text("Uniform Order Receipt", pageWidth - 190, 38);
-
         doc.setFontSize(10);
         doc.setTextColor(35,35,35);
         const left = 18;
@@ -679,10 +609,8 @@
         doc.text(`Learner: ${details.learnerName}`, left, y); y += 16;
         doc.text(`Grade: ${details.grade}`, left, y); y += 16;
         doc.text(`Level: ${details.schoolLevel}`, left, y); y += 26;
-
         const tableBody = cartItems.map(it => [it.name, it.size, String(it.qty), `R${it.price}`, `R${(it.qty*it.price).toFixed(2)}`]);
         if(tableBody.length === 0) tableBody.push(['No items','','','','']);
-
         doc.autoTable({
           startY: y,
           head: [['Item', 'Size', 'Qty', 'Unit Price', 'Line Total']],
@@ -692,34 +620,25 @@
           theme: 'grid',
           margin: { left: 12, right: 12 }
         });
-
         const finalY = doc.lastAutoTable ? doc.lastAutoTable.finalY : y + 120;
         const grand = cartItems.reduce((s, it) => s + (it.price * it.qty), 0);
         doc.setFontSize(11);
         doc.setTextColor(0,0,0);
         doc.text(`Grand Total: R${grand.toFixed(2)}`, 18, finalY + 18);
-
         doc.setFontSize(9);
         doc.setTextColor(120,120,120);
         doc.text("SA College Private School • admin@sacps.co.za • Tel: 012 326 4580 / 064 548 9428", 18, doc.internal.pageSize.getHeight() - 30);
-
         return {
           doc,
           dataUrl: doc.output('datauristring'),
           base64: doc.output('dataurlstring')
         };
       }
-
-      // ---------------------------
-      // Submit: generate PDF, download, send email via EmailJS
-      // ---------------------------
       document.getElementById('orderForm').addEventListener('submit', async function(e){
         e.preventDefault();
-
         const submitBtn = document.getElementById('submitBtn');
         submitBtn.disabled = true;
         submitBtn.textContent = 'Processing...';
-
         try {
           const parentName = document.getElementById('parentName').value.trim();
           const contactNumber = document.getElementById('contactNumber').value.trim();
@@ -727,7 +646,6 @@
           const learnerName = document.getElementById('learnerName').value.trim();
           const grade = document.getElementById('grade').value.trim();
           const schoolLevel = document.getElementById('schoolLevel').value.trim();
-
           collectCartFromDOM();
           if(cart.length === 0){
             alert('Please add at least one uniform item before submitting.');
@@ -735,22 +653,18 @@
             submitBtn.textContent = 'Submit Order & Download Receipt';
             return;
           }
-
           const details = { parentName, contactNumber, email, learnerName, grade, schoolLevel };
           const { doc, dataUrl, base64 } = await createReceiptPDF(details, cart);
-
           try {
             const fileName = `SACollege_Receipt_${learnerName || 'Order'}.pdf`;
             doc.save(fileName);
           } catch (err){
             console.warn('PDF download failed locally:', err);
           }
-
           const cartTotal = cart.reduce((sum, it) => sum + (it.price * it.qty), 0);
           const orderDetails = cart.map(it => 
             `${it.name} | Size: ${it.size} | Qty: ${it.qty} | R${(it.price*it.qty).toFixed(2)}`
           ).join('\n');
-
           const emailParams = {
             parentName,
             contactNumber,
@@ -762,7 +676,6 @@
             orderDetails,
             cartTotal: `R${cartTotal.toFixed(2)}`
           };
-
           try {
             const response = await emailjs.send("service_fe66puw", "template_oq150rd", emailParams);
             console.log("EmailJS response:", response);
@@ -775,7 +688,6 @@
             console.error("EmailJS send error:", sendErr);
             alert("Order saved and receipt downloaded, but sending email notification failed. Please check EmailJS setup.");
           }
-
         } catch (err) {
           console.error("Submit error:", err);
           alert("An error occurred while submitting. Please try again.");
@@ -784,10 +696,9 @@
           submitBtn.textContent = 'Submit Order & Download Receipt';
         }
       });
-
+      preloadImages(); // Preload images on page load
       collectCartFromDOM();
       renderCart();
-
       window._sa_helpers = {
         collectCartFromDOM, renderCart, createReceiptPDF, categories, cart
       };
