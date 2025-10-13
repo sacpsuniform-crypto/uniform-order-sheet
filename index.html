@@ -1,4 +1,3 @@
-```html
 <!doctype html>
 <html lang="en">
 <head>
@@ -322,7 +321,7 @@
         </table>
 
         <div class="total" id="grandTotal">Total: R0.00</div>
- <!-- 💳 Payment Information Section -->
+        <!-- 💳 Payment Information Section -->
         <div id="payment-info" style="margin-top: 30px; border: 2px solid #169179; border-radius: 10px; background-color: #f2faf8; padding: 20px; font-family: 'Comic Sans MS', sans-serif;">
           <h3 style="background-color: #ba372a; color: white; padding: 10px; border-radius: 8px 8px 0 0; margin-top: 0;">
             💳 Payment Information
@@ -332,9 +331,8 @@
           <p>Then email your <strong>proof of payment and order receipt</strong> to:</p>
           <p style="margin-left: 20px;">
             📧 <a href="mailto:finance@sacps.co.za">finance@sacps.co.za</a> or 
-            <a href="mailto:info@sacps.co.za">info@sacps.co.za</a>  or <a href="mailto:sacpsuniform@gmail.com">sacpsuniform@gmail.com</a>  
+            <a href="mailto:info@sacps.co.za">info@sacps.co.za</a> or <a href="mailto:sacpsuniform@gmail.com">sacpsuniform@gmail.com</a>  
           </p>
-          
         </div>
         <!-- Submit button -->
         <button type="submit" class="btn btn-gold" id="submitBtn" style="margin-top:14px;">
@@ -342,7 +340,7 @@
         </button>
 
         <div class="spaced muted" style="font-size:13px;">
-          After submitting, a PDF receipt will download for the parent .
+          After submitting, a PDF receipt will be downloaded and emailed to you and the school.
         </div>
       </aside>
     </form>
@@ -399,7 +397,7 @@
           {id:"netball_dress",name:"Netball Dress",price:310,sizes:allSizes},
           {id:"athletics_vest",name:"Athletics Vest",price:275,sizes:allSizes},
           {id:"athletics_short",name:"Athletics Short",price:265,sizes:allSizes}
-        ]
+        ],
       };
 
       const imageMap = {
@@ -678,7 +676,7 @@
         return {
           doc,
           dataUrl: doc.output('datauristring'), // datauri (useful for inline preview)
-          base64: doc.output('dataurlstring') // this returns data:application/pdf;filename=generated.pdf;base64,....
+          base64: doc.output('dataurlstring').split(';base64,')[1] // extract base64 part for attachment
         };
       }
 
@@ -726,33 +724,29 @@
           }
 
           // Prepare email template parameters for EmailJS
-const cartTotal = cart.reduce((sum, it) => sum + (it.price * it.qty), 0);
+          const cartTotal = cart.reduce((sum, it) => sum + (it.price * it.qty), 0);
 
-// Build a readable orderDetails string from cart items
-const orderDetails = cart.map(it => 
-  `${it.name} | Size: ${it.size} | Qty: ${it.qty} | R${(it.price*it.qty).toFixed(2)}`
-).join('\n');
+          // Build a readable orderDetails string from cart items
+          const orderDetails = cart.map(it => 
+            `${it.name} | Size: ${it.size} | Qty: ${it.qty} | R${(it.price*it.qty).toFixed(2)}`
+          ).join('\n');
 
-const emailParams = {
-  parentName: parentName,       // matches {{parentName}}
-  contactNumber: contactNumber, // matches {{contactNumber}}
-  email: email,                 // matches {{email}}
-  parentEmail: email,           // matches {{parentEmail}}
-  learnerName: learnerName,     // matches {{learnerName}}
-  grade: grade,                 // matches {{grade}}
-  adminNumber: adminNumber,     // matches {{adminNumber}}
-  orderDetails: orderDetails,   // matches {{orderDetails}}
-  cartTotal: `R${cartTotal.toFixed(2)}` // matches {{cartTotal}}
-};
-
-emailParams.attachments = [
-  {
-    name: `SACollege_Receipt_${learnerName || 'Order'}.pdf`,
-    data: base64.split(';base64,')[1],
-    type: 'application/pdf'
-  }
-];
-
+          const emailParams = {
+            parentName: parentName,       // matches {{parentName}}
+            contactNumber: contactNumber, // matches {{contactNumber}}
+            email: email,                 // matches {{email}} for to address
+            parentEmail: email,           // matches {{parentEmail}}
+            learnerName: learnerName,     // matches {{learnerName}}
+            grade: grade,                 // matches {{grade}}
+            adminNumber: adminNumber,     // matches {{adminNumber}}
+            orderDetails: orderDetails,   // matches {{orderDetails}}
+            cartTotal: `R${cartTotal.toFixed(2)}`, // matches {{cartTotal}}
+            attachment: {
+              name: `SACollege_Receipt_${learnerName || 'Order'}.pdf`,
+              data: base64,
+              type: 'application/pdf'
+            }
+          };
 
           // Send email using EmailJS service/template from your account
           // Service ID: service_fe66puw
@@ -761,7 +755,7 @@ emailParams.attachments = [
           try {
             const response = await emailjs.send("service_fe66puw", "template_oq150rd", emailParams);
             console.log("EmailJS response:", response);
-            alert("Order submitted successfully. Receipt downloaded.");
+            alert("Order submitted successfully. Receipt downloaded and emailed.");
             // reset form and cart
             document.getElementById('orderForm').reset();
             // clear all qty inputs
@@ -803,4 +797,3 @@ emailParams.attachments = [
        ========================= -->
 </body>
 </html>
-```
