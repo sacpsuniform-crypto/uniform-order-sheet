@@ -114,8 +114,8 @@
       border:1px solid #e8eef7;
       padding:10px;
       margin-bottom:12px;
-      overflow: hidden;
-      min-height: 100px;
+      overflow: hidden; /* Prevent content spill */
+      min-height: 100px; /* Ensure stable height */
     }
     .category-card .cat-header{
       background:var(--navy);
@@ -131,9 +131,9 @@
       align-items:center;
       padding:8px 0;
       border-bottom:1px dashed #eef3fb;
-      min-height: 70px;
+      min-height: 70px; /* Prevent collapse */
       box-sizing: border-box;
-      transition: all 0.2s ease;
+      transition: all 0.2s ease; /* Smooth updates */
     }
     .product-row:last-child{ border-bottom:none; }
     .product-row .pimage {
@@ -141,7 +141,7 @@
       height:60px;
       object-fit: cover;
       border-radius:6px;
-      background:#f0f0f0;
+      background:#f0f0f0; /* Placeholder background */
       padding:4px;
       box-shadow:0 2px 5px rgba(0,0,0,0.1);
       display: block;
@@ -338,8 +338,8 @@
           <p>Then email your <strong>proof of payment and order receipt</strong> to:</p>
           <p style="margin-left: 20px;">
             📧 <a href="mailto:admin@sacps.co.za">admin@sacps.co.za</a> or 
-            <a href="mailto:info@sacps.co.za">info@sacps.co.za</a> or 
-            <a href="mailto:sacpsuniform@gmail.com">sacpsuniform@gmail.com</a>
+            < peroxide
+            <a href="mailto:sacpsuniform@gmail.com">sacpsuniform@gmail.com</a>  
           </p>
         </div>
         <button type="submit" class="btn btn-gold" id="submitBtn" style="margin-top:14px;">
@@ -353,9 +353,6 @@
   </main>
   <script>
     (function(){
-      // Base64 placeholder image (gray square)
-      const placeholderImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
-      
       // Data: sizes & items
       const primarySizes = ['5-6','6-7','7-8','8-9','9-10','10-11','11-12','12-13','13-14'];
       const highschoolSizes = ['13-14','14-15','15-16','16-17','17-18','18-20'];
@@ -395,7 +392,7 @@
           {id:"rugby_jersey",name:"Rugby Jersey",price:395,sizes:allSizes,image:"rugby_jersey.png"},
           {id:"rugby_short",name:"Rugby Short",price:275,sizes:allSizes,image:"rugby_short.png"},
           {id:"rugby_socks",name:"Rugby Socks",price:110,sizes:allSizes,image:"rugby_socks.png"},
-          {id:"basketball_shirt",name:"Basketball Shirt",price:295,sizes:allSizes,image:"basketball_shirt.png"},
+          {id:"basketball_shirt",name:"Basketball Shirt",price:285,sizes:allSizes,image:"basketball_shirt.png"},
           {id:"basketball_short",name:"Basketball Short",price:285,sizes:allSizes,image:"basketball_short.png"},
           {id:"netball_dress",name:"Netball Dress",price:310,sizes:allSizes,image:"netball_dress.png"},
           {id:"athletics_vest",name:"Athletics Vest",price:275,sizes:allSizes,image:"athletics_vest.png"},
@@ -407,21 +404,6 @@
           {id:"beanie",name:"Beanie",price:55,sizes:oneSize,image:"beanie.png"}
         ],
       };
-
-      // Preload images to stabilize rendering
-      function preloadImages() {
-        Object.values(categories).flat().forEach(item => {
-          if (item.image) {
-            const img = new Image();
-            img.src = `${imageBaseUrl}${item.image}`;
-            img.onerror = () => {
-              console.warn(`Failed to load image: ${item.image}`);
-              img.src = placeholderImage;
-            };
-          }
-        });
-      }
-
       function createProductRow(item){
         const row = document.createElement('div');
         row.className = 'product-row item-row';
@@ -430,15 +412,12 @@
         const imgDiv = document.createElement('div');
         const img = document.createElement('img');
         img.className = 'pimage';
-        img.src = item.image ? `${imageBaseUrl}${item.image}` : placeholderImage;
+        img.src = item.image ? `${imageBaseUrl}${item.image}` : 'placeholder.png';
         img.alt = `${item.name} image`;
         img.width = 60;
         img.height = 60;
         img.loading = 'lazy';
-        img.onerror = function() {
-          console.warn(`Image load failed for ${item.name}: ${item.image}`);
-          this.src = placeholderImage;
-        };
+        img.onerror = function() { this.src = 'placeholder.png'; };
         imgDiv.appendChild(img);
         const nameSpan = document.createElement('div');
         nameSpan.className = 'pname';
@@ -696,7 +675,6 @@
           submitBtn.textContent = 'Submit Order & Download Receipt';
         }
       });
-      preloadImages(); // Preload images on page load
       collectCartFromDOM();
       renderCart();
       window._sa_helpers = {
