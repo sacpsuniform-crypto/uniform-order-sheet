@@ -353,7 +353,7 @@
         </button>
 
         <div class="spaced muted" style="font-size:13px;">
-          After submitting, a PDF receipt will download for the parent .
+          After submitting, a PDF receipt will download for the parent.
         </div>
       </aside>
     </form>
@@ -737,49 +737,54 @@
           }
 
           // Prepare email template parameters for EmailJS
-const cartTotal = cart.reduce((sum, it) => sum + (it.price * it.qty), 0);
+          const cartTotal = cart.reduce((sum, it) => sum + (it.price * it.qty), 0);
 
-// Build a readable orderDetails string from cart items
-const orderDetails = cart.map(it => 
-  `${it.name} | Size: ${it.size} | Qty: ${it.qty} | R${(it.price*it.qty).toFixed(2)}`
-).join('\n');
+          // Build a readable orderDetails string from cart items
+          const orderDetails = cart.map(it => 
+            `${it.name} | Size: ${it.size} | Qty: ${it.qty} | R${(it.price*it.qty).toFixed(2)}`
+          ).join('\n');
 
-const emailParams = {
-  parentName: parentName,       // matches {{parentName}}
-  contactNumber: contactNumber, // matches {{contactNumber}}
-  email: email,                 // matches {{email}}
-  parentEmail: email,           // matches {{parentEmail}}
-  learnerName: learnerName,     // matches {{learnerName}}
-  grade: grade,                 // matches {{grade}}
-  adminNumber: adminNumber,     // matches {{adminNumber}}
-  orderDetails: orderDetails,   // matches {{orderDetails}}
-  cartTotal: `R${cartTotal.toFixed(2)}` // matches {{cartTotal}}
-};
+          const emailParams = {
+            parentName: parentName,       // matches {{parentName}}
+            contactNumber: contactNumber, // matches {{contactNumber}}
+            email: email,                 // matches {{email}}
+            parentEmail: email,           // matches {{parentEmail}}
+            learnerName: learnerName,     // matches {{learnerName}}
+            grade: grade,                 // matches {{grade}}
+            adminNumber: adminNumber,     // matches {{adminNumber}}
+            orderDetails: orderDetails,   // matches {{orderDetails}}
+            cartTotal: `R${cartTotal.toFixed(2)}` // matches {{cartTotal}}
+          };
 
+          // Send primary email using EmailJS
+          await emailjs.send("service_fe66puw", "template_oq150rd", emailParams);
+          console.log("Primary email sent successfully.");
 
-          // Send email using EmailJS service/template from your account
-          // Service ID: service_fe66puw
-          // Template ID: template_oq150rd
-          // (emailjs.init called earlier with public key)
-          try {
-            const response = await emailjs.send("service_fe66puw", "template_oq150rd", emailParams);
-            console.log("EmailJS response:", response);
-            alert("Order submitted successfully. Receipt downloaded.");
-            // reset form and cart
-            document.getElementById('orderForm').reset();
-            // clear all qty inputs
-            document.querySelectorAll('.item-row .qty').forEach(q => q.value = 0);
-            collectCartFromDOM();
-            renderCart();
-          } catch (sendErr) {
-            console.error("EmailJS send error:", sendErr);
-            // Even if email fails, the parent still gets the downloaded receipt
-            alert("Order saved and receipt downloaded, but sending email notification failed. Please check EmailJS setup.");
-          }
+          // Prepare and send confirmation email to parent
+          const parentEmailParams = {
+            to_email: email,           // parent's email address
+            parentName: parentName,
+            learnerName: learnerName,
+            grade: grade,
+            adminNumber: adminNumber,
+            orderDetails: orderDetails,
+            cartTotal: `R${cartTotal.toFixed(2)}`
+          };
 
+          await emailjs.send("service_fe66puw", "template_cey3iq3", parentEmailParams);
+          console.log("Parent confirmation email sent successfully.");
+
+          alert("Order submitted successfully. Receipt downloaded and confirmation emails sent.");
+          // reset form and cart
+          document.getElementById('orderForm').reset();
+          // clear all qty inputs
+          document.querySelectorAll('.item-row .qty').forEach(q => q.value = 0);
+          collectCartFromDOM();
+          renderCart();
         } catch (err) {
-          console.error("Submit error:", err);
-          alert("An error occurred while submitting. Please try again.");
+          console.error("Error during submission:", err);
+          // Even if email fails, the parent still gets the downloaded receipt
+          alert("Order saved and receipt downloaded, but sending one or both email notifications failed. Please check EmailJS setup.");
         } finally {
           submitBtn.disabled = false;
           submitBtn.textContent = 'Submit Order & Download Receipt';
