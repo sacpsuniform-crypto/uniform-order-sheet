@@ -730,7 +730,6 @@
           // prompt download for parent
           try {
             const fileName = `SACollege_Receipt_${learnerName || 'Order'}.pdf`;
-            // save the file locally for parent
             doc.save(fileName);
           } catch (err){
             console.warn('PDF download failed locally:', err);
@@ -745,24 +744,24 @@
           ).join('\n');
 
           const emailParams = {
-            parentName: parentName,       // matches {{parentName}}
-            contactNumber: contactNumber, // matches {{contactNumber}}
-            email: email,                 // matches {{email}}
-            parentEmail: email,           // matches {{parentEmail}}
-            learnerName: learnerName,     // matches {{learnerName}}
-            grade: grade,                 // matches {{grade}}
-            adminNumber: adminNumber,     // matches {{adminNumber}}
-            orderDetails: orderDetails,   // matches {{orderDetails}}
-            cartTotal: `R${cartTotal.toFixed(2)}` // matches {{cartTotal}}
+            parentName: parentName,
+            contactNumber: contactNumber,
+            email: email,
+            parentEmail: email,
+            learnerName: learnerName,
+            grade: grade,
+            adminNumber: adminNumber,
+            orderDetails: orderDetails,
+            cartTotal: `R${cartTotal.toFixed(2)}`
           };
 
           // Send primary email using EmailJS
-          await emailjs.send("service_fe66puw", "template_oq150rd", emailParams);
-          console.log("Primary email sent successfully.");
+          const primaryEmailResponse = await emailjs.send("service_fe66puw", "template_oq150rd", emailParams);
+          console.log("Primary email sent successfully:", primaryEmailResponse);
 
-          // Prepare and send confirmation email to parent
+          // Prepare and send confirmation email to parent with the specified template
           const parentEmailParams = {
-            to_email: email,           // parent's email address
+            to_email: email,
             parentName: parentName,
             learnerName: learnerName,
             grade: grade,
@@ -771,20 +770,18 @@
             cartTotal: `R${cartTotal.toFixed(2)}`
           };
 
-          await emailjs.send("service_fe66puw", "template_cey3iq3", parentEmailParams);
-          console.log("Parent confirmation email sent successfully.");
+          const parentEmailResponse = await emailjs.send("service_fe66puw", "template_cey3iq3", parentEmailParams);
+          console.log("Parent confirmation email sent successfully:", parentEmailResponse);
 
-          alert("Order submitted successfully. Receipt downloaded and confirmation emails sent.");
+          alert("Order submitted successfully. Receipt downloaded and confirmation emails sent to both recipients.");
           // reset form and cart
           document.getElementById('orderForm').reset();
-          // clear all qty inputs
           document.querySelectorAll('.item-row .qty').forEach(q => q.value = 0);
           collectCartFromDOM();
           renderCart();
         } catch (err) {
           console.error("Error during submission:", err);
-          // Even if email fails, the parent still gets the downloaded receipt
-          alert("Order saved and receipt downloaded, but sending one or both email notifications failed. Please check EmailJS setup.");
+          alert("Order saved and receipt downloaded, but there was an issue sending one or both emails. Please verify EmailJS template configuration at https://dashboard.emailjs.com.");
         } finally {
           submitBtn.disabled = false;
           submitBtn.textContent = 'Submit Order & Download Receipt';
