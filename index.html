@@ -15,9 +15,9 @@
     (function(){
       try {
         emailjs.init("GEyF3k2gS9_KFma8Y");
-        console.log("EmailJS initialized");
+        console.log("EmailJS initialized with User ID: GEyF3k2gS9_KFma8Y");
       } catch (e) {
-        console.warn("EmailJS init failed:", e);
+        console.error("EmailJS init failed:", e);
       }
     })();
   </script>
@@ -760,12 +760,13 @@
 
           // Send email
           try {
-            const response = await emailjs.send("service_fe66puw", "template_oq150rd", emailParams);
+            console.log("Attempting to send email with Service ID: service_myhmc1q, Template ID: template_oq150rd", emailParams);
+            const response = await emailjs.send("service_myhmc1q", "template_oq150rd", emailParams);
             console.log("Email sent successfully:", response);
-            alert("Order submitted successfully. Receipt downloaded and confirmation email sent.");
+            alert("Order submitted successfully. Receipt downloaded and confirmation email sent to parent with BCC to school.");
           } catch (sendErr) {
-            console.error("Failed to send email:", sendErr);
-            alert("Order submitted successfully and receipt downloaded, but the email failed to send. Please check EmailJS configuration (Service ID: service_fe66puw, Template ID: template_oq150rd) and console logs.");
+            console.error("Failed to send email:", sendErr, { status: sendErr.status, text: sendErr.text });
+            alert("Order submitted successfully and receipt downloaded, but the email failed to send. Please check EmailJS configuration (Service ID: service_myhmc1q, Template ID: template_oq150rd) and console logs for details.");
           }
 
           // Reset form and cart
@@ -789,9 +790,24 @@
       collectCartFromDOM();
       renderCart();
 
-      // Expose useful functions for debugging from console (optional)
+      // Expose useful functions for debugging from console
       window._sa_helpers = {
-        collectCartFromDOM, renderCart, createReceiptPDF, categories, cart
+        collectCartFromDOM,
+        renderCart,
+        createReceiptPDF,
+        categories,
+        cart,
+        testEmail: async function(params) {
+          try {
+            console.log("Testing email with Service ID: service_myhmc1q, Template ID: template_oq150rd", params);
+            const response = await emailjs.send("service_myhmc1q", "template_oq150rd", params);
+            console.log("Test email sent successfully:", response);
+            return response;
+          } catch (err) {
+            console.error("Test email failed:", err, { status: err.status, text: err.text });
+            throw err;
+          }
+        }
       };
 
     })();
