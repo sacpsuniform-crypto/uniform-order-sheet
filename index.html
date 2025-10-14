@@ -688,8 +688,8 @@
         // Return the jsPDF doc object and a base64 string for attaching to EmailJS if desired
         return {
           doc,
-          dataUrl: doc.output('datauristring'), // datauri (useful for inline preview)
-          base64: doc.output('dataurlstring') // this returns data:application/pdf;filename=generated.pdf;base64,....
+          dataUrl: doc.output('datauristring'),
+          base64: doc.output('dataurlstring')
         };
       }
 
@@ -705,7 +705,7 @@
         submitBtn.textContent = 'Processing...';
 
         try {
-          // gather form details and cart
+          // Gather form details and cart
           const parentName = document.getElementById('parentName').value.trim();
           const contactNumber = document.getElementById('contactNumber').value.trim();
           const email = document.getElementById('email').value.trim();
@@ -713,7 +713,7 @@
           const grade = document.getElementById('grade').value.trim();
           const adminNumber = document.getElementById('adminNumber').value.trim();
 
-          // collect cart items from DOM
+          // Collect cart items from DOM
           collectCartFromDOM();
           if(cart.length === 0){
             alert('Please add at least one uniform item before submitting.');
@@ -724,10 +724,10 @@
 
           const details = { parentName, contactNumber, email, learnerName, grade, adminNumber };
 
-          // create PDF
+          // Create PDF
           const { doc, dataUrl, base64 } = await createReceiptPDF(details, cart);
 
-          // prompt download for parent
+          // Prompt download for parent
           try {
             const fileName = `SACollege_Receipt_${learnerName || 'Order'}.pdf`;
             doc.save(fileName);
@@ -737,12 +737,11 @@
 
           // Prepare email template parameters for EmailJS
           const cartTotal = cart.reduce((sum, it) => sum + (it.price * it.qty), 0);
-
-          // Build a readable orderDetails string from cart items
           const orderDetails = cart.map(it => 
             `${it.name} | Size: ${it.size} | Qty: ${it.qty} | R${(it.price*it.qty).toFixed(2)}`
           ).join('\n');
 
+          // Primary email parameters (for school)
           const emailParams = {
             parentName: parentName,
             contactNumber: contactNumber,
@@ -755,11 +754,7 @@
             cartTotal: `R${cartTotal.toFixed(2)}`
           };
 
-          // Send primary email using EmailJS
-          const primaryEmailResponse = await emailjs.send("service_fe66puw", "template_oq150rd", emailParams);
-          console.log("Primary email sent successfully:", primaryEmailResponse);
-
-          // Prepare and send confirmation email to parent with the specified template
+          // Parent email parameters
           const parentEmailParams = {
             to_email: email,
             parentName: parentName,
@@ -770,18 +765,46 @@
             cartTotal: `R${cartTotal.toFixed(2)}`
           };
 
-          const parentEmailResponse = await emailjs.send("service_fe66puw", "template_cey3iq3", parentEmailParams);
-          console.log("Parent confirmation email sent successfully:", parentEmailResponse);
+          let primaryEmailSuccess = false;
+          let parentEmailSuccess = false;
 
-          alert("Order submitted successfully. Receipt downloaded and confirmation emails sent to both recipients.");
-          // reset form and cart
+          // Send primary email (to school)
+          try {
+            const primaryEmailResponse = await emailjs.send("service_fe66puw", "template_oq150rd", emailParams);
+            console.log("Primary email sent successfully to school:", primaryEmailResponse);
+            primaryEmailSuccess = true;
+          } catch (err) {
+            console.error("Error sending primary email to school:", err);
+          }
+
+          // Send parent confirmation email
+          try {
+            const parentEmailResponse = await emailjs.send("service_fe66puw", "template_cey3iq3", parentEmailParams);
+            console.log("Parent confirmation email sent successfully:", parentEmailResponse);
+            parentEmailSuccess = true;
+          } catch (err) {
+            console.error("Error sending parent confirmation email:", err);
+          }
+
+          // Determine alert message based on email success
+          if (primaryEmailSuccess && parentEmailSuccess) {
+            alert("Order submitted successfully. Receipt downloaded and confirmation emails sent to both school and parent.");
+          } else if (primaryEmailSuccess) {
+            alert("Order submitted successfully and receipt downloaded, but the parent confirmation email failed to send. Please check the EmailJS template (template_cey3iq3) configuration.");
+          } else if (parentEmailSuccess) {
+            alert("Order submitted successfully and receipt downloaded, but the school notification email failed to send. Please check the EmailJS template (template_oq150rd) configuration.");
+          } else {
+            alert("Order submitted successfully and receipt downloaded, but both emails failed to send. Please check EmailJS template configurations.");
+          }
+
+          // Reset form and cart
           document.getElementById('orderForm').reset();
           document.querySelectorAll('.item-row .qty').forEach(q => q.value = 0);
           collectCartFromDOM();
           renderCart();
         } catch (err) {
           console.error("Error during submission:", err);
-          alert("Order saved and receipt downloaded, but there was an issue sending one or both emails. Please verify EmailJS template configuration at https://dashboard.emailjs.com.");
+          alert("Order saved and receipt downloaded, but an error occurred. Please check EmailJS setup and console logs for details.");
         } finally {
           submitBtn.disabled = false;
           submitBtn.textContent = 'Submit Order & Download Receipt';
