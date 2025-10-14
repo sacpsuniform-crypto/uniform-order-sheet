@@ -768,23 +768,22 @@
           let primaryEmailSuccess = false;
           let parentEmailSuccess = false;
 
-          // Send primary email (to school)
-          try {
-            const primaryEmailResponse = await emailjs.send("service_fe66puw", "template_oq150rd", emailParams);
-            console.log("Primary email sent successfully to school:", primaryEmailResponse);
-            primaryEmailSuccess = true;
-          } catch (err) {
-            console.error("Error sending primary email to school:", err);
-          }
+          // Send both emails — school and parent
+try {
+  // School email
+  const primaryEmailResponse = await emailjs.send("service_fe66puw", "template_oq150rd", emailParams);
+  console.log("Primary email sent successfully to school:", primaryEmailResponse);
+  primaryEmailSuccess = true;
 
-          // Send parent confirmation email
-          try {
-            const parentEmailResponse = await emailjs.send("service_fe66puw", "template_cey3iq3", parentEmailParams);
-            console.log("Parent confirmation email sent successfully:", parentEmailResponse);
-            parentEmailSuccess = true;
-          } catch (err) {
-            console.error("Error sending parent confirmation email:", err);
-          }
+  // Parent confirmation email (new template)
+  const parentEmailResponse = await emailjs.send("service_fe66puw", "template_cey3iq3", parentEmailParams);
+  console.log("Parent email sent successfully:", parentEmailResponse);
+  parentEmailSuccess = true;
+
+} catch (err) {
+  console.error("Email sending failed:", err);
+}
+
 
           // Determine alert message based on email success
           if (primaryEmailSuccess && parentEmailSuccess) {
