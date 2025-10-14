@@ -713,6 +713,16 @@
           const grade = document.getElementById('grade').value.trim();
           const adminNumber = document.getElementById('adminNumber').value.trim();
 
+          // Validate email format
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(email)) {
+            console.error("Invalid email address:", email);
+            alert("Please enter a valid email address.");
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Submit Order & Download Receipt';
+            return;
+          }
+
           // Collect cart items from DOM
           collectCartFromDOM();
           if(cart.length === 0){
@@ -741,12 +751,11 @@
             `${it.name} | Size: ${it.size} | Qty: ${it.qty} | R${(it.price*it.qty).toFixed(2)}`
           ).join('\n');
 
-          // Primary email parameters (for school)
+          // Email parameters (sent to parent with BCC to Razawok@sacps.co.za via template)
           const emailParams = {
+            email: email,
             parentName: parentName,
             contactNumber: contactNumber,
-            email: email,
-            parentEmail: email,
             learnerName: learnerName,
             grade: grade,
             adminNumber: adminNumber,
@@ -754,41 +763,14 @@
             cartTotal: `R${cartTotal.toFixed(2)}`
           };
 
-          // Parent email parameters
-          const parentEmailParams = {
-            to_email: email,
-            parentName: parentName,
-            learnerName: learnerName,
-            grade: grade,
-            adminNumber: adminNumber,
-            orderDetails: orderDetails,
-            cartTotal: `R${cartTotal.toFixed(2)}`
-          };
-
-          let primaryEmailSuccess = false;
-          let parentEmailSuccess = false;
-
-          // Send both emails — school and parent
+          // Send email
           try {
-          // School email
-         const primaryEmailResponse = await emailjs.send("service_fe66puw", "template_oq150rd", emailParams);
-         console.log("Primary email sent successfully to school:", primaryEmailResponse);
-         primaryEmailSuccess = true;
-  
-         } catch (err) {
-         console.error("Email sending failed:", err);
-         }
-
-
-          // Determine alert message based on email success
-          if (primaryEmailSuccess && parentEmailSuccess) {
-            alert("Order submitted successfully. Receipt downloaded and confirmation emails sent to both school and parent.");
-          } else if (primaryEmailSuccess) {
-            alert("Order submitted successfully and receipt downloaded, but the parent confirmation email failed to send. Please check the EmailJS template (template_cey3iq3) configuration.");
-          } else if (parentEmailSuccess) {
-            alert("Order submitted successfully and receipt downloaded, but the school notification email failed to send. Please check the EmailJS template (template_oq150rd) configuration.");
-          } else {
-            alert("Order submitted successfully and receipt downloaded, but both emails failed to send. Please check EmailJS template configurations.");
+            const emailResponse = await emailjs.send("service_fe66puw", "template_oq150rd", emailParams);
+            console.log("Email sent successfully:", emailResponse);
+            alert("Order submitted successfully. Receipt downloaded and confirmation email sent to parent with BCC to school.");
+          } catch (err) {
+            console.error("Failed to send email:", err);
+            alert("Order submitted successfully and receipt downloaded, but the email failed to send. Please check EmailJS configuration (Service ID: service_fe66puw, Template ID: template_oq150rd) and console logs.");
           }
 
           // Reset form and cart
