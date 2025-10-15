@@ -8,11 +8,14 @@
   <!-- =========================
        Libraries
        - jsPDF + AutoTable for PDF generation
+       - EmailJS for sending emails
        ========================= -->
 
   <!-- jsPDF and autotable -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+  <!-- EmailJS SDK -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
   <style>
     :root{
@@ -271,12 +274,12 @@
     <h3>Important Uniform Order Information</h3>
     <p>SA College Private School is partnering with <strong>Reaora</strong> and <strong>N2S Suppliers</strong> to offer school uniforms and sportswear at more affordable prices for parents.</p>
     <p><strong>Note:</strong> Select Outfitters remains an approved supplier, and parents may continue purchasing from them if preferred.</p>
-    <h3><span class="emoji">🗓</span> Uniform Orders</h3>
+    <h3>🗓 Uniform Orders</h3>
     <ul>
       <li>Orders placed before <strong>1 November 2025</strong> will be delivered to the school and handed to your child before the last day of term, ensuring readiness for January 2026 without queuing.</li>
       <li>Orders placed between <strong>1 and 30 December 2025</strong> will be delivered by <strong>9 January 2026</strong>.</li>
     </ul>
-    <h3><span class="emoji">🏅</span> Sportswear Orders</h3>
+    <h3>🏅 Sportswear Orders</h3>
     <ul>
       <li>All sportswear orders must be placed by <strong>15 November 2025</strong>.</li>
       <li>Expected delivery date: <strong>5 December 2025</strong>.</li>
@@ -377,10 +380,13 @@
   </main>
 
   <!-- =========================
-       Script: Data, render, cart, PDF
+       Script: Data, render, cart, PDF, EmailJS
        ========================= -->
   <script>
     (function(){
+      // Initialize EmailJS with your public key
+      emailjs.init('AXfbwxKNy1g4wKAX8');
+
       // ---------------------------
       // Data: sizes & items
       // ---------------------------
@@ -620,6 +626,7 @@
       // PDF generation
       // - includes logo if available (attempts to add image)
       // - uses school colours for header
+      // - Updated to return base64 for attachment
       // ---------------------------
       async function createReceiptPDF(details, cartItems){
         // details: { parentName, contactNumber, email, learnerName, grade, adminNumber }
@@ -702,16 +709,15 @@
         doc.setTextColor(120,120,120);
         doc.text("SA College Private School • finance@sacps.co.za • Tel: 012 326 4580 / 064 548 9428", 18, doc.internal.pageSize.getHeight() - 30);
 
-        // Return the jsPDF doc object and a base64 string for attaching if desired
+        // Return the jsPDF doc object and base64
         return {
           doc,
-          dataUrl: doc.output('datauristring'), // datauri (useful for inline preview)
-          base64: doc.output('dataurlstring') // this returns data:application/pdf;filename=generated.pdf;base64,....
+          base64: doc.output('datauribase64') // Base64 string without prefix for EmailJS
         };
       }
 
       // ---------------------------
-      // Submit: generate PDF, download
+      // Submit: generate PDF, download, send via EmailJS
       // ---------------------------
       document.getElementById('orderForm').addEventListener('submit', async function(e){
         e.preventDefault();
@@ -741,19 +747,43 @@
 
           const details = { parentName, contactNumber, email, learnerName, grade, adminNumber };
 
-          // create PDF
-          const { doc } = await createReceiptPDF(details, cart);
+          // create PDF and get base64
+          const { doc, base64 } = await createReceiptPDF(details, cart);
 
           // prompt download for parent
           try {
             const fileName = `SACollege_Receipt_${learnerName || 'Order'}.pdf`;
             // save the file locally for parent
             doc.save(fileName);
+
+            // Prepare order summary for email template
+            let cartSummary = cart.map(it => `${it.name} - Size: ${it.size}, Qty: ${it.qty}, Line: R${(it.qty * it.price).toFixed(2)}`).join('\n');
+            const grand = cart.reduce((s, it) => s + (it.price * it.qty), 0);
+
+            // EmailJS parameters - adjust variable names to match your EmailJS template exactly!
+            const templateParams = {
+              parent_name: parentName,
+              contact_number: contactNumber,
+              parent_email: email,
+              learner_name: learnerName,
+              grade: grade,
+              admin_number: adminNumber,
+              cart_items: cartSummary,
+              grand_total: `R${grand.toFixed(2)}`,
+              // For attachment: If your template supports file attachments, use a variable like 'attachment'
+              // EmailJS doesn't natively support attachments in free tier templates; you may need to include base64 in body or use a service integration.
+              // If not using attachment, remove this. For now, commenting out - send details only.
+              // attachment: base64 (or { file: base64, name: fileName })
+            };
+
+            // Send email via EmailJS (details only; attachment may require premium or custom setup)
+            await emailjs.send('service_sy0rfqk', 'template_txaf1lf', templateParams);
+
+            alert("Order submitted successfully. Receipt downloaded and order details emailed to school. Please follow the payment instructions and email your proof of payment along with the receipt.");
           } catch (err){
             console.warn('PDF download failed locally:', err);
           }
 
-          alert("Order submitted successfully. Receipt downloaded. Please follow the payment instructions and email your proof of payment along with the receipt.");
           // reset form and cart
           document.getElementById('orderForm').reset();
           // clear all qty inputs
