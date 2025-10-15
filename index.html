@@ -759,17 +759,17 @@
             cart: cart,
             grandTotal: `R${grand.toFixed(2)}`
           };
-          fetch('https://script.google.com/macros/s/AKfycbwtsG4mmo8cie3bKSSKKtMXuxB76nt1GZat8VR1y9PF8FypMP_EiUHIYt62uYuLyJb0/exec', {
-            method: 'POST',
-            mode: 'no-cors', // Needed for cross-origin; can't read response, but it works
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(sheetPayload)
-          }).then(() => {
-            console.log('Order details sent to Google Sheet successfully.');
-          }).catch(err => {
-            console.error('Failed to send to Google Sheet:', err);
-            // Optional: alert('Warning: Order submitted but sheet update failed. Contact admin.');
-          });
+         fetch('https://script.google.com/macros/s/AKfycbwtsG4mmo8cie3bKSSKKtMXuxB76nt1GZat8VR1y9PF8FypMP_EiUHIYt62uYuLyJb0/exec', {
+  method: 'POST',
+  mode: 'no-cors',
+  headers: {'Content-Type': 'application/json'},
+  body: JSON.stringify(sheetPayload)
+}).then(() => {
+  console.log('Fetch sent to Google Sheet. Payload:', sheetPayload);
+}).catch(err => {
+  console.error('Fetch error sending to Google Sheet:', err);
+  alert('Warning: Order submitted but sheet update may have failed. Contact admin.');
+});
 
           // Create PDF and get base64
           const { doc, base64 } = await createReceiptPDF(details, cart);
