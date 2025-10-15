@@ -719,110 +719,85 @@
       // ---------------------------
       // Submit: generate PDF, download, send via EmailJS, save to Google Sheet
       // ---------------------------
-      document.getElementById('orderForm').addEventListener('submit', async function(e){
-        e.preventDefault();
+document.getElementById('orderForm').addEventListener('submit', async function(e){
+  e.preventDefault();
 
-        // Disable submit to avoid double submissions
-        const submitBtn = document.getElementById('submitBtn');
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Processing...';
+  // Disable submit
+  const submitBtn = document.getElementById('submitBtn');
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Processing...';
 
-        try {
-          // Gather form details and cart
-          const parentName = document.getElementById('parentName').value.trim();
-          const contactNumber = document.getElementById('contactNumber').value.trim();
-          const email = document.getElementById('email').value.trim();
-          const learnerName = document.getElementById('learnerName').value.trim();
-          const grade = document.getElementById('grade').value.trim();
-          const adminNumber = document.getElementById('adminNumber').value.trim();
+  try {
+    // Gather form details and cart
+    const parentName = document.getElementById('parentName').value.trim();
+    const contactNumber = document.getElementById('contactNumber').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const learnerName = document.getElementById('learnerName').value.trim();
+    const grade = document.getElementById('grade').value.trim();
+    const adminNumber = document.getElementById('adminNumber').value.trim();
 
-          // Collect cart items from DOM
-          collectCartFromDOM();
-          if(cart.length === 0){
-            alert('Please add at least one uniform item before submitting.');
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Submit Order & Download Receipt';
-            return;
-          }
+    // Collect cart items from DOM
+    collectCartFromDOM();
+    if(cart.length === 0){
+      alert('Please add at least one uniform item before submitting.');
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Submit Order & Download Receipt';
+      return;
+    }
 
-          const details = { parentName, contactNumber, email, learnerName, grade, adminNumber };
-          const grand = cart.reduce((s, it) => s + (it.price * it.qty), 0);
+    const details = { parentName, contactNumber, email, learnerName, grade, adminNumber };
+    const grand = cart.reduce((s, it) => s + (it.price * it.qty), 0);
 
-          // Send to Google Sheet (fire-and-forget; failures logged but don't block submission)
-          const sheetPayload = {
-            parentName: details.parentName,
-            contactNumber: details.contactNumber,
-            email: details.email,
-            learnerName: details.learnerName,
-            grade: details.grade,
-            adminNumber: details.adminNumber,
-            cart: cart,
-            grandTotal: `R${grand.toFixed(2)}`
-          };
-         fetch('https://script.google.com/macros/s/AKfycbwvKoIUGk4dcZ5erPkwQubB-Fe1LMZEfiRlukhiTrobjn99mC_ayuHHLS3kCPDS80M5/exec', {
-  method: 'POST',
-  mode: 'no-cors',
-  headers: {'Content-Type': 'application/json'},
-  body: JSON.stringify(sheetPayload)
-}).then(() => {
-  console.log('Fetch sent to Google Sheet. Payload:', sheetPayload);
-}).catch(err => {
-  console.error('Fetch error sending to Google Sheet:', err);
-  alert('Warning: Order submitted but sheet update may have failed. Contact admin.');
+    // Create PDF and get base64
+    const { doc, base64 } = await createReceiptPDF(details, cart);
+
+    // Prompt download for parent
+    const fileName = `SACollege_Receipt_${learnerName || 'Order'}.pdf`;
+    doc.save(fileName);
+
+    // Improved cart summary for email body
+    let orderDetails = '';
+    cart.forEach(it => {
+      const lineTotal = (it.qty * it.price).toFixed(2);
+      orderDetails += `${it.name} - Size: ${it.size}, Qty: ${it.qty}, Unit: R${it.price.toFixed(2)}, Line: R${lineTotal}\n`;
+    });
+
+    // EmailJS parameters
+    const templateParams = {
+      parentName: parentName,
+      contactNumber: contactNumber,
+      email: email,
+      learnerName: learnerName,
+      grade: grade,
+      adminNumber: adminNumber,
+      orderDetails: orderDetails,
+      cartTotal: `R${grand.toFixed(2)}`
+    };
+
+    // Log params for debugging
+    console.log('Sending EmailJS params:', templateParams);
+
+    // Send email via EmailJS with correct IDs
+    await emailjs.send('service_myhmc1q', 'template_oq150rd', templateParams)
+      .then(response => console.log('EmailJS response:', response))
+      .catch(err => console.error('EmailJS error:', err));
+
+    alert("Order submitted successfully! Order Form downloaded and details emailed to school.");
+
+    // Reset form and cart
+    document.getElementById('orderForm').reset();
+    document.querySelectorAll('.item-row .qty').forEach(q => q.value = 0);
+    collectCartFromDOM();
+    renderCart();
+
+  } catch (err) {
+    console.error("Submit error:", err);
+    alert("An error occurred while submitting. Please try again. Check console for details.");
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Submit Order & Download Order Form';
+  }
 });
-
-          // Create PDF and get base64
-          const { doc, base64 } = await createReceiptPDF(details, cart);
-
-          // Prompt download for parent
-          try {
-            const fileName = `SACollege_Receipt_${learnerName || 'Order'}.pdf`;
-            // Save the file locally for parent
-            doc.save(fileName);
-
-            // Improved cart summary as formatted text for email body
-            let orderDetails = '';
-            cart.forEach(it => {
-              const lineTotal = (it.qty * it.price).toFixed(2);
-              orderDetails += `${it.name} - Size: ${it.size}, Qty: ${it.qty}, Unit: R${it.price.toFixed(2)}, Line: R${lineTotal}\n`;
-            });
-
-            // EmailJS parameters - Matched to your template variables
-            const templateParams = {
-              parentName: parentName,
-              learnerName: learnerName,
-              grade: grade,
-              adminNumber: adminNumber,
-              orderDetails: orderDetails,
-              cartTotal: `R${grand.toFixed(2)}`
-            };
-
-            // Log params for debugging
-            console.log('Sending EmailJS params:', templateParams);
-
-            // Send email via EmailJS
-            await emailjs.send('service_myhmc1q', 'template_txaf1lf', templateParams);
-
-            alert("Order submitted successfully! Receipt downloaded, details emailed to school, and saved to records.");
-          } catch (err){
-            console.warn('PDF download or email failed:', err);
-            throw err;
-          }
-
-          // Reset form and cart
-          document.getElementById('orderForm').reset();
-          document.querySelectorAll('.item-row .qty').forEach(q => q.value = 0);
-          collectCartFromDOM();
-          renderCart();
-
-        } catch (err) {
-          console.error("Submit error:", err);
-          alert("An error occurred while submitting. Please try again. Check console for details.");
-        } finally {
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'Submit Order & Download Receipt';
-        }
-      });
 
       // Ensure cart is rendered initially (shows 'No items')
       collectCartFromDOM();
