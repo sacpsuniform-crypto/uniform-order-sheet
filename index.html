@@ -7,20 +7,8 @@
 
   <!-- =========================
        Libraries
-       - EmailJS for sending emails
        - jsPDF + AutoTable for PDF generation
        ========================= -->
-  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-  <script>
-    (function(){
-      try {
-        emailjs.init("GEyF3k2gS9_KFma8Y");
-        console.log("EmailJS initialized");
-      } catch (e) {
-        console.warn("EmailJS init failed:", e);
-      }
-    })();
-  </script>
 
   <!-- jsPDF and autotable -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -389,7 +377,7 @@
   </main>
 
   <!-- =========================
-       Script: Data, render, cart, PDF, email
+       Script: Data, render, cart, PDF
        ========================= -->
   <script>
     (function(){
@@ -714,7 +702,7 @@
         doc.setTextColor(120,120,120);
         doc.text("SA College Private School • finance@sacps.co.za • Tel: 012 326 4580 / 064 548 9428", 18, doc.internal.pageSize.getHeight() - 30);
 
-        // Return the jsPDF doc object and a base64 string for attaching to EmailJS if desired
+        // Return the jsPDF doc object and a base64 string for attaching if desired
         return {
           doc,
           dataUrl: doc.output('datauristring'), // datauri (useful for inline preview)
@@ -723,7 +711,7 @@
       }
 
       // ---------------------------
-      // Submit: generate PDF, download, send email via EmailJS
+      // Submit: generate PDF, download
       // ---------------------------
       document.getElementById('orderForm').addEventListener('submit', async function(e){
         e.preventDefault();
@@ -754,7 +742,7 @@
           const details = { parentName, contactNumber, email, learnerName, grade, adminNumber };
 
           // create PDF
-          const { doc, dataUrl, base64 } = await createReceiptPDF(details, cart);
+          const { doc } = await createReceiptPDF(details, cart);
 
           // prompt download for parent
           try {
@@ -765,45 +753,13 @@
             console.warn('PDF download failed locally:', err);
           }
 
-          // Prepare email template parameters for EmailJS
-          const cartTotal = cart.reduce((sum, it) => sum + (it.price * it.qty), 0);
-
-          // Build a readable orderDetails string from cart items
-          const orderDetails = cart.map(it => 
-            `${it.name} | Size: ${it.size} | Qty: ${it.qty} | R${(it.price*it.qty).toFixed(2)}`
-          ).join('\n');
-
-          const emailParams = {
-            parentName: parentName,       // matches {{parentName}}
-            contactNumber: contactNumber, // matches {{contactNumber}}
-            email: email,                 // matches {{email}}
-            parentEmail: email,           // matches {{parentEmail}}
-            learnerName: learnerName,     // matches {{learnerName}}
-            grade: grade,                 // matches {{grade}}
-            adminNumber: adminNumber,     // matches {{adminNumber}}
-            orderDetails: orderDetails,   // matches {{orderDetails}}
-            cartTotal: `R${cartTotal.toFixed(2)}` // matches {{cartTotal}}
-          };
-
-          // Send email using EmailJS service/template from your account
-          // Service ID: service_fe66puw
-          // Template ID: template_oq150rd
-          // (emailjs.init called earlier with public key)
-          try {
-            const response = await emailjs.send("service_fe66puw", "template_oq150rd", emailParams);
-            console.log("EmailJS response:", response);
-            alert("Order submitted successfully. Receipt downloaded.");
-            // reset form and cart
-            document.getElementById('orderForm').reset();
-            // clear all qty inputs
-            document.querySelectorAll('.item-row .qty').forEach(q => q.value = 0);
-            collectCartFromDOM();
-            renderCart();
-          } catch (sendErr) {
-            console.error("EmailJS send error:", sendErr);
-            // Even if email fails, the parent still gets the downloaded receipt
-            alert("Order saved and receipt downloaded, but sending email notification failed. Please check EmailJS setup.");
-          }
+          alert("Order submitted successfully. Receipt downloaded. Please follow the payment instructions and email your proof of payment along with the receipt.");
+          // reset form and cart
+          document.getElementById('orderForm').reset();
+          // clear all qty inputs
+          document.querySelectorAll('.item-row .qty').forEach(q => q.value = 0);
+          collectCartFromDOM();
+          renderCart();
 
         } catch (err) {
           console.error("Submit error:", err);
