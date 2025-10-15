@@ -274,12 +274,12 @@
     <h3>Important Uniform Order Information</h3>
     <p>SA College Private School is partnering with <strong>Reaora</strong> and <strong>N2S Suppliers</strong> to offer school uniforms and sportswear at more affordable prices for parents.</p>
     <p><strong>Note:</strong> Select Outfitters remains an approved supplier, and parents may continue purchasing from them if preferred.</p>
-    <h3>🗓 Uniform Orders</h3>
+    <h3><span class="emoji">🗓</span> Uniform Orders</h3>
     <ul>
       <li>Orders placed before <strong>1 November 2025</strong> will be delivered to the school and handed to your child before the last day of term, ensuring readiness for January 2026 without queuing.</li>
       <li>Orders placed between <strong>1 and 30 December 2025</strong> will be delivered by <strong>9 January 2026</strong>.</li>
     </ul>
-    <h3>🏅 Sportswear Orders</h3>
+    <h3><span class="emoji">🏅</span> Sportswear Orders</h3>
     <ul>
       <li>All sportswear orders must be placed by <strong>15 November 2025</strong>.</li>
       <li>Expected delivery date: <strong>5 December 2025</strong>.</li>
@@ -373,7 +373,7 @@
         </button>
 
         <div class="spaced muted" style="font-size:13px;">
-          After submitting, a PDF receipt will download for the parent.
+          After submitting, a PDF receipt will download for the parent, and order details will be emailed to the school.
         </div>
       </aside>
     </form>
@@ -626,7 +626,7 @@
       // PDF generation
       // - includes logo if available (attempts to add image)
       // - uses school colours for header
-      // - Updated to return base64 for attachment
+      // - Updated to return base64 for potential attachment (paid plan only)
       // ---------------------------
       async function createReceiptPDF(details, cartItems){
         // details: { parentName, contactNumber, email, learnerName, grade, adminNumber }
@@ -712,7 +712,7 @@
         // Return the jsPDF doc object and base64
         return {
           doc,
-          base64: doc.output('datauribase64') // Base64 string without prefix for EmailJS
+          base64: doc.output('datauribase64') // Base64 string without prefix for EmailJS (paid plan only)
         };
       }
 
@@ -756,32 +756,35 @@
             // save the file locally for parent
             doc.save(fileName);
 
-            // Prepare order summary for email template
-            let cartSummary = cart.map(it => `${it.name} - Size: ${it.size}, Qty: ${it.qty}, Line: R${(it.qty * it.price).toFixed(2)}`).join('\n');
+            // Improved cart summary as formatted text for email body (preserves whitespace in pre-wrap)
+            let orderDetails = '';
+            cart.forEach(it => {
+              const lineTotal = (it.qty * it.price).toFixed(2);
+              orderDetails += `${it.name} - Size: ${it.size}, Qty: ${it.qty}, Unit: R${it.price.toFixed(2)}, Line: R${lineTotal}\n`;
+            });
             const grand = cart.reduce((s, it) => s + (it.price * it.qty), 0);
 
-            // EmailJS parameters - adjust variable names to match your EmailJS template exactly!
+            // EmailJS parameters - Matched EXACTLY to your template variables: {{parentName}}, {{learnerName}}, {{grade}}, {{adminNumber}}, {{orderDetails}}, {{cartTotal}}
             const templateParams = {
-              parent_name: parentName,
-              contact_number: contactNumber,
-              parent_email: email,
-              learner_name: learnerName,
+              parentName: parentName,
+              learnerName: learnerName,
               grade: grade,
-              admin_number: adminNumber,
-              cart_items: cartSummary,
-              grand_total: `R${grand.toFixed(2)}`,
-              // For attachment: If your template supports file attachments, use a variable like 'attachment'
-              // EmailJS doesn't natively support attachments in free tier templates; you may need to include base64 in body or use a service integration.
-              // If not using attachment, remove this. For now, commenting out - send details only.
-              // attachment: base64 (or { file: base64, name: fileName })
+              adminNumber: adminNumber,
+              orderDetails: orderDetails,
+              cartTotal: `R${grand.toFixed(2)}`
             };
 
-            // Send email via EmailJS (details only; attachment may require premium or custom setup)
+            // Log params for debugging (check browser console)
+            console.log('Sending EmailJS params:', templateParams);
+
+            // Send email via EmailJS
             await emailjs.send('service_sy0rfqk', 'template_txaf1lf', templateParams);
 
-            alert("Order submitted successfully. Receipt downloaded and order details emailed to school. Please follow the payment instructions and email your proof of payment along with the receipt.");
+            alert("Order submitted successfully! Receipt downloaded for you, and details emailed to school. Please follow payment instructions.");
           } catch (err){
             console.warn('PDF download failed locally:', err);
+            // Still attempt to send email if possible
+            throw err;
           }
 
           // reset form and cart
@@ -793,15 +796,12 @@
 
         } catch (err) {
           console.error("Submit error:", err);
-          alert("An error occurred while submitting. Please try again.");
+          alert("An error occurred while submitting. Please try again. Check console for details.");
         } finally {
           submitBtn.disabled = false;
           submitBtn.textContent = 'Submit Order & Download Receipt';
         }
       });
-
-      // Small UX improvement: allow pressing Enter in any field to submit (native form)
-      // handled by form submit above.
 
       // Ensure cart is rendered initially (shows 'No items')
       collectCartFromDOM();
