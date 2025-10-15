@@ -373,14 +373,14 @@
         </button>
 
         <div class="spaced muted" style="font-size:13px;">
-          After submitting, a PDF receipt will download for the parent, and order details will be emailed to the school.
+          After submitting, a PDF receipt will download for the parent, order details will be emailed to the school, and saved to our records.
         </div>
       </aside>
     </form>
   </main>
 
   <!-- =========================
-       Script: Data, render, cart, PDF, EmailJS
+       Script: Data, render, cart, PDF, EmailJS, Google Sheet
        ========================= -->
   <script>
     (function(){
@@ -717,7 +717,7 @@
       }
 
       // ---------------------------
-      // Submit: generate PDF, download, send via EmailJS
+      // Submit: generate PDF, download, send via EmailJS, save to Google Sheet
       // ---------------------------
       document.getElementById('orderForm').addEventListener('submit', async function(e){
         e.preventDefault();
@@ -728,7 +728,7 @@
         submitBtn.textContent = 'Processing...';
 
         try {
-          // gather form details and cart
+          // Gather form details and cart
           const parentName = document.getElementById('parentName').value.trim();
           const contactNumber = document.getElementById('contactNumber').value.trim();
           const email = document.getElementById('email').value.trim();
@@ -736,7 +736,7 @@
           const grade = document.getElementById('grade').value.trim();
           const adminNumber = document.getElementById('adminNumber').value.trim();
 
-          // collect cart items from DOM
+          // Collect cart items from DOM
           collectCartFromDOM();
           if(cart.length === 0){
             alert('Please add at least one uniform item before submitting.');
@@ -746,25 +746,48 @@
           }
 
           const details = { parentName, contactNumber, email, learnerName, grade, adminNumber };
+          const grand = cart.reduce((s, it) => s + (it.price * it.qty), 0);
 
-          // create PDF and get base64
+          // Send to Google Sheet (fire-and-forget; failures logged but don't block submission)
+          const sheetPayload = {
+            parentName: details.parentName,
+            contactNumber: details.contactNumber,
+            email: details.email,
+            learnerName: details.learnerName,
+            grade: details.grade,
+            adminNumber: details.adminNumber,
+            cart: cart,
+            grandTotal: `R${grand.toFixed(2)}`
+          };
+          fetch('https://script.google.com/macros/s/AKfycbwtsG4mmo8cie3bKSSKKtMXuxB76nt1GZat8VR1y9PF8FypMP_EiUHIYt62uYuLyJb0/exec', {
+            method: 'POST',
+            mode: 'no-cors', // Needed for cross-origin; can't read response, but it works
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(sheetPayload)
+          }).then(() => {
+            console.log('Order details sent to Google Sheet successfully.');
+          }).catch(err => {
+            console.error('Failed to send to Google Sheet:', err);
+            // Optional: alert('Warning: Order submitted but sheet update failed. Contact admin.');
+          });
+
+          // Create PDF and get base64
           const { doc, base64 } = await createReceiptPDF(details, cart);
 
-          // prompt download for parent
+          // Prompt download for parent
           try {
             const fileName = `SACollege_Receipt_${learnerName || 'Order'}.pdf`;
-            // save the file locally for parent
+            // Save the file locally for parent
             doc.save(fileName);
 
-            // Improved cart summary as formatted text for email body (preserves whitespace in pre-wrap)
+            // Improved cart summary as formatted text for email body
             let orderDetails = '';
             cart.forEach(it => {
               const lineTotal = (it.qty * it.price).toFixed(2);
               orderDetails += `${it.name} - Size: ${it.size}, Qty: ${it.qty}, Unit: R${it.price.toFixed(2)}, Line: R${lineTotal}\n`;
             });
-            const grand = cart.reduce((s, it) => s + (it.price * it.qty), 0);
 
-            // EmailJS parameters - Matched EXACTLY to your template variables: {{parentName}}, {{learnerName}}, {{grade}}, {{adminNumber}}, {{orderDetails}}, {{cartTotal}}
+            // EmailJS parameters - Matched to your template variables
             const templateParams = {
               parentName: parentName,
               learnerName: learnerName,
@@ -774,22 +797,20 @@
               cartTotal: `R${grand.toFixed(2)}`
             };
 
-            // Log params for debugging (check browser console)
+            // Log params for debugging
             console.log('Sending EmailJS params:', templateParams);
 
             // Send email via EmailJS
             await emailjs.send('service_sy0rfqk', 'template_txaf1lf', templateParams);
 
-            alert("Order submitted successfully! Receipt downloaded for you, and details emailed to school. Please follow payment instructions.");
+            alert("Order submitted successfully! Receipt downloaded, details emailed to school, and saved to records.");
           } catch (err){
-            console.warn('PDF download failed locally:', err);
-            // Still attempt to send email if possible
+            console.warn('PDF download or email failed:', err);
             throw err;
           }
 
-          // reset form and cart
+          // Reset form and cart
           document.getElementById('orderForm').reset();
-          // clear all qty inputs
           document.querySelectorAll('.item-row .qty').forEach(q => q.value = 0);
           collectCartFromDOM();
           renderCart();
@@ -814,9 +835,5 @@
 
     })();
   </script>
-
-  <!-- =========================
-       End file
-       ========================= -->
 </body>
 </html>
