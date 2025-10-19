@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>SA College Private School - Uniform Order</title>
+  <title>SA College Private School - Uniform Order Form</title>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
@@ -81,7 +81,6 @@
       background: #00274d !important;
       transform: scale(1.2);
     }
-    .secret-admin.show { opacity: 1 !important; }
 
     /* PASSWORD MODAL */
     .password-modal {
@@ -228,6 +227,18 @@
     .product-row select.size { width:110px; padding:6px; border-radius:6px; border:1px solid #d7dbe0; }
     .product-row input.qty { width:70px; padding:6px; border-radius:6px; border:1px solid #d7dbe0; }
 
+    /* COMPULSORY NOTE */
+    .compulsory-note {
+      background: #fff3cd;
+      border: 1px solid #ffeaa7;
+      border-radius: 6px;
+      padding: 8px;
+      margin: 8px 0;
+      font-size: 12px;
+      color: #856404;
+      font-weight: 600;
+    }
+
     /* Right column - cart */
     .cart {
       background:var(--white);
@@ -317,7 +328,7 @@
     <img class="logo" id="schoolLogo" src="logo.jpg" alt="SA College Private School logo" />
     <div class="heading">
       <h1>SA College Private School</h1>
-      <p class="muted">finance@sacps.co.za • info@sacps.co.za • sacpsuniform@gmail.com • Tel: 012 326 4580 / 064 548 9428</p>
+      <p class="muted">finance@sacps.co.za • info@sacps.co.za • uniform@sacps.co.za • Tel: 012 326 4580 / 064 548 9428</p>
     </div>
   </header>
 
@@ -362,9 +373,20 @@
         <div class="section" id="productsSection">
           <h2 style="margin-top:0; color:var(--navy)">Uniforms & Sports</h2>
 
-          <!-- Reaora -->
-          <div class="category-card" id="cat-reaora">
-            <div class="cat-header">Reaora</div>
+          <!-- PRIMARY Reaora FIRST -->
+          <div class="category-card" id="cat-reaora-primary">
+            <div class="cat-header">Reaora - Primary Uniform</div>
+            <div style="display:flex; gap:16px; font-weight:700; font-size:13px; margin-bottom:8px;">
+              <div style="flex:1; text-align:left;">Item</div>
+              <div style="width:120px; text-align:center;">Size</div>
+              <div style="width:80px; text-align:center;">Quantity</div>
+            </div>
+            <div class="card-body"></div>
+          </div>
+
+          <!-- HIGHSCHOOL Reaora -->
+          <div class="category-card" id="cat-reaora-hs">
+            <div class="cat-header">Reaora - Highschool Uniform</div>
             <div style="display:flex; gap:16px; font-weight:700; font-size:13px; margin-bottom:8px;">
               <div style="flex:1; text-align:left;">Item</div>
               <div style="width:120px; text-align:center;">Size</div>
@@ -375,7 +397,7 @@
 
           <!-- N2S -->
           <div class="category-card" id="cat-n2s">
-            <div class="cat-header">N2S</div>
+            <div class="cat-header">N2S - Sportswear</div>
             <div style="display:flex; gap:16px; font-weight:700; font-size:13px; margin-bottom:8px;">
               <div style="flex:1; text-align:left;">Item</div>
               <div style="width:120px; text-align:center;">Size</div>
@@ -414,20 +436,20 @@
           </h3>
           <p>After submitting your order, please make an <strong>EFT payment</strong> to the normal account.</p>
           <p>Use <strong>"Uniform – [Admin number-Child's Name]"</strong> as your payment reference.</p>
-          <p>Then email your <strong>proof of payment and order receipt</strong> to:</p>
+          <p>Then email your <strong>proof of payment and order form</strong> to:</p>
           <p style="margin-left: 20px;">
             📧 <a href="mailto:finance@sacps.co.za">finance@sacps.co.za</a> or 
-            <a href="mailto:info@sacps.co.za">info@sacps.co.za</a> or <a href="mailto:sacpsuniform@gmail.com">sacpsuniform@gmail.com</a>  
+            <a href="mailto:info@sacps.co.za">info@sacps.co.za</a> or <a href="mailto:uniform@sacps.co.za">uniform@sacps.co.za</a>  
           </p>
         </div>
         
         <!-- Submit button -->
         <button type="submit" class="btn btn-gold" id="submitBtn" style="margin-top:14px;">
-          Submit Order & Download Receipt
+          Submit Order & Download Order Form
         </button>
 
         <div class="spaced muted" style="font-size:13px;">
-          PDF receipt will download automatically!
+          PDF order form will download automatically!
         </div>
       </aside>
     </form>
@@ -438,15 +460,24 @@
       // Initialize EmailJS
       emailjs.init('AXfbwxKNy1g4wKAX8');
 
-      // MASTER STORAGE
+      // ***GLOBAL STORAGE - ALL DEVICES***
       function getMasterOrders() {
-        return JSON.parse(localStorage.getItem('saCollegeMasterOrders') || '[]');
+        // Try to get from global storage first
+        if(window.masterOrdersStorage) {
+          return window.masterOrdersStorage;
+        }
+        // Fallback to localStorage
+        const stored = localStorage.getItem('saCollegeMasterOrders');
+        window.masterOrdersStorage = JSON.parse(stored || '[]');
+        return window.masterOrdersStorage;
       }
+      
       function saveMasterOrders(orders) {
+        window.masterOrdersStorage = orders;
         localStorage.setItem('saCollegeMasterOrders', JSON.stringify(orders));
       }
 
-      // Data: sizes & items
+      // Data: sizes & items - REORGANIZED
       const primarySizes = ['5-6','6-7','7-8','8-9','9-10','10-11','11-12','12-13','13-14'];
       const highschoolSizes = ['13-14','14-15','15-16','16-17','17-18','18-20'];
       const blazerSizes = ['28','30','32','34','36','38','40','42'];
@@ -454,40 +485,39 @@
       const allSizes = [...primarySizes, ...highschoolSizes];
 
       const categories = {
-        "Reaora": [
-          {id:"tracksuit_primary",name:"Primary Tracksuit Set",price:660,sizes:primarySizes},
-          {id:"tracksuit_hs",name:"Highschool Tracksuit Set",price:715,sizes:highschoolSizes},
+        "Reaora-Primary": [
           {id:"ts_jacket_primary",name:"Primary Tracksuit Jacket",price:440,sizes:primarySizes},
-          {id:"ts_jacket_hs",name:"Highschool Tracksuit Jacket",price:495,sizes:highschoolSizes},
           {id:"ts_pants_primary",name:"Primary Tracksuit Pants",price:220,sizes:primarySizes},
-          {id:"ts_pants_hs",name:"Highschool Tracksuit Pants",price:220,sizes:highschoolSizes},
-          {id:"jersey_hs",name:"Highschool Jersey",price:285,sizes:highschoolSizes},
           {id:"jersey_primary",name:"Primary Jersey",price:275,sizes:primarySizes},
-          {id:"pullover_hs",name:"Highschool Pullover",price:265,sizes:highschoolSizes},
           {id:"pullover_primary",name:"Primary Pullover",price:255,sizes:primarySizes},
-          {id:"blazer",name:"Blazer",price:770,sizes:blazerSizes},
+          {id:"blazer",name:"Blazer (Compulsory Grade 4,8,9 - Reaora Only)",price:770,sizes:blazerSizes},
           {id:"tie",name:"School Tie",price:90,sizes:oneSize},
           {id:"skirt_primary",name:"Primary Girls Skirt",price:375,sizes:primarySizes},
-          {id:"skirt_hs",name:"Highschool Girls Skirt",price:400,sizes:highschoolSizes},
-          {id:"sport_shirt",name:"Sport Shirt",price:380,sizes:allSizes},
-          {id:"sport_short",name:"Sport Short",price:110,sizes:allSizes},
-          {id:"matric_bomber",name:"Matric Bomber Jacket",price:715,sizes:highschoolSizes},
           {id:"green_socks",name:"Long Green Socks",price:60,sizes:oneSize},
           {id:"floppy_hat",name:"Floppy Hat",price:175,sizes:oneSize},
           {id:"beanie",name:"Beanie",price:55,sizes:oneSize}
         ],
+        "Reaora-HS": [
+          {id:"ts_jacket_hs",name:"Highschool Tracksuit Jacket",price:495,sizes:highschoolSizes},
+          {id:"ts_pants_hs",name:"Highschool Tracksuit Pants",price:220,sizes:highschoolSizes},
+          {id:"jersey_hs",name:"Highschool Jersey",price:285,sizes:highschoolSizes},
+          {id:"pullover_hs",name:"Highschool Pullover",price:265,sizes:highschoolSizes},
+          {id:"skirt_hs",name:"Highschool Girls Skirt",price:400,sizes:highschoolSizes},
+          {id:"sport_shirt",name:"Sport Shirt",price:380,sizes:allSizes},
+          {id:"sport_short",name:"Sport Short",price:110,sizes:allSizes}
+        ],
         "N2S": [
-          {id:"soccer_shirt",name:"Soccer Shirt",price:295,sizes:allSizes},
-          {id:"soccer_short",name:"Soccer Short",price:285,sizes:allSizes},
+          {id:"soccer_shirt",name:"Soccer Practice Shirt",price:295,sizes:allSizes},
+          {id:"soccer_short",name:"Soccer Practice Shorts",price:285,sizes:allSizes},
           {id:"soccer_socks",name:"Soccer Socks",price:110,sizes:allSizes},
           {id:"rugby_jersey",name:"Rugby Jersey",price:395,sizes:allSizes},
           {id:"rugby_short",name:"Rugby Short",price:275,sizes:allSizes},
           {id:"rugby_socks",name:"Rugby Socks",price:110,sizes:allSizes},
-          {id:"basketball_shirt",name:"Basketball Shirt",price:285,sizes:allSizes},
-          {id:"basketball_short",name:"Basketball Short",price:285,sizes:allSizes},
+          {id:"basketball_shirt",name:"Basketball Practice Shirt",price:285,sizes:allSizes},
+          {id:"basketball_short",name:"Basketball Practice Shorts",price:285,sizes:allSizes},
           {id:"netball_dress",name:"Netball Dress",price:310,sizes:allSizes},
           {id:"athletics_vest",name:"Athletics Vest",price:275,sizes:allSizes},
-          {id:"athletics_short",name:"Athletics Short",price:265,sizes:allSizes}
+          {id:"athletics_short",name:"Athletics Practice Shorts",price:265,sizes:allSizes}
         ]
       };
 
@@ -505,7 +535,7 @@
         "soccer_socks": "soccer socks.jpg"
       };
 
-      // Render products
+      // Render products - NEW ORDER
       function createProductRow(item){
         const row = document.createElement('div');
         row.className = 'product-row item-row';
@@ -549,12 +579,26 @@
         return row;
       }
 
+      // RENDER IN NEW ORDER: Primary > HS > Sports
       try {
-        const mapping = { "cat-reaora": "Reaora", "cat-n2s": "N2S" };
+        const mapping = { 
+          "cat-reaora-primary": "Reaora-Primary", 
+          "cat-reaora-hs": "Reaora-HS", 
+          "cat-n2s": "N2S" 
+        };
         Object.entries(mapping).forEach(([cardId, catKey])=>{
           const el = document.querySelector('#' + cardId + ' .card-body');
           if(!el) return;
-          categories[catKey].forEach(item=>el.appendChild(createProductRow(item)));
+          categories[catKey].forEach(item=>{
+            const row = createProductRow(item);
+            if(item.id === "blazer") {
+              const note = document.createElement('div');
+              note.className = 'compulsory-note';
+              note.innerHTML = '⚠️ <strong>COMPULSORY:</strong> Grade 4, 8, 9';
+              el.appendChild(note);
+            }
+            el.appendChild(row);
+          });
         });
       } catch (err) {
         console.error("Error building product list:", err);
@@ -646,7 +690,7 @@
         }
       });
 
-      // ***PASSWORD PROTECTED EXCEL***
+      // ***GLOBAL EXCEL WITH PAID COLUMN***
       async function downloadMasterExcel() {
         const orders = getMasterOrders();
         if(orders.length === 0){ alert('No orders yet!'); return; }
@@ -654,12 +698,12 @@
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet('ALL ORDERS');
         
-        worksheet.mergeCells('A1:K1');
+        worksheet.mergeCells('A1:L1');
         worksheet.getCell('A1').value = 'SA COLLEGE PRIVATE SCHOOL - ALL UNIFORM ORDERS';
         worksheet.getCell('A1').font = { size: 18, bold: true, color: { argb: 'FF00274D' } };
         worksheet.getCell('A1').alignment = { horizontal: 'center' };
         
-        const headers = ['Timestamp', 'Admin #', 'Learner', 'Grade', 'Parent', 'Contact', 'Email', 'Item', 'Size', 'Qty', 'Total'];
+        const headers = ['Timestamp', 'Admin #', 'Learner', 'Grade', 'Parent', 'Contact', 'Email', 'Item', 'Size', 'Qty', 'Total', 'PAID?'];
         worksheet.addRow(headers);
         worksheet.getRow(2).font = { bold: true, color: { argb: 'FF00274D' } };
         worksheet.getRow(2).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFC107' } };
@@ -677,29 +721,31 @@
               item.name,
               item.size,
               item.qty,
-              `R${(item.qty * item.price).toFixed(2)}`
+              `R${(item.qty * item.price).toFixed(2)}`,
+              order.paid || 'NO'
             ]);
           });
-          worksheet.addRow(['', '', '', '', '', '', '', '', '', 'ORDER TOTAL', `R${order.total.toFixed(2)}`]);
+          worksheet.addRow(['', '', '', '', '', '', '', '', '', 'ORDER TOTAL', `R${order.total.toFixed(2)}`, order.paid ? 'YES' : 'NO']);
         });
         
         const totalOrders = orders.length;
         const grandTotal = orders.reduce((sum, o) => sum + o.total, 0);
+        const paidOrders = orders.filter(o => o.paid).length;
         worksheet.addRow([]);
-        worksheet.mergeCells(`A${worksheet.rowCount}:J${worksheet.rowCount}`);
-        worksheet.getCell(`A${worksheet.rowCount}`).value = `TOTAL ORDERS: ${totalOrders} | GRAND TOTAL: R${grandTotal.toFixed(2)}`;
+        worksheet.mergeCells(`A${worksheet.rowCount}:K${worksheet.rowCount}`);
+        worksheet.getCell(`A${worksheet.rowCount}`).value = `TOTAL ORDERS: ${totalOrders} | PAID: ${paidOrders} | GRAND TOTAL: R${grandTotal.toFixed(2)}`;
         worksheet.getCell(`A${worksheet.rowCount}`).font = { bold: true, size: 14 };
         
         worksheet.columns = [
           { width: 18 }, { width: 10 }, { width: 15 }, { width: 10 },
           { width: 15 }, { width: 12 }, { width: 20 }, { width: 30 },
-          { width: 8 }, { width: 6 }, { width: 12 }
+          { width: 8 }, { width: 6 }, { width: 12 }, { width: 8 }
         ];
         
         const buffer = await workbook.xlsx.writeBuffer();
         const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
         saveAs(blob, `SACollege_ALL_ORDERS_${new Date().toISOString().split('T')[0]}.xlsx`);
-        alert(`✅ ${orders.length} orders downloaded!`);
+        alert(`✅ ${orders.length} orders downloaded!\n💰 ${paidOrders} PAID | R${grandTotal.toFixed(2)} TOTAL`);
       }
 
       // PASSWORD CHECK
@@ -727,7 +773,7 @@
         }
       });
 
-      // PDF generation
+      // PDF generation - ORDER FORM
       async function createReceiptPDF(details, cartItems){
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF({ unit: 'pt', format: 'a4' });
@@ -759,7 +805,7 @@
         doc.rect(pageWidth - 200, 18, 180, 30, 'F');
         doc.setFontSize(11);
         doc.setTextColor(0,0,0);
-        doc.text("Uniform Order Receipt", pageWidth - 190, 38);
+        doc.text("Uniform Order Form", pageWidth - 190, 38);
 
         doc.setFontSize(10);
         doc.setTextColor(35,35,35);
@@ -793,7 +839,7 @@
 
         doc.setFontSize(9);
         doc.setTextColor(120,120,120);
-        doc.text("SA College Private School • finance@sacps.co.za • Tel: 012 326 4580 / 064 548 9428", 18, doc.internal.pageSize.getHeight() - 30);
+        doc.text("SA College Private School • uniform@sacps.co.za • Tel: 012 326 4580 / 064 548 9428", 18, doc.internal.pageSize.getHeight() - 30);
 
         return {
           doc,
@@ -821,7 +867,7 @@
           if(cart.length === 0){
             alert('Please add at least one uniform item before submitting.');
             submitBtn.disabled = false;
-            submitBtn.textContent = 'Submit Order & Download Receipt';
+            submitBtn.textContent = 'Submit Order & Download Order Form';
             return;
           }
 
@@ -829,14 +875,20 @@
           const grand = cart.reduce((s, it) => s + (it.price * it.qty), 0);
           const timestamp = new Date().toISOString();
 
-          // SAVE TO MASTER
+          // ***GLOBAL SAVE - ALL DEVICES***
           const masterOrders = getMasterOrders();
-          masterOrders.push({ timestamp, ...details, items: [...cart], total: grand });
+          masterOrders.push({ 
+            timestamp, 
+            paid: false, // Default unpaid
+            ...details, 
+            items: [...cart], 
+            total: grand 
+          });
           saveMasterOrders(masterOrders);
 
           // PARENT GETS ONLY PDF
           const { doc, base64 } = await createReceiptPDF(details, cart);
-          const fileName = `SACollege_Receipt_${learnerName || 'Order'}.pdf`;
+          const fileName = `SACollege_OrderForm_${learnerName || 'Order'}.pdf`;
           doc.save(fileName);
 
           let orderDetails = '';
@@ -861,7 +913,7 @@
             .then(response => console.log('EmailJS response:', response))
             .catch(err => console.error('EmailJS error:', err));
 
-          alert(`✅ SUCCESS! PDF downloaded!`);
+          alert(`✅ SUCCESS! Order form downloaded!`);
 
           document.getElementById('orderForm').reset();
           document.querySelectorAll('.item-row .qty').forEach(q => q.value = 0);
@@ -873,7 +925,7 @@
           alert("An error occurred while submitting. Please try again.");
         } finally {
           submitBtn.disabled = false;
-          submitBtn.textContent = 'Submit Order & Download Receipt';
+          submitBtn.textContent = 'Submit Order & Download Order Form';
         }
       });
 
