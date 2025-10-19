@@ -9,6 +9,7 @@
        Libraries
        - jsPDF + AutoTable for PDF generation
        - EmailJS for sending emails
+       - ExcelJS + FileSaver for MASTER EXCEL (ADMIN ONLY)
        ========================= -->
 
   <!-- jsPDF and autotable -->
@@ -16,6 +17,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
   <!-- EmailJS SDK -->
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <!-- Excel Libraries (ADMIN ONLY) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
   <style>
     :root{
@@ -64,6 +68,39 @@
       margin:3px 0 0 0;
       font-size:13px;
       color: rgba(255,255,255,0.9);
+    }
+
+    /* Master Stats */
+    .master-stats { 
+      background: var(--white); 
+      border-radius:10px; 
+      padding:16px; 
+      margin: 0 auto 18px auto; 
+      max-width:1200px; 
+      text-align:center; 
+      border: 2px solid var(--gold); 
+    }
+    .master-stats h3 { 
+      color:var(--navy); 
+      margin-top:0; 
+    }
+    .stats-grid { 
+      display:grid; 
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); 
+      gap:12px; 
+      margin-top:12px; 
+    }
+    .stat-item { 
+      background:var(--gold); 
+      padding:12px; 
+      border-radius:6px; 
+      font-weight:700; 
+      font-size:16px; 
+    }
+    .btn-excel { 
+      background:var(--navy) !important; 
+      color:white !important; 
+      padding:10px !important; 
     }
 
     /* Braten notice below header */
@@ -269,6 +306,16 @@
     </div>
   </header>
 
+  <!-- Master Stats -->
+  <div class="master-stats" id="masterStats">
+    <h3>📊 Total Orders Today</h3>
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-item" id="totalOrders">0</div>
+      <div class="stat-item" id="totalValue">R0</div>
+      <div class="stat-item"><button class="btn btn-primary btn-excel" onclick="window._sa_helpers.downloadMasterExcel()">📥 Download Master Excel</button></div>
+    </div>
+  </div>
+
   <!-- Braten notice -->
   <div class="braten-notice">
     <h3>Important Uniform Order Information</h3>
@@ -360,7 +407,7 @@
             💳 Payment Information
           </h3>
           <p>After submitting your order, please make an <strong>EFT payment</strong> to the normal account.</p>
-          <p>Use <strong>“Uniform – [Admin number-Child’s Name]”</strong> as your payment reference.</p>
+          <p>Use <strong>"Uniform – [Admin number-Child's Name]"</strong> as your payment reference.</p>
           <p>Then email your <strong>proof of payment and order receipt</strong> to:</p>
           <p style="margin-left: 20px;">
             📧 <a href="mailto:finance@sacps.co.za">finance@sacps.co.za</a> or 
@@ -369,23 +416,38 @@
         </div>
         <!-- Submit button -->
         <button type="submit" class="btn btn-gold" id="submitBtn" style="margin-top:14px;">
-          Submit Order & Download Order Form
+          Submit Order & Download Receipt
         </button>
 
         <div class="spaced muted" style="font-size:13px;">
-          After submitting, a PDF order form will download for the parent, order details will be emailed to the school, and saved to our records.
+          PDF receipt will download automatically! All orders saved to master records.
         </div>
       </aside>
     </form>
   </main>
 
   <!-- =========================
-       Script: Data, render, cart, PDF, EmailJS, Google Sheet
+       Script: Data, render, cart, PDF, EmailJS, MASTER EXCEL
        ========================= -->
   <script>
     (function(){
       // Initialize EmailJS with your public key
       emailjs.init('AXfbwxKNy1g4wKAX8');
+
+      // MASTER STORAGE FUNCTIONS
+      function getMasterOrders() {
+        return JSON.parse(localStorage.getItem('saCollegeMasterOrders') || '[]');
+      }
+      function saveMasterOrders(orders) {
+        localStorage.setItem('saCollegeMasterOrders', JSON.stringify(orders));
+      }
+      function updateStats() {
+        const orders = getMasterOrders();
+        const today = new Date().toDateString();
+        const todayOrders = orders.filter(o => new Date(o.timestamp).toDateString() === today);
+        document.getElementById('totalOrders').textContent = todayOrders.length;
+        document.getElementById('totalValue').textContent = `R${todayOrders.reduce((sum, o) => sum + o.total, 0).toFixed(2)}`;
+      }
 
       // ---------------------------
       // Data: sizes & items
@@ -397,7 +459,7 @@
       const allSizes = [...primarySizes, ...highschoolSizes];
 
       function increase10pct(price){ return Math.round(price * 1.1); }
-      // All items - unchanged from your working list, grouped here for clarity
+      // All items - unchanged from your working list
       const categories = {
         "Reaora": [
           {id:"tracksuit_primary",name:"Primary Tracksuit Set",price:660,sizes:primarySizes},
@@ -454,13 +516,11 @@
       // Rendering: inject products into their category cards
       // ---------------------------
       function createProductRow(item){
-        // container row
         const row = document.createElement('div');
         row.className = 'product-row item-row';
         row.dataset.itemId = item.id;
         row.dataset.price = item.price;
 
-        // name
         const nameSpan = document.createElement('div');
         nameSpan.className = 'pname';
         nameSpan.textContent = `${item.name} — R${item.price}`;
@@ -475,7 +535,6 @@
           nameSpan.appendChild(img);
         }
 
-        // size selector
         const sizeSel = document.createElement('select');
         sizeSel.className = 'size';
         item.sizes.forEach(s=>{
@@ -485,7 +544,6 @@
           sizeSel.appendChild(opt);
         });
 
-        // qty input
         const qtyInput = document.createElement('input');
         qtyInput.className = 'qty';
         qtyInput.type = 'number';
@@ -500,20 +558,12 @@
         return row;
       }
 
-      // find category card bodies and append items
       try {
-        // mapping card ids -> category keys
-        const mapping = {
-          "cat-reaora": "Reaora",
-          "cat-n2s": "N2S"
-        };
-
+        const mapping = { "cat-reaora": "Reaora", "cat-n2s": "N2S" };
         Object.entries(mapping).forEach(([cardId, catKey])=>{
           const el = document.querySelector('#' + cardId + ' .card-body');
           if(!el) return;
-          categories[catKey].forEach(item=>{
-            el.appendChild(createProductRow(item));
-          });
+          categories[catKey].forEach(item=>el.appendChild(createProductRow(item)));
         });
       } catch (err) {
         console.error("Error building product list:", err);
@@ -530,7 +580,6 @@
           const qty = parseInt(row.querySelector('.qty').value || 0, 10);
           if(qty > 0){
             const fullName = row.querySelector('.pname').textContent || row.querySelector('.item-name')?.textContent;
-            // some rows may use former naming; guard with fallback
             const name = (fullName || 'Item').split(' — ')[0].trim();
             const size = row.querySelector('.size').value;
             const price = parseFloat(row.dataset.price);
@@ -557,26 +606,16 @@
         let grand = 0;
         cart.forEach((it, idx) => {
           const tr = document.createElement('tr');
-
-          // item cell
           const tdItem = document.createElement('td');
           tdItem.textContent = it.name;
-
-          // size cell
           const tdSize = document.createElement('td');
           tdSize.textContent = it.size;
-
-          // qty
           const tdQty = document.createElement('td');
           tdQty.textContent = it.qty;
-
-          // line
           const line = it.qty * it.price;
           grand += line;
           const tdLine = document.createElement('td');
           tdLine.textContent = `R${line.toFixed(2)}`;
-
-          // remove
           const tdRemove = document.createElement('td');
           const removeBtn = document.createElement('button');
           removeBtn.className = 'btn btn-primary';
@@ -589,8 +628,6 @@
           removeBtn.addEventListener('click', function(e){
             e.preventDefault();
             cart.splice(this.dataset.index, 1);
-            // Also set the corresponding qty input in the DOM to 0
-            // Find matching item and reset qty (best-effort by name & size)
             document.querySelectorAll('.item-row').forEach(r=>{
               const name = r.querySelector('.pname').textContent.split(' — ')[0].trim();
               const size = r.querySelector('.size').value;
@@ -614,7 +651,6 @@
         document.getElementById('grandTotal').textContent = `Total: R${grand.toFixed(2)}`;
       }
 
-      // update cart whenever a qty or size changes
       document.addEventListener('input', function(e){
         if(e.target.classList && (e.target.classList.contains('qty') || e.target.classList.contains('size'))){
           collectCartFromDOM();
@@ -623,27 +659,74 @@
       });
 
       // ---------------------------
+      // MASTER EXCEL GENERATOR (ADMIN ONLY)
+      // ---------------------------
+      async function generateMasterExcel() {
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('ALL ORDERS');
+        
+        worksheet.mergeCells('A1:K1');
+        worksheet.getCell('A1').value = 'SA COLLEGE PRIVATE SCHOOL - ALL UNIFORM ORDERS';
+        worksheet.getCell('A1').font = { size: 18, bold: true, color: { argb: 'FF00274D' } };
+        worksheet.getCell('A1').alignment = { horizontal: 'center' };
+        
+        const headers = ['Timestamp', 'Admin #', 'Learner', 'Grade', 'Parent', 'Contact', 'Email', 'Item', 'Size', 'Qty', 'Total'];
+        worksheet.addRow(headers);
+        worksheet.getRow(2).font = { bold: true, color: { argb: 'FF00274D' } };
+        worksheet.getRow(2).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFC107' } };
+        
+        const orders = getMasterOrders();
+        orders.forEach(order => {
+          order.items.forEach(item => {
+            worksheet.addRow([
+              new Date(order.timestamp).toLocaleString('en-ZA'),
+              order.adminNumber,
+              order.learnerName,
+              order.grade,
+              order.parentName,
+              order.contactNumber,
+              order.email,
+              item.name,
+              item.size,
+              item.qty,
+              `R${(item.qty * item.price).toFixed(2)}`
+            ]);
+          });
+          worksheet.addRow(['', '', '', '', '', '', '', '', '', 'ORDER TOTAL', `R${order.total.toFixed(2)}`]);
+        });
+        
+        const totalOrders = orders.length;
+        const grandTotal = orders.reduce((sum, o) => sum + o.total, 0);
+        worksheet.addRow([]);
+        worksheet.mergeCells(`A${worksheet.rowCount}:J${worksheet.rowCount}`);
+        worksheet.getCell(`A${worksheet.rowCount}`).value = `TOTAL ORDERS: ${totalOrders} | GRAND TOTAL: R${grandTotal.toFixed(2)}`;
+        worksheet.getCell(`A${worksheet.rowCount}`).font = { bold: true, size: 14 };
+        
+        worksheet.columns = [
+          { width: 18 }, { width: 10 }, { width: 15 }, { width: 10 },
+          { width: 15 }, { width: 12 }, { width: 20 }, { width: 30 },
+          { width: 8 }, { width: 6 }, { width: 12 }
+        ];
+        
+        const buffer = await workbook.xlsx.writeBuffer();
+        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        saveAs(blob, `SACollege_ALL_ORDERS_${new Date().toISOString().split('T')[0]}.xlsx`);
+      }
+
+      // ---------------------------
       // PDF generation
-      // - includes logo if available (attempts to add image)
-      // - uses school colours for header
-      // - Updated to return base64 for potential attachment (paid plan only)
       // ---------------------------
       async function createReceiptPDF(details, cartItems){
-        // details: { parentName, contactNumber, email, learnerName, grade, adminNumber }
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF({ unit: 'pt', format: 'a4' });
 
-        // --- Header band with colours & logo ---
         const pageWidth = doc.internal.pageSize.getWidth();
-        // draw a navy rectangle
-        doc.setFillColor(0, 39, 77); // navy
+        doc.setFillColor(0, 39, 77);
         doc.rect(0, 0, pageWidth, 70, 'F');
 
-        // try to include logo (falls back gracefully)
         try {
           const logoImg = document.getElementById('schoolLogo');
           if(logoImg && logoImg.complete){
-            // convert image to data URL via canvas to ensure compatibility
             const canvas = document.createElement('canvas');
             canvas.width = logoImg.naturalWidth;
             canvas.height = logoImg.naturalHeight;
@@ -656,19 +739,16 @@
           console.warn('Could not add logo to PDF:', err);
         }
 
-        // School title
         doc.setFontSize(16);
         doc.setTextColor(255,255,255);
         doc.text("SA College Private School", 80, 28);
 
-        // Receipt title on gold
-        doc.setFillColor(255,193,7); // gold
+        doc.setFillColor(255,193,7);
         doc.rect(pageWidth - 200, 18, 180, 30, 'F');
         doc.setFontSize(11);
         doc.setTextColor(0,0,0);
         doc.text("Uniform Order Receipt", pageWidth - 190, 38);
 
-        // Body text
         doc.setFontSize(10);
         doc.setTextColor(35,35,35);
         const left = 18;
@@ -680,13 +760,9 @@
         doc.text(`Grade: ${details.grade}`, left, y); y += 16;
         doc.text(`Admin Number: ${details.adminNumber}`, left, y); y += 26;
 
-        // Build table array for autoTable
         const tableBody = cartItems.map(it => [it.name, it.size, String(it.qty), `R${it.price}`, `R${(it.qty*it.price).toFixed(2)}`]);
-
-        // If no items, put a placeholder row
         if(tableBody.length === 0) tableBody.push(['No items','','','','']);
 
-        // Add table using autoTable
         doc.autoTable({
           startY: y,
           head: [['Item', 'Size', 'Qty', 'Unit Price', 'Line Total']],
@@ -697,116 +773,113 @@
           margin: { left: 12, right: 12 }
         });
 
-        // Grand total
         const finalY = doc.lastAutoTable ? doc.lastAutoTable.finalY : y + 120;
         const grand = cartItems.reduce((s, it) => s + (it.price * it.qty), 0);
         doc.setFontSize(11);
         doc.setTextColor(0,0,0);
         doc.text(`Grand Total: R${grand.toFixed(2)}`, 18, finalY + 18);
 
-        // Footer with school contact
         doc.setFontSize(9);
         doc.setTextColor(120,120,120);
         doc.text("SA College Private School • finance@sacps.co.za • Tel: 012 326 4580 / 064 548 9428", 18, doc.internal.pageSize.getHeight() - 30);
 
-        // Return the jsPDF doc object and base64
         return {
           doc,
-          base64: doc.output('datauribase64') // Base64 string without prefix for EmailJS (paid plan only)
+          base64: doc.output('datauribase64')
         };
       }
 
       // ---------------------------
-      // Submit: generate PDF, download, send via EmailJS, save to Google Sheet
+      // Submit: generate PDF, download, send via EmailJS, save to MASTER
       // ---------------------------
-document.getElementById('orderForm').addEventListener('submit', async function(e){
-  e.preventDefault();
+      document.getElementById('orderForm').addEventListener('submit', async function(e){
+        e.preventDefault();
 
-  // Disable submit
-  const submitBtn = document.getElementById('submitBtn');
-  submitBtn.disabled = true;
-  submitBtn.textContent = 'Processing...';
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Processing...';
 
-  try {
-    // Gather form details and cart
-    const parentName = document.getElementById('parentName').value.trim();
-    const contactNumber = document.getElementById('contactNumber').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const learnerName = document.getElementById('learnerName').value.trim();
-    const grade = document.getElementById('grade').value.trim();
-    const adminNumber = document.getElementById('adminNumber').value.trim();
+        try {
+          const parentName = document.getElementById('parentName').value.trim();
+          const contactNumber = document.getElementById('contactNumber').value.trim();
+          const email = document.getElementById('email').value.trim();
+          const learnerName = document.getElementById('learnerName').value.trim();
+          const grade = document.getElementById('grade').value.trim();
+          const adminNumber = document.getElementById('adminNumber').value.trim();
 
-    // Collect cart items from DOM
-    collectCartFromDOM();
-    if(cart.length === 0){
-      alert('Please add at least one uniform item before submitting.');
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Submit Order & Download Receipt';
-      return;
-    }
+          collectCartFromDOM();
+          if(cart.length === 0){
+            alert('Please add at least one uniform item before submitting.');
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Submit Order & Download Receipt';
+            return;
+          }
 
-    const details = { parentName, contactNumber, email, learnerName, grade, adminNumber };
-    const grand = cart.reduce((s, it) => s + (it.price * it.qty), 0);
+          const details = { parentName, contactNumber, email, learnerName, grade, adminNumber };
+          const grand = cart.reduce((s, it) => s + (it.price * it.qty), 0);
+          const timestamp = new Date().toISOString();
 
-    // Create PDF and get base64
-    const { doc, base64 } = await createReceiptPDF(details, cart);
+          // SAVE TO MASTER (NO DOWNLOAD)
+          const masterOrders = getMasterOrders();
+          masterOrders.push({ timestamp, ...details, items: [...cart], total: grand });
+          saveMasterOrders(masterOrders);
+          updateStats();
 
-    // Prompt download for parent
-    const fileName = `SACollege_Receipt_${learnerName || 'Order'}.pdf`;
-    doc.save(fileName);
+          // PARENT GETS ONLY PDF
+          const { doc, base64 } = await createReceiptPDF(details, cart);
+          const fileName = `SACollege_Receipt_${learnerName || 'Order'}.pdf`;
+          doc.save(fileName);
 
-    // Improved cart summary for email body
-    let orderDetails = '';
-    cart.forEach(it => {
-      const lineTotal = (it.qty * it.price).toFixed(2);
-      orderDetails += `${it.name} - Size: ${it.size}, Qty: ${it.qty}, Unit: R${it.price.toFixed(2)}, Line: R${lineTotal}\n`;
-    });
+          let orderDetails = '';
+          cart.forEach(it => {
+            const lineTotal = (it.qty * it.price).toFixed(2);
+            orderDetails += `${it.name} - Size: ${it.size}, Qty: ${it.qty}, Unit: R${it.price.toFixed(2)}, Line: R${lineTotal}\n`;
+          });
 
-    // EmailJS parameters
-    const templateParams = {
-      parentName: parentName,
-      contactNumber: contactNumber,
-      email: email,
-      learnerName: learnerName,
-      grade: grade,
-      adminNumber: adminNumber,
-      orderDetails: orderDetails,
-      cartTotal: `R${grand.toFixed(2)}`
-    };
+          const templateParams = {
+            parentName: parentName,
+            contactNumber: contactNumber,
+            email: email,
+            learnerName: learnerName,
+            grade: grade,
+            adminNumber: adminNumber,
+            orderDetails: orderDetails,
+            cartTotal: `R${grand.toFixed(2)}`,
+            masterSummary: `***NEW ORDER #${masterOrders.length}*** | Admin: ${adminNumber} | Total: R${grand.toFixed(2)}`
+          };
 
-    // Log params for debugging
-    console.log('Sending EmailJS params:', templateParams);
+          console.log('Sending EmailJS params:', templateParams);
 
-    // Send email via EmailJS with correct IDs
-    await emailjs.send('service_myhmc1q', 'template_oq150rd', templateParams)
-      .then(response => console.log('EmailJS response:', response))
-      .catch(err => console.error('EmailJS error:', err));
+          await emailjs.send('service_myhmc1q', 'template_oq150rd', templateParams)
+            .then(response => console.log('EmailJS response:', response))
+            .catch(err => console.error('EmailJS error:', err));
 
-    alert("Order submitted successfully! Order Form downloaded and details emailed to school.");
+          alert(`✅ SUCCESS! PDF downloaded! (${masterOrders.length} total orders saved)`);
 
-    // Reset form and cart
-    document.getElementById('orderForm').reset();
-    document.querySelectorAll('.item-row .qty').forEach(q => q.value = 0);
-    collectCartFromDOM();
-    renderCart();
+          document.getElementById('orderForm').reset();
+          document.querySelectorAll('.item-row .qty').forEach(q => q.value = 0);
+          collectCartFromDOM();
+          renderCart();
 
-  } catch (err) {
-    console.error("Submit error:", err);
-    alert("An error occurred while submitting. Please try again. Check console for details.");
-  } finally {
-    submitBtn.disabled = false;
-    submitBtn.textContent = 'Submit Order & Download Order Form';
-  }
-});
+        } catch (err) {
+          console.error("Submit error:", err);
+          alert("An error occurred while submitting. Please try again. Check console for details.");
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Submit Order & Download Receipt';
+        }
+      });
 
-      // Ensure cart is rendered initially (shows 'No items')
+      // Expose functions
+      window._sa_helpers = { 
+        collectCartFromDOM, renderCart, createReceiptPDF, categories, cart, 
+        downloadMasterExcel: generateMasterExcel 
+      };
+
+      // Initialize
       collectCartFromDOM();
       renderCart();
-
-      // Expose useful functions for debugging from console (optional)
-      window._sa_helpers = {
-        collectCartFromDOM, renderCart, createReceiptPDF, categories, cart
-      };
+      updateStats();
 
     })();
   </script>
