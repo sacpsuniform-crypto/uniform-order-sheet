@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>SA College Private School - Uniform Order</title>
 
-  <!-- Libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
@@ -61,6 +60,68 @@
       color: rgba(255,255,255,0.9);
     }
 
+    /* TINY SECRET BUTTON */
+    .secret-admin {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      background: #666;
+      color: white;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      cursor: pointer;
+      z-index: 1000;
+      opacity: 0.3;
+      transition: all 0.3s;
+    }
+    .secret-admin:hover {
+      opacity: 1 !important;
+      background: #00274d !important;
+      transform: scale(1.2);
+    }
+    .secret-admin.show { opacity: 1 !important; }
+
+    /* PASSWORD MODAL */
+    .password-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 2000;
+    }
+    .password-modal.show { display: flex !important; }
+    .password-box {
+      background: white;
+      margin: auto;
+      padding: 30px;
+      border-radius: 10px;
+      text-align: center;
+      width: 300px;
+    }
+    .password-box h3 { color: #00274d; margin-top: 0; }
+    .password-input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+    .password-btn {
+      background: #00274d;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px;
+    }
+
     /* Braten notice */
     .braten-notice {
       background: var(--white);
@@ -96,11 +157,6 @@
     }
     .braten-notice .emoji {
       margin-right: 6px;
-    }
-    @media (max-width: 980px) {
-      .braten-notice {
-        margin: 0 10px 18px 10px;
-      }
     }
 
     /* Page wrapper */
@@ -172,21 +228,6 @@
     .product-row select.size { width:110px; padding:6px; border-radius:6px; border:1px solid #d7dbe0; }
     .product-row input.qty { width:70px; padding:6px; border-radius:6px; border:1px solid #d7dbe0; }
 
-    /* Size & Qty headings */
-    .size-qty-heading {
-      display:flex;
-      gap:10px;
-      font-weight:700;
-      font-size:13px;
-      margin-bottom:6px;
-    }
-    .size-qty-heading div {
-      width: auto;
-      text-align:left;
-    }
-    .size-qty-heading .size-col { width:110px; text-align:center; }
-    .size-qty-heading .qty-col { width:70px; text-align:center; }
-
     /* Right column - cart */
     .cart {
       background:var(--white);
@@ -248,6 +289,7 @@
     @media(max-width:980px){
       form#orderForm { grid-template-columns: 1fr; }
       .cart { position:relative; top:auto; }
+      .secret-admin { bottom: 5px; right: 5px; font-size: 9px; }
     }
 
     .muted { color:#6b7280; font-size:13px; }
@@ -255,6 +297,21 @@
   </style>
 </head>
 <body>
+  <!-- TINY SECRET BUTTON -->
+  <button class="secret-admin" id="secretBtn" title="Admin Download">📥</button>
+
+  <!-- PASSWORD MODAL -->
+  <div class="password-modal" id="passwordModal">
+    <div class="password-box">
+      <h3>🔐 Admin Access</h3>
+      <p>Enter password to download Excel:</p>
+      <input type="password" class="password-input" id="adminPass" placeholder="Password">
+      <br>
+      <button class="password-btn" onclick="checkPassword()">Unlock</button>
+      <button class="password-btn" onclick="document.getElementById('passwordModal').classList.remove('show')">Cancel</button>
+    </div>
+  </div>
+
   <!-- Header -->
   <header class="site-header" role="banner">
     <img class="logo" id="schoolLogo" src="logo.jpg" alt="SA College Private School logo" />
@@ -376,13 +433,12 @@
     </form>
   </main>
 
-  <!-- Script -->
   <script>
     (function(){
       // Initialize EmailJS
       emailjs.init('AXfbwxKNy1g4wKAX8');
 
-      // ***MASTER STORAGE FUNCTIONS (INVISIBLE TO PARENTS)***
+      // MASTER STORAGE
       function getMasterOrders() {
         return JSON.parse(localStorage.getItem('saCollegeMasterOrders') || '[]');
       }
@@ -590,8 +646,11 @@
         }
       });
 
-      // ***ADMIN-ONLY EXCEL GENERATOR (HIDDEN FROM PARENTS)***
-      async function generateMasterExcel() {
+      // ***PASSWORD PROTECTED EXCEL***
+      async function downloadMasterExcel() {
+        const orders = getMasterOrders();
+        if(orders.length === 0){ alert('No orders yet!'); return; }
+        
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet('ALL ORDERS');
         
@@ -605,7 +664,6 @@
         worksheet.getRow(2).font = { bold: true, color: { argb: 'FF00274D' } };
         worksheet.getRow(2).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFC107' } };
         
-        const orders = getMasterOrders();
         orders.forEach(order => {
           order.items.forEach(item => {
             worksheet.addRow([
@@ -641,10 +699,33 @@
         const buffer = await workbook.xlsx.writeBuffer();
         const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
         saveAs(blob, `SACollege_ALL_ORDERS_${new Date().toISOString().split('T')[0]}.xlsx`);
+        alert(`✅ ${orders.length} orders downloaded!`);
       }
 
-      // ***ADMIN ACCESS: Type "ADMIN" in console to download Excel***
-      window.downloadMasterExcel = generateMasterExcel;
+      // PASSWORD CHECK
+      window.checkPassword = function() {
+        const pass = document.getElementById('adminPass').value;
+        if(pass === 'wzq81FIE') {
+          document.getElementById('passwordModal').classList.remove('show');
+          downloadMasterExcel();
+        } else {
+          alert('❌ Wrong password!');
+          document.getElementById('adminPass').value = '';
+        }
+      }
+
+      // SECRET BUTTON CLICK
+      document.getElementById('secretBtn').addEventListener('click', function() {
+        document.getElementById('passwordModal').classList.add('show');
+        document.getElementById('adminPass').focus();
+      });
+
+      // ESCAPE MODAL
+      document.addEventListener('keydown', function(e) {
+        if(e.key === 'Escape') {
+          document.getElementById('passwordModal').classList.remove('show');
+        }
+      });
 
       // PDF generation
       async function createReceiptPDF(details, cartItems){
@@ -748,12 +829,12 @@
           const grand = cart.reduce((s, it) => s + (it.price * it.qty), 0);
           const timestamp = new Date().toISOString();
 
-          // ***SAVE TO MASTER (INVISIBLE)***
+          // SAVE TO MASTER
           const masterOrders = getMasterOrders();
           masterOrders.push({ timestamp, ...details, items: [...cart], total: grand });
           saveMasterOrders(masterOrders);
 
-          // ***PARENT GETS ONLY PDF***
+          // PARENT GETS ONLY PDF
           const { doc, base64 } = await createReceiptPDF(details, cart);
           const fileName = `SACollege_Receipt_${learnerName || 'Order'}.pdf`;
           doc.save(fileName);
@@ -800,9 +881,6 @@
       collectCartFromDOM();
       renderCart();
 
-      // ***ADMIN CONSOLE INSTRUCTION (VISIBLE ONLY TO YOU)***
-      console.log('%c🔐 ADMIN: Type "downloadMasterExcel()" in console to download ALL orders Excel!', 'color:#00274d;font-size:16px;font-weight:bold;');
-      
     })();
   </script>
 </body>
