@@ -373,20 +373,9 @@
         <div class="section" id="productsSection">
           <h2 style="margin-top:0; color:var(--navy)">Uniforms & Sports</h2>
 
-          <!-- PRIMARY Reaora FIRST -->
-          <div class="category-card" id="cat-reaora-primary">
-            <div class="cat-header">Reaora - Primary Uniform</div>
-            <div style="display:flex; gap:16px; font-weight:700; font-size:13px; margin-bottom:8px;">
-              <div style="flex:1; text-align:left;">Item</div>
-              <div style="width:120px; text-align:center;">Size</div>
-              <div style="width:80px; text-align:center;">Quantity</div>
-            </div>
-            <div class="card-body"></div>
-          </div>
-
-          <!-- HIGHSCHOOL Reaora -->
-          <div class="category-card" id="cat-reaora-hs">
-            <div class="cat-header">Reaora - Highschool Uniform</div>
+          <!-- REAORA COMBINED -->
+          <div class="category-card" id="cat-reaora">
+            <div class="cat-header">Reaora - Uniform</div>
             <div style="display:flex; gap:16px; font-weight:700; font-size:13px; margin-bottom:8px;">
               <div style="flex:1; text-align:left;">Item</div>
               <div style="width:120px; text-align:center;">Size</div>
@@ -485,7 +474,7 @@
       const allSizes = [...primarySizes, ...highschoolSizes];
 
       const categories = {
-        "Reaora-Primary": [
+        "Reaora": [
           {id:"ts_jacket_primary",name:"Primary Tracksuit Jacket",price:440,sizes:primarySizes},
           {id:"ts_pants_primary",name:"Primary Tracksuit Pants",price:220,sizes:primarySizes},
           {id:"jersey_primary",name:"Primary Jersey",price:275,sizes:primarySizes},
@@ -495,9 +484,7 @@
           {id:"skirt_primary",name:"Primary Girls Skirt",price:375,sizes:primarySizes},
           {id:"green_socks",name:"Long Green Socks",price:60,sizes:oneSize},
           {id:"floppy_hat",name:"Floppy Hat",price:175,sizes:oneSize},
-          {id:"beanie",name:"Beanie",price:55,sizes:oneSize}
-        ],
-        "Reaora-HS": [
+          {id:"beanie",name:"Beanie",price:55,sizes:oneSize},
           {id:"ts_jacket_hs",name:"Highschool Tracksuit Jacket",price:495,sizes:highschoolSizes},
           {id:"ts_pants_hs",name:"Highschool Tracksuit Pants",price:220,sizes:highschoolSizes},
           {id:"jersey_hs",name:"Highschool Jersey",price:285,sizes:highschoolSizes},
@@ -508,16 +495,16 @@
         ],
         "N2S": [
           {id:"soccer_shirt",name:"Soccer Practice Shirt",price:295,sizes:allSizes},
-          {id:"soccer_short",name:"Soccer Practice Shorts",price:285,sizes:allSizes},
+          {id:"soccer_short",name:"Soccer Shorts",price:285,sizes:allSizes},
           {id:"soccer_socks",name:"Soccer Socks",price:110,sizes:allSizes},
           {id:"rugby_jersey",name:"Rugby Jersey",price:395,sizes:allSizes},
           {id:"rugby_short",name:"Rugby Short",price:275,sizes:allSizes},
           {id:"rugby_socks",name:"Rugby Socks",price:110,sizes:allSizes},
           {id:"basketball_shirt",name:"Basketball Practice Shirt",price:285,sizes:allSizes},
-          {id:"basketball_short",name:"Basketball Practice Shorts",price:285,sizes:allSizes},
+          {id:"basketball_short",name:"Basketball Shorts",price:285,sizes:allSizes},
           {id:"netball_dress",name:"Netball Dress",price:310,sizes:allSizes},
           {id:"athletics_vest",name:"Athletics Vest",price:275,sizes:allSizes},
-          {id:"athletics_short",name:"Athletics Practice Shorts",price:265,sizes:allSizes}
+          {id:"athletics_short",name:"Athletics Shorts",price:265,sizes:allSizes}
         ]
       };
 
@@ -579,11 +566,10 @@
         return row;
       }
 
-      // RENDER IN NEW ORDER: Primary > HS > Sports
+      // RENDER IN NEW ORDER: Reaora (primary then hs) > Sports
       try {
         const mapping = { 
-          "cat-reaora-primary": "Reaora-Primary", 
-          "cat-reaora-hs": "Reaora-HS", 
+          "cat-reaora": "Reaora", 
           "cat-n2s": "N2S" 
         };
         Object.entries(mapping).forEach(([cardId, catKey])=>{
@@ -591,12 +577,6 @@
           if(!el) return;
           categories[catKey].forEach(item=>{
             const row = createProductRow(item);
-            if(item.id === "blazer") {
-              const note = document.createElement('div');
-              note.className = 'compulsory-note';
-              note.innerHTML = '⚠️ <strong>COMPULSORY:</strong> Grade 4, 8, 9';
-              el.appendChild(note);
-            }
             el.appendChild(row);
           });
         });
