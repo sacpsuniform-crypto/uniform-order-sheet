@@ -5,19 +5,10 @@
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>SA College Private School - Uniform Order</title>
 
-  <!-- =========================
-       Libraries
-       - jsPDF + AutoTable for PDF generation
-       - EmailJS for sending emails
-       - ExcelJS + FileSaver for MASTER EXCEL (ADMIN ONLY)
-       ========================= -->
-
-  <!-- jsPDF and autotable -->
+  <!-- Libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-  <!-- EmailJS SDK -->
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-  <!-- Excel Libraries (ADMIN ONLY) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
@@ -70,40 +61,7 @@
       color: rgba(255,255,255,0.9);
     }
 
-    /* Master Stats */
-    .master-stats { 
-      background: var(--white); 
-      border-radius:10px; 
-      padding:16px; 
-      margin: 0 auto 18px auto; 
-      max-width:1200px; 
-      text-align:center; 
-      border: 2px solid var(--gold); 
-    }
-    .master-stats h3 { 
-      color:var(--navy); 
-      margin-top:0; 
-    }
-    .stats-grid { 
-      display:grid; 
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); 
-      gap:12px; 
-      margin-top:12px; 
-    }
-    .stat-item { 
-      background:var(--gold); 
-      padding:12px; 
-      border-radius:6px; 
-      font-weight:700; 
-      font-size:16px; 
-    }
-    .btn-excel { 
-      background:var(--navy) !important; 
-      color:white !important; 
-      padding:10px !important; 
-    }
-
-    /* Braten notice below header */
+    /* Braten notice */
     .braten-notice {
       background: var(--white);
       border: 1px solid var(--gold);
@@ -214,7 +172,7 @@
     .product-row select.size { width:110px; padding:6px; border-radius:6px; border:1px solid #d7dbe0; }
     .product-row input.qty { width:70px; padding:6px; border-radius:6px; border:1px solid #d7dbe0; }
 
-    /* Size & Qty headings above products */
+    /* Size & Qty headings */
     .size-qty-heading {
       display:flex;
       gap:10px;
@@ -306,16 +264,6 @@
     </div>
   </header>
 
-  <!-- Master Stats -->
-  <div class="master-stats" id="masterStats">
-    <h3>📊 Total Orders Today</h3>
-    <div class="stats-grid" id="statsGrid">
-      <div class="stat-item" id="totalOrders">0</div>
-      <div class="stat-item" id="totalValue">R0</div>
-      <div class="stat-item"><button class="btn btn-primary btn-excel" onclick="window._sa_helpers.downloadMasterExcel()">📥 Download Master Excel</button></div>
-    </div>
-  </div>
-
   <!-- Braten notice -->
   <div class="braten-notice">
     <h3>Important Uniform Order Information</h3>
@@ -401,7 +349,8 @@
         </table>
 
         <div class="total" id="grandTotal">Total: R0.00</div>
-        <!-- 💳 Payment Information Section -->
+        
+        <!-- Payment Information Section -->
         <div id="payment-info" style="margin-top: 30px; border: 2px solid #169179; border-radius: 10px; background-color: #f2faf8; padding: 20px; font-family: 'Comic Sans MS', sans-serif;">
           <h3 style="background-color: #ba372a; color: white; padding: 10px; border-radius: 8px 8px 0 0; margin-top: 0;">
             💳 Payment Information
@@ -414,52 +363,40 @@
             <a href="mailto:info@sacps.co.za">info@sacps.co.za</a> or <a href="mailto:sacpsuniform@gmail.com">sacpsuniform@gmail.com</a>  
           </p>
         </div>
+        
         <!-- Submit button -->
         <button type="submit" class="btn btn-gold" id="submitBtn" style="margin-top:14px;">
           Submit Order & Download Receipt
         </button>
 
         <div class="spaced muted" style="font-size:13px;">
-          PDF receipt will download automatically! All orders saved to master records.
+          PDF receipt will download automatically!
         </div>
       </aside>
     </form>
   </main>
 
-  <!-- =========================
-       Script: Data, render, cart, PDF, EmailJS, MASTER EXCEL
-       ========================= -->
+  <!-- Script -->
   <script>
     (function(){
-      // Initialize EmailJS with your public key
+      // Initialize EmailJS
       emailjs.init('AXfbwxKNy1g4wKAX8');
 
-      // MASTER STORAGE FUNCTIONS
+      // ***MASTER STORAGE FUNCTIONS (INVISIBLE TO PARENTS)***
       function getMasterOrders() {
         return JSON.parse(localStorage.getItem('saCollegeMasterOrders') || '[]');
       }
       function saveMasterOrders(orders) {
         localStorage.setItem('saCollegeMasterOrders', JSON.stringify(orders));
       }
-      function updateStats() {
-        const orders = getMasterOrders();
-        const today = new Date().toDateString();
-        const todayOrders = orders.filter(o => new Date(o.timestamp).toDateString() === today);
-        document.getElementById('totalOrders').textContent = todayOrders.length;
-        document.getElementById('totalValue').textContent = `R${todayOrders.reduce((sum, o) => sum + o.total, 0).toFixed(2)}`;
-      }
 
-      // ---------------------------
       // Data: sizes & items
-      // ---------------------------
       const primarySizes = ['5-6','6-7','7-8','8-9','9-10','10-11','11-12','12-13','13-14'];
       const highschoolSizes = ['13-14','14-15','15-16','16-17','17-18','18-20'];
       const blazerSizes = ['28','30','32','34','36','38','40','42'];
       const oneSize = ['One Size'];
       const allSizes = [...primarySizes, ...highschoolSizes];
 
-      function increase10pct(price){ return Math.round(price * 1.1); }
-      // All items - unchanged from your working list
       const categories = {
         "Reaora": [
           {id:"tracksuit_primary",name:"Primary Tracksuit Set",price:660,sizes:primarySizes},
@@ -512,9 +449,7 @@
         "soccer_socks": "soccer socks.jpg"
       };
 
-      // ---------------------------
-      // Rendering: inject products into their category cards
-      // ---------------------------
+      // Render products
       function createProductRow(item){
         const row = document.createElement('div');
         row.className = 'product-row item-row';
@@ -569,11 +504,8 @@
         console.error("Error building product list:", err);
       }
 
-      // ---------------------------
-      // Cart: collect selected items & render
-      // ---------------------------
+      // Cart
       let cart = [];
-
       function collectCartFromDOM(){
         cart = [];
         document.querySelectorAll('.item-row').forEach(row=>{
@@ -658,9 +590,7 @@
         }
       });
 
-      // ---------------------------
-      // MASTER EXCEL GENERATOR (ADMIN ONLY)
-      // ---------------------------
+      // ***ADMIN-ONLY EXCEL GENERATOR (HIDDEN FROM PARENTS)***
       async function generateMasterExcel() {
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet('ALL ORDERS');
@@ -713,9 +643,10 @@
         saveAs(blob, `SACollege_ALL_ORDERS_${new Date().toISOString().split('T')[0]}.xlsx`);
       }
 
-      // ---------------------------
+      // ***ADMIN ACCESS: Type "ADMIN" in console to download Excel***
+      window.downloadMasterExcel = generateMasterExcel;
+
       // PDF generation
-      // ---------------------------
       async function createReceiptPDF(details, cartItems){
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF({ unit: 'pt', format: 'a4' });
@@ -789,9 +720,7 @@
         };
       }
 
-      // ---------------------------
-      // Submit: generate PDF, download, send via EmailJS, save to MASTER
-      // ---------------------------
+      // Submit
       document.getElementById('orderForm').addEventListener('submit', async function(e){
         e.preventDefault();
 
@@ -819,13 +748,12 @@
           const grand = cart.reduce((s, it) => s + (it.price * it.qty), 0);
           const timestamp = new Date().toISOString();
 
-          // SAVE TO MASTER (NO DOWNLOAD)
+          // ***SAVE TO MASTER (INVISIBLE)***
           const masterOrders = getMasterOrders();
           masterOrders.push({ timestamp, ...details, items: [...cart], total: grand });
           saveMasterOrders(masterOrders);
-          updateStats();
 
-          // PARENT GETS ONLY PDF
+          // ***PARENT GETS ONLY PDF***
           const { doc, base64 } = await createReceiptPDF(details, cart);
           const fileName = `SACollege_Receipt_${learnerName || 'Order'}.pdf`;
           doc.save(fileName);
@@ -848,13 +776,11 @@
             masterSummary: `***NEW ORDER #${masterOrders.length}*** | Admin: ${adminNumber} | Total: R${grand.toFixed(2)}`
           };
 
-          console.log('Sending EmailJS params:', templateParams);
-
           await emailjs.send('service_myhmc1q', 'template_oq150rd', templateParams)
             .then(response => console.log('EmailJS response:', response))
             .catch(err => console.error('EmailJS error:', err));
 
-          alert(`✅ SUCCESS! PDF downloaded! (${masterOrders.length} total orders saved)`);
+          alert(`✅ SUCCESS! PDF downloaded!`);
 
           document.getElementById('orderForm').reset();
           document.querySelectorAll('.item-row .qty').forEach(q => q.value = 0);
@@ -863,24 +789,20 @@
 
         } catch (err) {
           console.error("Submit error:", err);
-          alert("An error occurred while submitting. Please try again. Check console for details.");
+          alert("An error occurred while submitting. Please try again.");
         } finally {
           submitBtn.disabled = false;
           submitBtn.textContent = 'Submit Order & Download Receipt';
         }
       });
 
-      // Expose functions
-      window._sa_helpers = { 
-        collectCartFromDOM, renderCart, createReceiptPDF, categories, cart, 
-        downloadMasterExcel: generateMasterExcel 
-      };
-
       // Initialize
       collectCartFromDOM();
       renderCart();
-      updateStats();
 
+      // ***ADMIN CONSOLE INSTRUCTION (VISIBLE ONLY TO YOU)***
+      console.log('%c🔐 ADMIN: Type "downloadMasterExcel()" in console to download ALL orders Excel!', 'color:#00274d;font-size:16px;font-weight:bold;');
+      
     })();
   </script>
 </body>
