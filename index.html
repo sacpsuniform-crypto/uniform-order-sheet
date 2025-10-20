@@ -449,22 +449,9 @@
       // Initialize EmailJS
       emailjs.init('AXfbwxKNy1g4wKAX8');
 
-      // ***GLOBAL STORAGE - ALL DEVICES***
-      function getMasterOrders() {
-        // Try to get from global storage first
-        if(window.masterOrdersStorage) {
-          return window.masterOrdersStorage;
-        }
-        // Fallback to localStorage
-        const stored = localStorage.getItem('saCollegeMasterOrders');
-        window.masterOrdersStorage = JSON.parse(stored || '[]');
-        return window.masterOrdersStorage;
-      }
-      
-      function saveMasterOrders(orders) {
-        window.masterOrdersStorage = orders;
-        localStorage.setItem('saCollegeMasterOrders', JSON.stringify(orders));
-      }
+      // Notion Configuration - REPLACE THESE
+      const NOTION_TOKEN = 'your_notion_integration_token_here'; // Get from https://www.notion.so/my-integrations
+      const DATABASE_ID = 'your_database_id_here'; // Get from your Notion database URL
 
       // Data: sizes & items - REORGANIZED
       const primarySizes = ['5-6','6-7','7-8','8-9','9-10','10-11','11-12','12-13','13-14'];
@@ -670,62 +657,138 @@
         }
       });
 
+      // Notion API Helper - Query All Pages
+      async function queryAllPages() {
+        if (!NOTION_TOKEN || !DATABASE_ID) {
+          throw new Error('Notion token or database ID not configured.');
+        }
+        const baseUrl = `https://api.notion.com/v1/data_sources/${DATABASE_ID}/query`;
+        const headers = {
+          'Authorization': `Bearer ${NOTION_TOKEN}`,
+          'Content-Type': 'application/json',
+          'Notion-Version': '2022-06-28'
+        };
+        let allPages = [];
+        let startCursor = null;
+        let hasMore = true;
+
+        while (hasMore) {
+          const body = {
+            page_size: 100
+          };
+          if (startCursor) {
+            body.start_cursor = startCursor;
+          }
+
+          const response = await fetch(baseUrl, {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify(body)
+          });
+
+          if (!response.ok) {
+            throw new Error(`Notion API error: ${response.status} - ${await response.text()}`);
+          }
+
+          const data = await response.json();
+          allPages = allPages.concat(data.results || []);
+          startCursor = data.next_cursor;
+          hasMore = !!startCursor;
+        }
+
+        return allPages;
+      }
+
       // ***GLOBAL EXCEL WITH PAID COLUMN***
       async function downloadMasterExcel() {
-        const orders = getMasterOrders();
-        if(orders.length === 0){ alert('No orders yet!'); return; }
-        
-        const workbook = new ExcelJS.Workbook();
-        const worksheet = workbook.addWorksheet('ALL ORDERS');
-        
-        worksheet.mergeCells('A1:L1');
-        worksheet.getCell('A1').value = 'SA COLLEGE PRIVATE SCHOOL - ALL UNIFORM ORDERS';
-        worksheet.getCell('A1').font = { size: 18, bold: true, color: { argb: 'FF00274D' } };
-        worksheet.getCell('A1').alignment = { horizontal: 'center' };
-        
-        const headers = ['Timestamp', 'Admin #', 'Learner', 'Grade', 'Parent', 'Contact', 'Email', 'Item', 'Size', 'Qty', 'Total', 'PAID?'];
-        worksheet.addRow(headers);
-        worksheet.getRow(2).font = { bold: true, color: { argb: 'FF00274D' } };
-        worksheet.getRow(2).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFC107' } };
-        
-        orders.forEach(order => {
-          order.items.forEach(item => {
-            worksheet.addRow([
-              new Date(order.timestamp).toLocaleString('en-ZA'),
-              order.adminNumber,
-              order.learnerName,
-              order.grade,
-              order.parentName,
-              order.contactNumber,
-              order.email,
-              item.name,
-              item.size,
-              item.qty,
-              `R${(item.qty * item.price).toFixed(2)}`,
-              order.paid || 'NO'
-            ]);
+        try {
+          const pages = await queryAllPages();
+          if (pages.length === 0) {
+            alert('No orders yet!');
+            return;
+          }
+
+          const orders = pages.map(page => {
+            const props = page.properties;
+            const itemsText = props['Order Details']?.rich_text?.map(rt => rt.text.content).join('\n') || '';
+            const items = itemsText.split('\n').filter(line => line.trim()).map(line => {
+              const [name, sizeQtyPrice] = line.split(' - ');
+              const [sizePart, qtyPart, pricePart] = sizeQtyPrice.split(', ');
+              const size = sizePart.replace('Size: ', '');
+              const qty = parseInt(qtyPart.replace('Qty: ', ''), 10);
+              const price = parseFloat(pricePart.replace('Price: R', ''));
+              return { name, size, qty, price };
+            });
+
+            return {
+              timestamp: props['Timestamp']?.rich_text?.[0]?.text.content || '',
+              adminNumber: props['Admin Number']?.rich_text?.[0]?.text.content || '',
+              learnerName: props['Learner Name']?.rich_text?.[0]?.text.content || '',
+              grade: props['Grade']?.rich_text?.[0]?.text.content || '',
+              parentName: props['Parent Name']?.rich_text?.[0]?.text.content || '',
+              contactNumber: props['Contact Number']?.rich_text?.[0]?.text.content || '',
+              email: props['Email']?.rich_text?.[0]?.text.content || '',
+              items,
+              total: props['Total']?.number || 0,
+              paid: props['Paid']?.checkbox || false
+            };
           });
-          worksheet.addRow(['', '', '', '', '', '', '', '', '', 'ORDER TOTAL', `R${order.total.toFixed(2)}`, order.paid ? 'YES' : 'NO']);
-        });
-        
-        const totalOrders = orders.length;
-        const grandTotal = orders.reduce((sum, o) => sum + o.total, 0);
-        const paidOrders = orders.filter(o => o.paid).length;
-        worksheet.addRow([]);
-        worksheet.mergeCells(`A${worksheet.rowCount}:K${worksheet.rowCount}`);
-        worksheet.getCell(`A${worksheet.rowCount}`).value = `TOTAL ORDERS: ${totalOrders} | PAID: ${paidOrders} | GRAND TOTAL: R${grandTotal.toFixed(2)}`;
-        worksheet.getCell(`A${worksheet.rowCount}`).font = { bold: true, size: 14 };
-        
-        worksheet.columns = [
-          { width: 18 }, { width: 10 }, { width: 15 }, { width: 10 },
-          { width: 15 }, { width: 12 }, { width: 20 }, { width: 30 },
-          { width: 8 }, { width: 6 }, { width: 12 }, { width: 8 }
-        ];
-        
-        const buffer = await workbook.xlsx.writeBuffer();
-        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-        saveAs(blob, `SACollege_ALL_ORDERS_${new Date().toISOString().split('T')[0]}.xlsx`);
-        alert(`✅ ${orders.length} orders downloaded!\n💰 ${paidOrders} PAID | R${grandTotal.toFixed(2)} TOTAL`);
+
+          const workbook = new ExcelJS.Workbook();
+          const worksheet = workbook.addWorksheet('ALL ORDERS');
+          
+          worksheet.mergeCells('A1:L1');
+          worksheet.getCell('A1').value = 'SA COLLEGE PRIVATE SCHOOL - ALL UNIFORM ORDERS';
+          worksheet.getCell('A1').font = { size: 18, bold: true, color: { argb: 'FF00274D' } };
+          worksheet.getCell('A1').alignment = { horizontal: 'center' };
+          
+          const headers = ['Timestamp', 'Admin #', 'Learner', 'Grade', 'Parent', 'Contact', 'Email', 'Item', 'Size', 'Qty', 'Total', 'PAID?'];
+          worksheet.addRow(headers);
+          worksheet.getRow(2).font = { bold: true, color: { argb: 'FF00274D' } };
+          worksheet.getRow(2).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFC107' } };
+          
+          orders.forEach(order => {
+            order.items.forEach(item => {
+              worksheet.addRow([
+                order.timestamp,
+                order.adminNumber,
+                order.learnerName,
+                order.grade,
+                order.parentName,
+                order.contactNumber,
+                order.email,
+                item.name,
+                item.size,
+                item.qty,
+                `R${(item.qty * item.price).toFixed(2)}`,
+                order.paid ? 'YES' : 'NO'
+              ]);
+            });
+            worksheet.addRow(['', '', '', '', '', '', '', '', '', 'ORDER TOTAL', `R${order.total.toFixed(2)}`, order.paid ? 'YES' : 'NO']);
+          });
+          
+          const totalOrders = orders.length;
+          const grandTotal = orders.reduce((sum, o) => sum + o.total, 0);
+          const paidOrders = orders.filter(o => o.paid).length;
+          worksheet.addRow([]);
+          worksheet.mergeCells(`A${worksheet.rowCount}:K${worksheet.rowCount}`);
+          worksheet.getCell(`A${worksheet.rowCount}`).value = `TOTAL ORDERS: ${totalOrders} | PAID: ${paidOrders} | GRAND TOTAL: R${grandTotal.toFixed(2)}`;
+          worksheet.getCell(`A${worksheet.rowCount}`).font = { bold: true, size: 14 };
+          
+          worksheet.columns = [
+            { width: 18 }, { width: 10 }, { width: 15 }, { width: 10 },
+            { width: 15 }, { width: 12 }, { width: 20 }, { width: 30 },
+            { width: 8 }, { width: 6 }, { width: 12 }, { width: 8 }
+          ];
+          
+          const buffer = await workbook.xlsx.writeBuffer();
+          const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+          saveAs(blob, `SACollege_ALL_ORDERS_${new Date().toISOString().split('T')[0]}.xlsx`);
+          alert(`✅ ${orders.length} orders downloaded!\n💰 ${paidOrders} PAID | R${grandTotal.toFixed(2)} TOTAL`);
+        } catch (err) {
+          console.error('Error downloading Excel:', err);
+          alert(`Error: ${err.message}`);
+        }
       }
 
       // PASSWORD CHECK
@@ -855,16 +918,66 @@
           const grand = cart.reduce((s, it) => s + (it.price * it.qty), 0);
           const timestamp = new Date().toISOString();
 
-          // ***GLOBAL SAVE - ALL DEVICES***
-          const masterOrders = getMasterOrders();
-          masterOrders.push({ 
-            timestamp, 
-            paid: false, // Default unpaid
-            ...details, 
-            items: [...cart], 
-            total: grand 
+          // Save to Notion
+          if (!NOTION_TOKEN || !DATABASE_ID) {
+            throw new Error('Notion configuration missing. Please set NOTION_TOKEN and DATABASE_ID in the script.');
+          }
+
+          const orderDetailsText = cart.map(it => `${it.name} - Size: ${it.size}, Qty: ${it.qty}, Price: R${it.price}`).join('\n');
+
+          const notionProperties = {
+            'Name': {
+              title: [{ text: { content: `${learnerName} Order - ${adminNumber}` } }]
+            },
+            'Timestamp': {
+              rich_text: [{ text: { content: timestamp } }]
+            },
+            'Admin Number': {
+              rich_text: [{ text: { content: adminNumber } }]
+            },
+            'Learner Name': {
+              rich_text: [{ text: { content: learnerName } }]
+            },
+            'Grade': {
+              rich_text: [{ text: { content: grade } }]
+            },
+            'Parent Name': {
+              rich_text: [{ text: { content: parentName } }]
+            },
+            'Contact Number': {
+              rich_text: [{ text: { content: contactNumber } }]
+            },
+            'Email': {
+              rich_text: [{ text: { content: email } }]
+            },
+            'Order Details': {
+              rich_text: cart.map(it => ({ text: { content: `${it.name} - Size: ${it.size}, Qty: ${it.qty}, Price: R${it.price}\n` } }))
+            },
+            'Total': {
+              number: grand
+            },
+            'Paid': {
+              checkbox: false
+            }
+          };
+
+          const notionResponse = await fetch('https://api.notion.com/v1/pages', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${NOTION_TOKEN}`,
+              'Content-Type': 'application/json',
+              'Notion-Version': '2022-06-28'
+            },
+            body: JSON.stringify({
+              parent: { type: 'data_source', data_source: DATABASE_ID },
+              properties: notionProperties
+            })
           });
-          saveMasterOrders(masterOrders);
+
+          if (!notionResponse.ok) {
+            const errorText = await notionResponse.text();
+            throw new Error(`Notion API error: ${notionResponse.status} - ${errorText}`);
+          }
 
           // PARENT GETS ONLY PDF
           const { doc, base64 } = await createReceiptPDF(details, cart);
@@ -886,14 +999,14 @@
             adminNumber: adminNumber,
             orderDetails: orderDetails,
             cartTotal: `R${grand.toFixed(2)}`,
-            masterSummary: `***NEW ORDER #${masterOrders.length}*** | Admin: ${adminNumber} | Total: R${grand.toFixed(2)}`
+            masterSummary: `***NEW ORDER*** | Admin: ${adminNumber} | Total: R${grand.toFixed(2)}`
           };
 
           await emailjs.send('service_myhmc1q', 'template_oq150rd', templateParams)
             .then(response => console.log('EmailJS response:', response))
             .catch(err => console.error('EmailJS error:', err));
 
-          alert(`✅ SUCCESS! Order form downloaded!`);
+          alert(`✅ SUCCESS! Order submitted to Notion and form downloaded!`);
 
           document.getElementById('orderForm').reset();
           document.querySelectorAll('.item-row .qty').forEach(q => q.value = 0);
@@ -902,7 +1015,7 @@
 
         } catch (err) {
           console.error("Submit error:", err);
-          alert("An error occurred while submitting. Please try again.");
+          alert(`An error occurred: ${err.message}`);
         } finally {
           submitBtn.disabled = false;
           submitBtn.textContent = 'Submit Order & Download Order Form';
