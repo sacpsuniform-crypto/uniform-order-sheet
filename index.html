@@ -11,6 +11,17 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
+  <!-- Airtable Configuration -->
+  <script>
+    // ⚙️ AIRTABLE CONFIGURATION - ✅ FULLY CONFIGURED
+    const AIRTABLE_CONFIG = {
+      apiKey: 'patPSNwb3ZKKsFr89.70d644671290a0824fbbf50cc4b6ff88cfc3609d994dc18404b5e43fe795d15b',
+      baseId: 'appNXtPjAndvyzdCe',       // ✅ Base ID configured
+      tableName: 'tbls8KE1BcmDPwiNf',    // Using table ID
+      viewId: 'viw5vAeOq1wUCX4St'        // Optional: specific view
+    };
+  </script>
+
   <style>
     :root{
       --navy: #00274d;
@@ -675,6 +686,133 @@
         localStorage.setItem('masterOrders', JSON.stringify(orders));
       }
 
+      // 📊 AIRTABLE API INTEGRATION
+      async function sendToAirtable(orderData) {
+        try {
+          // Check if Airtable is configured
+          if (!AIRTABLE_CONFIG.apiKey || AIRTABLE_CONFIG.apiKey === 'YOUR_AIRTABLE_API_KEY') {
+            console.warn('⚠️ Airtable API Key not configured. Skipping Airtable sync.');
+            return { success: false, message: 'API Key not configured' };
+          }
+          
+          if (!AIRTABLE_CONFIG.baseId || AIRTABLE_CONFIG.baseId === 'YOUR_BASE_ID') {
+            console.warn('⚠️ Airtable Base ID not configured. Skipping Airtable sync.');
+            return { success: false, message: 'Base ID not configured' };
+          }
+
+          const url = `https://api.airtable.com/v0/${AIRTABLE_CONFIG.baseId}/${AIRTABLE_CONFIG.tableName}`;
+          
+          // Format cart items as JSON string for Airtable
+          const itemsJSON = JSON.stringify(orderData.items);
+          
+          // Calculate total
+          const orderTotal = orderData.items.reduce((sum, item) => sum + (item.qty * item.price), 0);
+          
+          // Prepare the record for Airtable
+          const record = {
+            fields: {
+              'Timestamp': orderData.timestamp,
+              'Admin Number': orderData.adminNumber,
+              'Learner Name': orderData.learnerName,
+              'Grade': orderData.grade,
+              'Parent Name': orderData.parentName,
+              'Contact Number': orderData.contactNumber,
+              'Email': orderData.email,
+              'Order Items': itemsJSON,
+              'Order Total': orderTotal,
+              'Status': 'Pending',
+              'Paid': false,
+              'Order Count': orderData.items.length
+            }
+          };
+
+          const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${AIRTABLE_CONFIG.apiKey}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(record)
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`Airtable API error: ${errorData.error?.message || response.statusText}`);
+          }
+
+          const result = await response.json();
+          console.log('✅ Successfully sent to Airtable:', result);
+          return { success: true, recordId: result.id };
+
+        } catch (error) {
+          console.error('❌ Airtable error:', error);
+          return { success: false, error: error.message };
+        }
+      }
+
+      // Optional: Function to send individual order items as separate records
+      async function sendOrderItemsToAirtable(orderData) {
+        try {
+          if (!AIRTABLE_CONFIG.apiKey || AIRTABLE_CONFIG.apiKey === 'YOUR_AIRTABLE_API_KEY') {
+            console.warn('⚠️ Airtable API Key not configured. Skipping Airtable sync.');
+            return { success: false, message: 'API Key not configured' };
+          }
+          
+          if (!AIRTABLE_CONFIG.baseId || AIRTABLE_CONFIG.baseId === 'YOUR_BASE_ID') {
+            console.warn('⚠️ Airtable Base ID not configured. Skipping Airtable sync.');
+            return { success: false, message: 'Base ID not configured' };
+          }
+
+          const url = `https://api.airtable.com/v0/${AIRTABLE_CONFIG.baseId}/${AIRTABLE_CONFIG.tableName}`;
+          
+          // Send each item as a separate record
+          const promises = orderData.items.map(async (item, index) => {
+            const record = {
+              fields: {
+                'Timestamp': orderData.timestamp,
+                'Admin Number': orderData.adminNumber,
+                'Learner Name': orderData.learnerName,
+                'Grade': orderData.grade,
+                'Parent Name': orderData.parentName,
+                'Contact Number': orderData.contactNumber,
+                'Email': orderData.email,
+                'Item Name': item.name,
+                'Item Size': item.size,
+                'Item Quantity': item.qty,
+                'Item Price': item.price,
+                'Line Total': item.qty * item.price,
+                'Status': 'Pending',
+                'Paid': false,
+                'Item Number': index + 1
+              }
+            };
+
+            const response = await fetch(url, {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${AIRTABLE_CONFIG.apiKey}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(record)
+            });
+
+            if (!response.ok) {
+              throw new Error(`Failed to send item ${index + 1}`);
+            }
+
+            return await response.json();
+          });
+
+          const results = await Promise.all(promises);
+          console.log(`✅ Successfully sent ${results.length} items to Airtable`);
+          return { success: true, count: results.length };
+
+        } catch (error) {
+          console.error('❌ Airtable error:', error);
+          return { success: false, error: error.message };
+        }
+      }
+
       // Excel Download from localStorage
       async function downloadMasterExcel() {
         try {
@@ -870,7 +1008,7 @@
 
           // Save to localStorage
           const masterOrders = getMasterOrders();
-          masterOrders.push({
+          const newOrder = {
             timestamp,
             adminNumber,
             learnerName,
@@ -881,8 +1019,18 @@
             items: [...cart],
             total: grand,
             paid: false
-          });
+          };
+          masterOrders.push(newOrder);
           saveMasterOrders(masterOrders);
+
+          // 📊 Send to Airtable (Individual Items Per Record)
+          const airtableResult = await sendOrderItemsToAirtable(newOrder);
+          if (airtableResult.success) {
+            console.log(`✅ ${airtableResult.count} items sent to Airtable successfully!`);
+          } else if (airtableResult.error) {
+            console.warn('⚠️ Airtable sync failed:', airtableResult.error);
+            // Don't block the submission if Airtable fails
+          }
 
           // Generate and download PDF
           const { doc, base64 } = await createReceiptPDF(details, cart);

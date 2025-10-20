@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Airtable Integration Test</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #00274d;
+      margin-top: 0;
+    }
+    .config-section {
+      background: #f9f9f9;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 20px 0;
+      border-left: 4px solid #00274d;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+    button {
+      background: #00274d;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    button:hover {
+      background: #003d6b;
+    }
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 5px;
+      font-family: monospace;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    .success {
+      background: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+    }
+    .error {
+      background: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+    }
+    .info {
+      background: #d1ecf1;
+      border: 1px solid #bee5eb;
+      color: #0c5460;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+      color: #333;
+    }
+    .sample-data {
+      background: #fffbf0;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 15px 0;
+      border-left: 4px solid #ffc107;
+    }
+    code {
+      background: #f4f4f4;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧪 Airtable Integration Test</h1>
+    <p>Use this page to test your Airtable configuration before using the main order form.</p>
+
+    <div class="config-section">
+      <h3>Step 1: Your Airtable Credentials (Pre-filled ✅)</h3>
+      <label for="apiKey">Personal Access Token (API Key):</label>
+      <input type="text" id="apiKey" value="patPSNwb3ZKKsFr89.70d644671290a0824fbbf50cc4b6ff88cfc3609d994dc18404b5e43fe795d15b">
+      
+      <label for="baseId">Base ID:</label>
+      <input type="text" id="baseId" value="appNXtPjAndvyzdCe">
+      
+      <label for="tableName">Table ID:</label>
+      <input type="text" id="tableName" value="tbls8KE1BcmDPwiNf" placeholder="tbls8KE1BcmDPwiNf">
+      
+      <p style="color: #28a745; font-weight: bold; margin-top: 15px;">✅ All credentials are pre-configured! Just click the test button below.</p>
+    </div>
+
+    <div class="sample-data">
+      <h3>Step 2: Review Test Data</h3>
+      <p>This test will send the following sample order to your Airtable:</p>
+      <ul>
+        <li><strong>Parent:</strong> Test Parent</li>
+        <li><strong>Contact:</strong> 012 345 6789</li>
+        <li><strong>Email:</strong> test@example.com</li>
+        <li><strong>Learner:</strong> Test Student</li>
+        <li><strong>Grade:</strong> Grade 7A</li>
+        <li><strong>Admin Number:</strong> TEST123</li>
+        <li><strong>Items:</strong> 2 items (Tracksuit Jacket, School Tie)</li>
+        <li><strong>Total:</strong> R530.00</li>
+      </ul>
+    </div>
+
+    <div class="config-section">
+      <h3>Step 3: Test Connection</h3>
+      <button id="testBtn" onclick="testAirtableConnection()">🚀 Send Test Order to Airtable</button>
+    </div>
+
+    <div id="result"></div>
+  </div>
+
+  <script>
+    async function testAirtableConnection() {
+      const resultDiv = document.getElementById('result');
+      const testBtn = document.getElementById('testBtn');
+      const apiKey = document.getElementById('apiKey').value.trim();
+      const baseId = document.getElementById('baseId').value.trim();
+      const tableName = document.getElementById('tableName').value.trim();
+
+      // Validation
+      if (!apiKey || apiKey === 'patXXXXXXXXXXXXXXXX' || !apiKey.startsWith('pat')) {
+        resultDiv.className = 'result error';
+        resultDiv.textContent = '❌ Error: Please enter a valid Airtable Personal Access Token (starts with "pat")';
+        return;
+      }
+
+      if (!baseId || baseId === 'appXXXXXXXXXXXXXX' || !baseId.startsWith('app')) {
+        resultDiv.className = 'result error';
+        resultDiv.textContent = '❌ Error: Please enter a valid Airtable Base ID (starts with "app")';
+        return;
+      }
+
+      if (!tableName) {
+        resultDiv.className = 'result error';
+        resultDiv.textContent = '❌ Error: Please enter a table name';
+        return;
+      }
+
+      // Show loading
+      testBtn.disabled = true;
+      testBtn.textContent = '⏳ Sending...';
+      resultDiv.className = 'result info';
+      resultDiv.textContent = '⏳ Connecting to Airtable...\n\nPlease wait...';
+
+      try {
+        // Create test order data
+        const testOrder = {
+          timestamp: new Date().toISOString(),
+          adminNumber: 'TEST123',
+          learnerName: 'Test Student',
+          grade: 'Grade 7A',
+          parentName: 'Test Parent',
+          contactNumber: '012 345 6789',
+          email: 'test@example.com',
+          items: [
+            {
+              name: 'Primary Tracksuit Jacket',
+              size: '10-11',
+              qty: 1,
+              price: 440
+            },
+            {
+              name: 'School Tie',
+              size: 'One Size',
+              qty: 1,
+              price: 90
+            }
+          ]
+        };
+
+        const url = `https://api.airtable.com/v0/${baseId}/${tableName}`;
+
+        // Send each item as a separate record (Individual Items Per Record method)
+        const results = [];
+        for (let i = 0; i < testOrder.items.length; i++) {
+          const item = testOrder.items[i];
+          
+          const record = {
+            fields: {
+              'Timestamp': testOrder.timestamp,
+              'Admin Number': testOrder.adminNumber,
+              'Learner Name': testOrder.learnerName,
+              'Grade': testOrder.grade,
+              'Parent Name': testOrder.parentName,
+              'Contact Number': testOrder.contactNumber,
+              'Email': testOrder.email,
+              'Item Name': item.name,
+              'Item Size': item.size,
+              'Item Quantity': item.qty,
+              'Item Price': item.price,
+              'Line Total': item.qty * item.price,
+              'Status': 'Pending',
+              'Paid': false,
+              'Item Number': i + 1
+            }
+          };
+
+          const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${apiKey}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(record)
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`Airtable API error on item ${i + 1}: ${errorData.error?.message || response.statusText}`);
+          }
+
+          const result = await response.json();
+          results.push(result);
+        }
+        
+        resultDiv.className = 'result success';
+        resultDiv.textContent = `✅ SUCCESS! Test order sent to Airtable
+
+${results.length} items created as separate records!
+
+Record IDs:
+${results.map((r, i) => `  ${i + 1}. ${r.id} - ${testOrder.items[i].name}`).join('\n')}
+
+Created: ${new Date(results[0].createdTime).toLocaleString()}
+
+Check your Airtable base to see the ${results.length} test records!
+
+Using "Individual Items Per Record" method - each item is a separate row.`;
+
+        // Save config to localStorage for convenience
+        localStorage.setItem('airtable_test_config', JSON.stringify({ apiKey, baseId, tableName }));
+        
+      } catch (error) {
+        resultDiv.className = 'result error';
+        resultDiv.textContent = `❌ ERROR: ${error.message}
+
+Common Issues:
+1. Invalid API Key - Check your Personal Access Token
+2. Invalid Base ID - Verify the Base ID is correct
+3. Table Not Found - Check the table name matches exactly (case-sensitive)
+4. Missing Fields - Ensure your Airtable table has all required fields
+5. Permission Denied - Make sure your token has data.records:write permission
+
+Full Error:
+${error.stack || error}`;
+      } finally {
+        testBtn.disabled = false;
+        testBtn.textContent = '🚀 Send Test Order to Airtable';
+      }
+    }
+
+    // Load saved config on page load
+    window.addEventListener('load', () => {
+      try {
+        const saved = localStorage.getItem('airtable_test_config');
+        if (saved) {
+          const config = JSON.parse(saved);
+          document.getElementById('apiKey').value = config.apiKey || '';
+          document.getElementById('baseId').value = config.baseId || '';
+          document.getElementById('tableName').value = config.tableName || 'Orders';
+        }
+      } catch (e) {
+        console.log('No saved config');
+      }
+    });
+
+    // Allow Enter key to submit
+    document.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        testAirtableConnection();
+      }
+    });
+  </script>
+</body>
+</html>
+
