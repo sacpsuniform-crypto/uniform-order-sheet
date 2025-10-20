@@ -346,7 +346,7 @@
     <ul>
       <li>All sportswear orders must be placed by <strong>15 November 2025</strong>.</li>
       <li>Expected delivery date: <strong>5 December 2025</strong>.</li>
-      li> <strong>Further dates will be confirmed </strong>.</li>
+      <li><strong>Further dates will be confirmed</strong>.</li>
     </ul>
   </div>
 
@@ -450,10 +450,6 @@
       // Initialize EmailJS
       emailjs.init('AXfbwxKNy1g4wKAX8');
 
-      // Notion Configuration - REPLACE THESE
-      const NOTION_TOKEN = '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'; // Get from https://www.notion.so/my-integrations
-      const DATABASE_ID = '29236ae6402180a090cbda939b90c0da'; // Get from your Notion database URL
-
       // Data: sizes & items - REORGANIZED
       const primarySizes = ['5-6','6-7','7-8','8-9','9-10','10-11','11-12','12-13','13-14'];
       const highschoolSizes = ['13-14','14-15','15-16','16-17','17-18','18-20'];
@@ -510,7 +506,7 @@
         "soccer_socks": "soccer socks.jpg"
       };
 
-      // Render products - NEW ORDER
+      // Render products
       function createProductRow(item){
         const row = document.createElement('div');
         row.className = 'product-row item-row';
@@ -554,7 +550,7 @@
         return row;
       }
 
-      // RENDER IN NEW ORDER: Reaora (primary then hs) > Sports
+      // RENDER IN ORDER: Reaora (primary then hs) > Sports
       try {
         const mapping = { 
           "cat-reaora": "Reaora", 
@@ -658,82 +654,24 @@
         }
       });
 
-      // Notion API Helper - Query All Pages
-      async function queryAllPages() {
-        if (!NOTION_TOKEN || !DATABASE_ID) {
-          throw new Error('Notion token or database ID not configured.');
-        }
-        const baseUrl = `https://api.notion.com/v1/data_sources/${DATABASE_ID}/query`;
-        const headers = {
-          'Authorization': `Bearer ${NOTION_TOKEN}`,
-          'Content-Type': 'application/json',
-          'Notion-Version': '2022-06-28'
-        };
-        let allPages = [];
-        let startCursor = null;
-        let hasMore = true;
-
-        while (hasMore) {
-          const body = {
-            page_size: 100
-          };
-          if (startCursor) {
-            body.start_cursor = startCursor;
-          }
-
-          const response = await fetch(baseUrl, {
-            method: 'POST',
-            headers: headers,
-            body: JSON.stringify(body)
-          });
-
-          if (!response.ok) {
-            throw new Error(`Notion API error: ${response.status} - ${await response.text()}`);
-          }
-
-          const data = await response.json();
-          allPages = allPages.concat(data.results || []);
-          startCursor = data.next_cursor;
-          hasMore = !!startCursor;
-        }
-
-        return allPages;
+      // LocalStorage Helpers
+      function getMasterOrders() {
+        const orders = localStorage.getItem('masterOrders');
+        return orders ? JSON.parse(orders) : [];
       }
 
-      // ***GLOBAL EXCEL WITH PAID COLUMN***
+      function saveMasterOrders(orders) {
+        localStorage.setItem('masterOrders', JSON.stringify(orders));
+      }
+
+      // Excel Download from localStorage
       async function downloadMasterExcel() {
         try {
-          const pages = await queryAllPages();
-          if (pages.length === 0) {
+          const orders = getMasterOrders();
+          if (orders.length === 0) {
             alert('No orders yet!');
             return;
           }
-
-          const orders = pages.map(page => {
-            const props = page.properties;
-            const itemsText = props['Order Details']?.rich_text?.map(rt => rt.text.content).join('\n') || '';
-            const items = itemsText.split('\n').filter(line => line.trim()).map(line => {
-              const [name, sizeQtyPrice] = line.split(' - ');
-              const [sizePart, qtyPart, pricePart] = sizeQtyPrice.split(', ');
-              const size = sizePart.replace('Size: ', '');
-              const qty = parseInt(qtyPart.replace('Qty: ', ''), 10);
-              const price = parseFloat(pricePart.replace('Price: R', ''));
-              return { name, size, qty, price };
-            });
-
-            return {
-              timestamp: props['Timestamp']?.rich_text?.[0]?.text.content || '',
-              adminNumber: props['Admin Number']?.rich_text?.[0]?.text.content || '',
-              learnerName: props['Learner Name']?.rich_text?.[0]?.text.content || '',
-              grade: props['Grade']?.rich_text?.[0]?.text.content || '',
-              parentName: props['Parent Name']?.rich_text?.[0]?.text.content || '',
-              contactNumber: props['Contact Number']?.rich_text?.[0]?.text.content || '',
-              email: props['Email']?.rich_text?.[0]?.text.content || '',
-              items,
-              total: props['Total']?.number || 0,
-              paid: props['Paid']?.checkbox || false
-            };
-          });
 
           const workbook = new ExcelJS.Workbook();
           const worksheet = workbook.addWorksheet('ALL ORDERS');
@@ -751,7 +689,7 @@
           orders.forEach(order => {
             order.items.forEach(item => {
               worksheet.addRow([
-                order.timestamp,
+                new Date(order.timestamp).toLocaleString('en-ZA'),
                 order.adminNumber,
                 order.learnerName,
                 order.grade,
@@ -919,72 +857,28 @@
           const grand = cart.reduce((s, it) => s + (it.price * it.qty), 0);
           const timestamp = new Date().toISOString();
 
-          // Save to Notion
-          if (!NOTION_TOKEN || !DATABASE_ID) {
-            throw new Error('Notion configuration missing. Please set NOTION_TOKEN and DATABASE_ID in the script.');
-          }
-
-          const orderDetailsText = cart.map(it => `${it.name} - Size: ${it.size}, Qty: ${it.qty}, Price: R${it.price}`).join('\n');
-
-          const notionProperties = {
-            'Name': {
-              title: [{ text: { content: `${learnerName} Order - ${adminNumber}` } }]
-            },
-            'Timestamp': {
-              rich_text: [{ text: { content: timestamp } }]
-            },
-            'Admin Number': {
-              rich_text: [{ text: { content: adminNumber } }]
-            },
-            'Learner Name': {
-              rich_text: [{ text: { content: learnerName } }]
-            },
-            'Grade': {
-              rich_text: [{ text: { content: grade } }]
-            },
-            'Parent Name': {
-              rich_text: [{ text: { content: parentName } }]
-            },
-            'Contact Number': {
-              rich_text: [{ text: { content: contactNumber } }]
-            },
-            'Email': {
-              rich_text: [{ text: { content: email } }]
-            },
-            'Order Details': {
-              rich_text: cart.map(it => ({ text: { content: `${it.name} - Size: ${it.size}, Qty: ${it.qty}, Price: R${it.price}\n` } }))
-            },
-            'Total': {
-              number: grand
-            },
-            'Paid': {
-              checkbox: false
-            }
-          };
-
-          const notionResponse = await fetch('https://api.notion.com/v1/pages', {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${NOTION_TOKEN}`,
-              'Content-Type': 'application/json',
-              'Notion-Version': '2022-06-28'
-            },
-            body: JSON.stringify({
-              parent: { type: 'data_source', data_source: DATABASE_ID },
-              properties: notionProperties
-            })
+          // Save to localStorage
+          const masterOrders = getMasterOrders();
+          masterOrders.push({
+            timestamp,
+            adminNumber,
+            learnerName,
+            grade,
+            parentName,
+            contactNumber,
+            email,
+            items: [...cart],
+            total: grand,
+            paid: false
           });
+          saveMasterOrders(masterOrders);
 
-          if (!notionResponse.ok) {
-            const errorText = await notionResponse.text();
-            throw new Error(`Notion API error: ${notionResponse.status} - ${errorText}`);
-          }
-
-          // PARENT GETS ONLY PDF
+          // Generate and download PDF
           const { doc, base64 } = await createReceiptPDF(details, cart);
           const fileName = `SACollege_OrderForm_${learnerName || 'Order'}.pdf`;
           doc.save(fileName);
 
+          // Send email
           let orderDetails = '';
           cart.forEach(it => {
             const lineTotal = (it.qty * it.price).toFixed(2);
@@ -1007,7 +901,7 @@
             .then(response => console.log('EmailJS response:', response))
             .catch(err => console.error('EmailJS error:', err));
 
-          alert(`✅ SUCCESS! Order submitted to Notion and form downloaded!`);
+          alert(`✅ SUCCESS! Order saved and form downloaded!`);
 
           document.getElementById('orderForm').reset();
           document.querySelectorAll('.item-row .qty').forEach(q => q.value = 0);
