@@ -1,1085 +1,1087 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>SA College Private School - Uniform Order Form</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>SA College Private School - Uniform Order Form</title>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
-  <!-- Airtable Configuration -->
-  <script>
-    // ⚙️ AIRTABLE CONFIGURATION - ✅ FULLY CONFIGURED
-    const AIRTABLE_CONFIG = {
-      apiKey: 'patPSNwb3ZKKsFr89.70d644671290a0824fbbf50cc4b6ff88cfc3609d994dc18404b5e43fe795d15b',
-      baseId: 'appNXtPjAndvyzdCe',       // ✅ Base ID configured
-      tableName: 'tbls8KE1BcmDPwiNf',    // Using table ID
-      viewId: 'viw5vAeOq1wUCX4St'        // Optional: specific view
-    };
-  </script>
+<!-- Airtable Configuration -->
+<script>
+// ⚙️ AIRTABLE CONFIGURATION - ✅ FULLY CONFIGURED
+const AIRTABLE_CONFIG = {
+apiKey: 'patPSNwb3ZKKsFr89.70d644671290a0824fbbf50cc4b6ff88cfc3609d994dc18404b5e43fe795d15b',
+baseId: 'appNXtPjAndvyzdCe',       // ✅ Base ID configured
+tableName: 'tbls8KE1BcmDPwiNf',    // Using table ID
+viewId: 'viw5vAeOq1wUCX4St'        // Optional: specific view
+};
+</script>
 
-  <style>
-    :root{
-      --navy: #00274d;
-      --gold: #ffc107;
-      --white: #ffffff;
-      --muted: #f4f6f8;
-      --accent: #0f7b3a;
-    }
-    html,body{
-      margin:0;
-      padding:0;
-      height:100%;
-      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      background: var(--muted);
-      color:#111;
-    }
+<style>
+:root{
+--navy: #00274d;
+--gold: #ffc107;
+--white: #ffffff;
+--muted: #f4f6f8;
+--accent: #0f7b3a;
+}
+html,body{
+margin:0;
+padding:0;
+height:100%;
+font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+background: var(--muted);
+color:#111;
+}
 
-    /* Header */
-    header.site-header{
-      background: linear-gradient(90deg, rgba(0,39,77,1) 0%, rgba(0,39,77,0.95) 60%);
-      color:var(--white);
-      padding:14px 20px;
-      display:flex;
-      gap:18px;
-      align-items:center;
-    }
-    header.site-header img.logo{
-      height:78px;
-      width:auto;
-      border-radius:8px;
-      box-shadow:0 3px 8px rgba(0,0,0,0.2);
-      background:var(--white);
-      padding:4px;
-    }
-    header.site-header .heading{
-      line-height:1.05;
-    }
-    header.site-header .heading h1{
-      font-size:20px;
-      margin:0;
-      color:var(--white);
-      letter-spacing:0.2px;
-    }
-    header.site-header .heading p{
-      margin:3px 0 0 0;
-      font-size:13px;
-      color: rgba(255,255,255,0.9);
-    }
+/* Header */
+header.site-header{
+background: linear-gradient(90deg, rgba(0,39,77,1) 0%, rgba(0,39,77,0.95) 60%);
+color:var(--white);
+padding:14px 20px;
+display:flex;
+gap:18px;
+align-items:center;
+}
+header.site-header img.logo{
+height:78px;
+width:auto;
+border-radius:8px;
+box-shadow:0 3px 8px rgba(0,0,0,0.2);
+background:var(--white);
+padding:4px;
+}
+header.site-header .heading{
+line-height:1.05;
+}
+header.site-header .heading h1{
+font-size:20px;
+margin:0;
+color:var(--white);
+letter-spacing:0.2px;
+}
+header.site-header .heading p{
+margin:3px 0 0 0;
+font-size:13px;
+color: rgba(255,255,255,0.9);
+}
 
-    /* TINY SECRET BUTTON */
-    .secret-admin {
-      position: fixed;
-      bottom: 10px;
-      right: 10px;
-      background: #666;
-      color: white;
-      border: none;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 10px;
-      cursor: pointer;
-      z-index: 1000;
-      opacity: 0.3;
-      transition: all 0.3s;
-    }
-    .secret-admin:hover {
-      opacity: 1 !important;
-      background: #00274d !important;
-      transform: scale(1.2);
-    }
+/* TINY SECRET BUTTON */
+.secret-admin {
+position: fixed;
+bottom: 10px;
+right: 10px;
+background: #666;
+color: white;
+border: none;
+padding: 4px 8px;
+border-radius: 4px;
+font-size: 10px;
+cursor: pointer;
+z-index: 1000;
+opacity: 0.3;
+transition: all 0.3s;
+}
+.secret-admin:hover {
+opacity: 1 !important;
+background: #00274d !important;
+transform: scale(1.2);
+}
 
-    /* PASSWORD MODAL */
-    .password-modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.8);
-      z-index: 2000;
-    }
-    .password-modal.show { display: flex !important; }
-    .password-box {
-      background: white;
-      margin: auto;
-      padding: 30px;
-      border-radius: 10px;
-      text-align: center;
-      width: 300px;
-    }
-    .password-box h3 { color: #00274d; margin-top: 0; }
-    .password-input {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      font-size: 16px;
-    }
-    .password-btn {
-      background: #00274d;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      margin: 5px;
-    }
+/* PASSWORD MODAL */
+.password-modal {
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: rgba(0,0,0,0.8);
+z-index: 2000;
+}
+.password-modal.show { display: flex !important; }
+.password-box {
+background: white;
+margin: auto;
+padding: 30px;
+border-radius: 10px;
+text-align: center;
+width: 300px;
+}
+.password-box h3 { color: #00274d; margin-top: 0; }
+.password-input {
+width: 100%;
+padding: 10px;
+margin: 10px 0;
+border: 1px solid #ddd;
+border-radius: 5px;
+font-size: 16px;
+}
+.password-btn {
+background: #00274d;
+color: white;
+padding: 10px 20px;
+border: none;
+border-radius: 5px;
+cursor: pointer;
+margin: 5px;
+}
 
-    /* Braten notice */
-    .braten-notice {
-      background: var(--white);
-      border: 1px solid var(--gold);
-      border-left: 5px solid var(--gold);
-      border-radius: 8px;
-      padding: 16px 20px;
-      margin: 0 auto 18px auto;
-      max-width: 1200px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-      font-size: 14px;
-      line-height: 1.5;
-      color: #222;
-    }
-    .braten-notice h3 {
-      margin: 0 0 10px 0;
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--navy);
-    }
-    .braten-notice p {
-      margin: 0 0 10px 0;
-    }
-    .braten-notice ul {
-      margin: 10px 0;
-      padding-left: 20px;
-    }
-    .braten-notice ul li {
-      margin-bottom: 8px;
-    }
-    .braten-notice strong {
-      color: var(--navy);
-    }
-    .braten-notice .emoji {
-      margin-right: 6px;
-    }
+/* Braten notice */
+.braten-notice {
+background: var(--white);
+border: 1px solid var(--gold);
+border-left: 5px solid var(--gold);
+border-radius: 8px;
+padding: 16px 20px;
+margin: 0 auto 18px auto;
+max-width: 1200px;
+box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+font-size: 14px;
+line-height: 1.5;
+color: #222;
+}
+.braten-notice h3 {
+margin: 0 0 10px 0;
+font-size: 16px;
+font-weight: 700;
+color: var(--navy);
+}
+.braten-notice p {
+margin: 0 0 10px 0;
+}
+.braten-notice ul {
+margin: 10px 0;
+padding-left: 20px;
+}
+.braten-notice ul li {
+margin-bottom: 8px;
+}
+.braten-notice strong {
+color: var(--navy);
+}
+.braten-notice .emoji {
+margin-right: 6px;
+}
 
-    /* Page wrapper */
-    .page {
-      max-width:1200px;
-      margin:18px auto;
-      padding:10px;
-    }
+/* Page wrapper */
+.page {
+max-width:1200px;
+margin:18px auto;
+padding:10px;
+}
 
-    /* Form layout */
-    form#orderForm {
-      display: grid;
-      grid-template-columns: 1fr 360px;
-      gap:18px;
-    }
+/* Form layout */
+form#orderForm {
+display: grid;
+grid-template-columns: 1fr 360px;
+gap:18px;
+}
 
-    /* Left column */
-    .left {
-      background:var(--white);
-      border-radius:10px;
-      padding:18px;
-      box-shadow:0 4px 10px rgba(0,0,0,0.04);
-    }
-    .left .section { margin-bottom:14px; }
+/* Left column */
+.left {
+background:var(--white);
+border-radius:10px;
+padding:18px;
+box-shadow:0 4px 10px rgba(0,0,0,0.04);
+}
+.left .section { margin-bottom:14px; }
 
-    .form-row { display:flex; gap:12px; margin-bottom:10px; }
-    .form-row .field { flex:1; }
-    label{
-      display:block;
-      font-size:13px;
-      margin-bottom:6px;
-      color:#222;
-    }
-    input[type="text"], input[type="email"], select {
-      width:100%;
-      padding:8px 10px;
-      border-radius:6px;
-      border:1px solid #d7dbe0;
-      font-size:14px;
-      box-sizing:border-box;
-      background:#fff;
-    }
+.form-row { display:flex; gap:12px; margin-bottom:10px; }
+.form-row .field { flex:1; }
+label{
+display:block;
+font-size:13px;
+margin-bottom:6px;
+color:#222;
+}
+input[type="text"], input[type="email"], select {
+width:100%;
+padding:8px 10px;
+border-radius:6px;
+border:1px solid #d7dbe0;
+font-size:14px;
+box-sizing:border-box;
+background:#fff;
+}
 
-    /* Product category cards */
-    .category-card {
-      border-radius:8px;
-      background:linear-gradient(180deg, #ffffff 0%, #fcfcfc 100%);
-      border:1px solid #e8eef7;
-      padding:10px;
-      margin-bottom:12px;
-    }
-    .category-card .cat-header{
-      background:var(--navy);
-      color:var(--white);
-      padding:8px 10px;
-      border-radius:6px;
-      font-weight:700;
-      margin:-10px -10px 10px -10px;
-    }
-    .product-row{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      padding:8px 0;
-      border-bottom:1px dashed #eef3fb;
-    }
-    .product-row:last-child{ border-bottom:none; }
-    .product-row .pname { flex:1; font-weight:600; color:#222; font-size:14px; }
-    .product-row select.size { width:110px; padding:6px; border-radius:6px; border:1px solid #d7dbe0; }
-    .product-row input.qty { width:70px; padding:6px; border-radius:6px; border:1px solid #d7dbe0; }
+/* Product category cards */
+.category-card {
+border-radius:8px;
+background:linear-gradient(180deg, #ffffff 0%, #fcfcfc 100%);
+border:1px solid #e8eef7;
+padding:10px;
+margin-bottom:12px;
+}
+.category-card .cat-header{
+background:var(--navy);
+color:var(--white);
+padding:8px 10px;
+border-radius:6px;
+font-weight:700;
+margin:-10px -10px 10px -10px;
+}
+.product-row{
+display:flex;
+gap:10px;
+align-items:center;
+padding:8px 0;
+border-bottom:1px dashed #eef3fb;
+}
+.product-row:last-child{ border-bottom:none; }
+.product-row .pname { flex:1; font-weight:600; color:#222; font-size:14px; }
+.product-row select.size { width:110px; padding:6px; border-radius:6px; border:1px solid #d7dbe0; }
+.product-row input.qty { width:70px; padding:6px; border-radius:6px; border:1px solid #d7dbe0; }
 
-    /* COMPULSORY NOTE */
-    .compulsory-note {
-      background: #fff3cd;
-      border: 1px solid #ffeaa7;
-      border-radius: 6px;
-      padding: 8px;
-      margin: 8px 0;
-      font-size: 12px;
-      color: #856404;
-      font-weight: 600;
-    }
+/* COMPULSORY NOTE */
+.compulsory-note {
+background: #fff3cd;
+border: 1px solid #ffeaa7;
+border-radius: 6px;
+padding: 8px;
+margin: 8px 0;
+font-size: 12px;
+color: #856404;
+font-weight: 600;
+}
 
-    /* Right column - cart */
-    .cart {
-      background:var(--white);
-      border-radius:10px;
-      padding:16px;
-      box-shadow:0 4px 10px rgba(0,0,0,0.04);
-      position:sticky;
-      top:18px;
-      height:fit-content;
-      min-height:200px;
-    }
-    .cart h3{ margin-top:0; color:var(--navy); }
-    table.cart-table{
-      width:100%;
-      border-collapse:collapse;
-      margin-top:8px;
-      font-size:14px;
-    }
-    table.cart-table th, table.cart-table td {
-      padding:8px 6px;
-      border:1px solid #e6e9ee;
-      text-align:left;
-    }
-    table.cart-table th{
-      background:var(--navy);
-      color:var(--white);
-      font-weight:600;
-      font-size:13px;
-    }
-    .cart .total {
-      margin-top:10px;
-      font-weight:700;
-      font-size:16px;
-      color:#111;
-    }
+/* Right column - cart */
+.cart {
+background:var(--white);
+border-radius:10px;
+padding:16px;
+box-shadow:0 4px 10px rgba(0,0,0,0.04);
+position:sticky;
+top:18px;
+height:fit-content;
+min-height:200px;
+}
+.cart h3{ margin-top:0; color:var(--navy); }
+table.cart-table{
+width:100%;
+border-collapse:collapse;
+margin-top:8px;
+font-size:14px;
+}
+table.cart-table th, table.cart-table td {
+padding:8px 6px;
+border:1px solid #e6e9ee;
+text-align:left;
+}
+table.cart-table th{
+background:var(--navy);
+color:var(--white);
+font-weight:600;
+font-size:13px;
+}
+.cart .total {
+margin-top:10px;
+font-weight:700;
+font-size:16px;
+color:#111;
+}
 
-    /* Buttons */
-    .btn {
-      display:inline-block;
-      padding:10px 14px;
-      border-radius:8px;
-      border:none;
-      cursor:pointer;
-      font-weight:700;
-      font-size:14px;
-    }
-    .btn-primary {
-      background:var(--navy);
-      color:var(--white);
-    }
-    .btn-gold {
-      background:var(--gold);
-      color:#111;
-      margin-top:12px;
-      width:100%;
-    }
+/* Buttons */
+.btn {
+display:inline-block;
+padding:10px 14px;
+border-radius:8px;
+border:none;
+cursor:pointer;
+font-weight:700;
+font-size:14px;
+}
+.btn-primary {
+background:var(--navy);
+color:var(--white);
+}
+.btn-gold {
+background:var(--gold);
+color:#111;
+margin-top:12px;
+width:100%;
+}
 
-    /* Responsive */
-    @media(max-width:980px){
-      form#orderForm { grid-template-columns: 1fr; }
-      .cart { position:relative; top:auto; }
-      .secret-admin { bottom: 5px; right: 5px; font-size: 9px; }
-    }
+/* Responsive */
+@media(max-width:980px){
+form#orderForm { grid-template-columns: 1fr; }
+.cart { position:relative; top:auto; }
+.secret-admin { bottom: 5px; right: 5px; font-size: 9px; }
+}
 
-    .muted { color:#6b7280; font-size:13px; }
-    .spaced { margin-top:8px; margin-bottom:8px; }
-  </style>
+.muted { color:#6b7280; font-size:13px; }
+.spaced { margin-top:8px; margin-bottom:8px; }
+</style>
 </head>
 <body>
-  <!-- TINY SECRET BUTTON -->
-  <button class="secret-admin" id="secretBtn" title="Admin Download">📥</button>
+<!-- TINY SECRET BUTTON -->
+<button class="secret-admin" id="secretBtn" title="Admin Download">📥</button>
 
-  <!-- PASSWORD MODAL -->
-  <div class="password-modal" id="passwordModal">
-    <div class="password-box">
-      <h3>🔐 Admin Access</h3>
-      <p>Enter password to download Excel:</p>
-      <input type="password" class="password-input" id="adminPass" placeholder="Password">
-      <br>
-      <button class="password-btn" onclick="checkPassword()">Unlock</button>
-      <button class="password-btn" onclick="document.getElementById('passwordModal').classList.remove('show')">Cancel</button>
-    </div>
-  </div>
+<!-- PASSWORD MODAL -->
+<div class="password-modal" id="passwordModal">
+<div class="password-box">
+<h3>🔐 Admin Access</h3>
+<p>Enter password to download Excel:</p>
+<input type="password" class="password-input" id="adminPass" placeholder="Password">
+<br>
+<button class="password-btn" onclick="checkPassword()">Unlock</button>
+<button class="password-btn" onclick="document.getElementById('passwordModal').classList.remove('show')">Cancel</button>
+</div>
+</div>
 
-  <!-- Header -->
-  <header class="site-header" role="banner">
-    <img class="logo" id="schoolLogo" src="logo.jpg" alt="SA College Private School logo" />
-    <div class="heading">
-      <h1>SA College Private School</h1>
-      <p class="muted">  uniform@sacps.co.za • Tel: 012 326 4580 / 064 548 9428</p>
-    </div>
-  </header>
+<!-- Header -->
+<header class="site-header" role="banner">
+<img class="logo" id="schoolLogo" src="logo.jpg" alt="SA College Private School logo" />
+<div class="heading">
+<h1>SA College Private School</h1>
+<p class="muted">  uniform@sacps.co.za • Tel: 012 326 4580 / 064 548 9428</p>
+</div>
+</header>
 
-  <!-- Braten notice -->
-  <div class="braten-notice">
-    <h3>Important Uniform Order Information</h3>
-    <p>SA College Private School is partnering with <strong>Reaora</strong> and <strong>N2S Suppliers</strong> to offer school uniforms and sportswear at more affordable prices for parents.</p>
-    <p><strong>Note:</strong> Select Outfitters remains an approved supplier, and parents may continue purchasing from them if preferred.</p>
-    <h3><span class="emoji">🗓</span> Uniform Orders</h3>
-    <ul>
-      <li>Orders placed before <strong>15 November 2025</strong> will be delivered to the school and handed to your child before the last day of term, ensuring readiness for January 2026 without queuing.</li>
-      <li>Orders placed between <strong>15 November and 30 December 2025</strong> will be delivered by <strong>9 January 2026</strong> for Reaora.</li>
-    </ul>
-    <h3><span class="emoji">🏅</span> Sportswear Orders</h3>
-    <ul>
-      <li>All sportswear orders must be placed by <strong>15 November 2025</strong>.</li>
-      <li>Expected delivery date: <strong>5 December 2025</strong>.</li>
-      <li><strong>Further dates will be confirmed</strong>.</li>
-    </ul>
-  </div>
+<!-- Braten notice -->
+<div class="braten-notice">
+<h3>Important Uniform Order Information</h3>
+<p>SA College Private School is partnering with <strong>Reaora</strong> and <strong>N2S Suppliers</strong> to offer school uniforms and sportswear at more affordable prices for parents.</p>
+<p><strong>Note:</strong> Select Outfitters remains an approved supplier, and parents may continue purchasing from them if preferred.</p>
+<h3><span class="emoji">🗓</span> Uniform Orders</h3>
+<ul>
+<li>Orders placed before <strong>15 November 2025</strong> will be delivered to the school and handed to your child before the last day of term, ensuring readiness for January 2026 without queuing.</li>
+<li>Orders placed between <strong>15 November and 30 December 2025</strong> will be delivered by <strong>9 January 2026</strong> for Reaora.</li>
+</ul>
+<h3><span class="emoji">🏅</span> Sportswear Orders</h3>
+<ul>
+<li>All sportswear orders must be placed by <strong>15 November 2025</strong>.</li>
+<li>Expected delivery date: <strong>5 December 2025</strong>.</li>
+<li><strong>Further dates will be confirmed</strong>.</li>
+</ul>
+</div>
 
-  <!-- Main content -->
-  <main class="page" role="main">
-    <form id="orderForm" autocomplete="off">
-      <div class="left" role="region" aria-label="Order and products">
-        <div class="section" id="infoSection">
-          <h2 style="margin-top:0; color:var(--navy)">Parent & Learner Information</h2>
-          <div class="form-row">
-            <div class="field"><label for="parentName">Parent Name</label><input id="parentName" type="text" required placeholder="e.g. Thandi Mbeki"></div>
-            <div class="field"><label for="contactNumber">Contact Number</label><input id="contactNumber" type="text" required placeholder="e.g. 072 000 0000"></div>
-          </div>
-          <div class="form-row">
-            <div class="field"><label for="email">Email</label><input id="email" type="email" required placeholder="parent@example.com"></div>
-            <div class="field"><label for="learnerName">Learner Name</label><input id="learnerName" type="text" required placeholder="e.g. Sipho M"></div>
-          </div>
-          <div class="form-row">
-            <div class="field"><label for="grade">Grade</label><input id="grade" type="text" required placeholder="e.g. Grade 7A"></div>
-            <div class="field"><label for="adminNumber">Admin Number</label><input id="adminNumber" type="text" required placeholder="e.g. 45125"></div>
-          </div>
-        </div>
+<!-- Main content -->
+<main class="page" role="main">
+<form id="orderForm" autocomplete="off">
+<div class="left" role="region" aria-label="Order and products">
+<div class="section" id="infoSection">
+<h2 style="margin-top:0; color:var(--navy)">Parent & Learner Information</h2>
+<div class="form-row">
+<div class="field"><label for="parentName">Parent Name</label><input id="parentName" type="text" required placeholder="e.g. Thandi Mbeki"></div>
+<div class="field"><label for="contactNumber">Contact Number</label><input id="contactNumber" type="text" required placeholder="e.g. 072 000 0000"></div>
+</div>
+<div class="form-row">
+<div class="field"><label for="email">Email</label><input id="email" type="email" required placeholder="parent@example.com"></div>
+<div class="field"><label for="learnerName">Learner Name</label><input id="learnerName" type="text" required placeholder="e.g. Sipho M"></div>
+</div>
+<div class="form-row">
+<div class="field"><label for="grade">Grade</label><input id="grade" type="text" required placeholder="e.g. Grade 7A"></div>
+<div class="field"><label for="adminNumber">Admin Number</label><input id="adminNumber" type="text" required placeholder="e.g. 45125"></div>
+</div>
+</div>
 
-        <!-- Products -->
-        <div class="section" id="productsSection">
-          <h2 style="margin-top:0; color:var(--navy)">Uniforms & Sports</h2>
+<!-- Products -->
+<div class="section" id="productsSection">
+<h2 style="margin-top:0; color:var(--navy)">Uniforms & Sports</h2>
 
-          <!-- REAORA COMBINED -->
-          <div class="category-card" id="cat-reaora">
-            <div class="cat-header">Reaora - Uniform</div>
-            <div style="display:flex; gap:16px; font-weight:700; font-size:13px; margin-bottom:8px;">
-              <div style="flex:1; text-align:left;">Item</div>
-              <div style="width:120px; text-align:center;">Size</div>
-              <div style="width:80px; text-align:center;">Quantity</div>
-            </div>
-            <div class="card-body"></div>
-          </div>
+<!-- REAORA COMBINED -->
+<div class="category-card" id="cat-reaora">
+<div class="cat-header">Reaora - Uniform</div>
+<div style="display:flex; gap:16px; font-weight:700; font-size:13px; margin-bottom:8px;">
+<div style="flex:1; text-align:left;">Item</div>
+<div style="width:120px; text-align:center;">Size</div>
+<div style="width:80px; text-align:center;">Quantity</div>
+</div>
+<div class="card-body"></div>
+</div>
 
-          <!-- N2S -->
-          <div class="category-card" id="cat-n2s">
-            <div class="cat-header">N2S - Sportswear</div>
-            <div style="display:flex; gap:16px; font-weight:700; font-size:13px; margin-bottom:8px;">
-              <div style="flex:1; text-align:left;">Item</div>
-              <div style="width:120px; text-align:center;">Size</div>
-              <div style="width:80px; text-align:center;">Quantity</div>
-            </div>
-            <div class="card-body"></div>
-          </div>
-        </div>
-      </div>
+<!-- N2S -->
+<div class="category-card" id="cat-n2s">
+<div class="cat-header">N2S - Sportswear</div>
+<div style="display:flex; gap:16px; font-weight:700; font-size:13px; margin-bottom:8px;">
+<div style="flex:1; text-align:left;">Item</div>
+<div style="width:120px; text-align:center;">Size</div>
+<div style="width:80px; text-align:center;">Quantity</div>
+</div>
+<div class="card-body"></div>
+</div>
+</div>
+</div>
 
-      <!-- RIGHT - cart & submit -->
-      <aside class="cart" role="region" aria-label="Cart and submit">
-        <h3>Your Cart</h3>
-        <div class="muted">Add quantities for the items on the left and the cart will update automatically.</div>
-        <table class="cart-table" aria-live="polite" id="cartTable">
-          <thead>
-            <tr>
-              <th style="width:42%;">Item</th>
-              <th style="width:18%;">Size</th>
-              <th style="width:10%;">Qty</th>
-              <th style="width:14%;">Line</th>
-              <th style="width:10%;">Remove</th>
-            </tr>
-          </thead>
-          <tbody id="cartBody">
-            <tr><td colspan="5" class="muted">No items</td></tr>
-          </tbody>
-        </table>
+<!-- RIGHT - cart & submit -->
+<aside class="cart" role="region" aria-label="Cart and submit">
+<h3>Your Cart</h3>
+<div class="muted">Add quantities for the items on the left and the cart will update automatically.</div>
+<table class="cart-table" aria-live="polite" id="cartTable">
+<thead>
+<tr>
+<th style="width:42%;">Item</th>
+<th style="width:18%;">Size</th>
+<th style="width:10%;">Qty</th>
+<th style="width:14%;">Line</th>
+<th style="width:10%;">Remove</th>
+</tr>
+</thead>
+<tbody id="cartBody">
+<tr><td colspan="5" class="muted">No items</td></tr>
+</tbody>
+</table>
 
-        <div class="total" id="grandTotal">Total: R0.00</div>
-        
-        <!-- Payment Information Section -->
-        <div id="payment-info" style="margin-top: 30px; border: 2px solid #169179; border-radius: 10px; background-color: #f2faf8; padding: 20px; font-family: 'Comic Sans MS', sans-serif;">
-          <h3 style="background-color: #ba372a; color: white; padding: 10px; border-radius: 8px 8px 0 0; margin-top: 0;">
-            💳 Payment Information
-          </h3>
-          <p>After submitting your order, please make an <strong>EFT payment</strong> to the school account.</p>
-          <p>Use <strong>"Uniform – [Admin number-Child's Name]"</strong> as your payment reference.</p>
-          <p>Then email your <strong>proof of payment and order form</strong> to:</p>
-          <p style="margin-left: 20px;">
+<div class="total" id="grandTotal">Total: R0.00</div>
+
+<!-- Payment Information Section -->
+<div id="payment-info" style="margin-top: 30px; border: 2px solid #169179; border-radius: 10px; background-color: #f2faf8; padding: 20px; font-family: 'Comic Sans MS', sans-serif;">
+<h3 style="background-color: #ba372a; color: white; padding: 10px; border-radius: 8px 8px 0 0; margin-top: 0;">
+💳 Payment Information
+</h3>
+<p>After submitting your order, please make an <strong>EFT payment</strong> to the school account.</p>
+<p>Use <strong>"Uniform – [Admin number-Child's Name]"</strong> as your payment reference.</p>
+<p>Then email your <strong>proof of payment and order form</strong> to:</p>
+<p style="margin-left: 20px;">
+            📧 <a href="mailto:finance@sacps.co.za">finance@sacps.co.za</a> or 
+            <a href="mailto:uniform@sacps.co.za">uniform@sacps.co.za</a>  
             📧 <a href="mailto:uniform@sacps.co.za">uniform@sacps.co.za</a>  
-          </p>
-        </div>
-        
-        <!-- Submit button -->
-        <button type="submit" class="btn btn-gold" id="submitBtn" style="margin-top:14px;">
-          Submit Order & Download Order Form
-        </button>
-
-        <div class="spaced muted" style="font-size:13px;">
-          PDF order form will download automatically!
-        </div>
-      </aside>
-    </form>
-  </main>
-
-  <script>
-    (function(){
-      // Initialize EmailJS
-      emailjs.init('AXfbwxKNy1g4wKAX8');
-
-      // Data: sizes & items - REORGANIZED
-      const primarySizes = ['5-6','6-7','7-8','8-9','9-10','10-11','11-12','12-13','13-14'];
-      const highschoolSizes = ['13-14','14-15','15-16','16-17','17-18','18-20'];
-      const blazerSizes = ['28','30','32','34','36','38','40','42'];
-      const oneSize = ['One Size'];
-      const allSizes = [...primarySizes, ...highschoolSizes];
-
-      const categories = {
-        "Reaora": [
-          {id:"ts_jacket_primary",name:"Primary Tracksuit Jacket",price:440,sizes:primarySizes},
-          {id:"ts_pants_primary",name:"Primary Tracksuit Pants",price:220,sizes:primarySizes},
-          {id:"jersey_primary",name:"Primary Jersey",price:275,sizes:primarySizes},
-          {id:"pullover_primary",name:"Primary Pullover",price:255,sizes:primarySizes},
-          {id:"blazer",name:"Blazer (Compulsory Grade 4,8,9 - Reaora Only)",price:770,sizes:blazerSizes},
-          {id:"tie",name:"School Tie",price:90,sizes:oneSize},
-          {id:"skirt_primary",name:"Primary Girls Skirt",price:375,sizes:primarySizes},
-          {id:"ts_jacket_hs",name:"Highschool Tracksuit Jacket",price:495,sizes:highschoolSizes},
-          {id:"ts_pants_hs",name:"Highschool Tracksuit Pants",price:220,sizes:highschoolSizes},
-          {id:"jersey_hs",name:"Highschool Jersey",price:285,sizes:highschoolSizes},
-          {id:"pullover_hs",name:"Highschool Pullover",price:265,sizes:highschoolSizes},
-          {id:"skirt_hs",name:"Highschool Girls Skirt",price:400,sizes:highschoolSizes},
-          {id:"sport_shirt",name:"Sport Shirt",price:380,sizes:allSizes},
-          {id:"green_socks",name:"Long Green Socks",price:60,sizes:oneSize},
-          {id:"floppy_hat",name:"Floppy Hat",price:175,sizes:oneSize},
-          {id:"beanie",name:"Beanie",price:55,sizes:oneSize}
-        ],
-        "N2S": [
-          {id:"soccer_shirt",name:"Soccer Practice Shirt",price:325,sizes:allSizes},
-          {id:"soccer_short",name:"Soccer Shorts",price:315,sizes:allSizes},
-          {id:"soccer_socks",name:"Soccer Socks",price:120,sizes:allSizes},
-          {id:"rugby_jersey",name:"Rugby Practice Jersey",price:435,sizes:allSizes},
-          {id:"rugby_short",name:"Rugby Short",price:300,sizes:allSizes},
-          {id:"rugby_socks",name:"Rugby Socks",price:120,sizes:allSizes},
-          {id:"basketball_shirt",name:"Basketball Practice Shirt",price:315,sizes:allSizes},
-          {id:"basketball_short",name:"Basketball Shorts",price:315,sizes:allSizes},
-          {id:"netball_dress",name:"Netball Dress",price:340,sizes:allSizes},
-          {id:"athletics_vest",name:"Athletics Vest",price:300,sizes:allSizes},
-          {id:"athletics_short",name:"Athletics Shorts",price:290,sizes:allSizes}
-        ]
-      };
-
-      const imageMap = {
-        "athletics_short": "athletics short.jpg",
-        "athletics_vest": "athletics vest.jpg",
-        "basketball_shirt": "basketball shirt.jpg",
-        "basketball_short": "basketball shorts.jpg",
-        "netball_dress": "netball dress.jpg",
-        "rugby_jersey": "rugby jersey.jpg",
-        "rugby_short": "rugby short.jpg",
-        "rugby_socks": "rugby socks.jpg",
-        "soccer_shirt": "soccer shirt.jpg",
-        "soccer_short": "soccer short.jpg",
-        "soccer_socks": "soccer socks.jpg",
-        "jersey_primary": "jersey.jpg",
-        "jersey_hs": "jersey.jpg",
-        "ts_jacket_primary": "tracksuit jacket.jpg",
-        "ts_jacket_hs": "tracksuit jacket.jpg",
-        "ts_pants_primary": "tracksuit pants.jpg",
-        "ts_pants_hs": "tracksuit pants.jpg",
-        "pullover_primary": "pullover.jpg",
-        "pullover_hs": "pullover.jpg",
-        "skirt_primary": "skirt.jpg",
-        "skirt_hs": "skirt.jpg",
-        "sport_shirt": "sport shirt.jpg",
-        "tie": "tie.jpg",
-      };
-
-      // Render products
-      function createProductRow(item){
-        const row = document.createElement('div');
-        row.className = 'product-row item-row';
-        row.dataset.itemId = item.id;
-        row.dataset.price = item.price;
-
-        const nameSpan = document.createElement('div');
-        nameSpan.className = 'pname';
-        nameSpan.textContent = `${item.name} — R${item.price}`;
-
-        if(imageMap[item.id]){
-          const img = document.createElement('img');
-          img.src = imageMap[item.id];
-          img.alt = `${item.name} image`;
-          img.style.height = '60px';
-          img.style.marginLeft = '10px';
-          img.style.verticalAlign = 'middle';
-          nameSpan.appendChild(img);
-        }
-
-        const sizeSel = document.createElement('select');
-        sizeSel.className = 'size';
-        item.sizes.forEach(s=>{
-          const opt = document.createElement('option');
-          opt.value = s;
-          opt.textContent = s;
-          sizeSel.appendChild(opt);
-        });
-
-        const qtyInput = document.createElement('input');
-        qtyInput.className = 'qty';
-        qtyInput.type = 'number';
-        qtyInput.min = 0;
-        qtyInput.value = 0;
-        qtyInput.setAttribute('aria-label', `${item.name} quantity`);
-
-        row.appendChild(nameSpan);
-        row.appendChild(sizeSel);
-        row.appendChild(qtyInput);
-
-        return row;
-      }
-
-      // RENDER IN ORDER: Reaora (primary then hs) > Sports
-      try {
-        const mapping = { 
-          "cat-reaora": "Reaora", 
-          "cat-n2s": "N2S" 
-        };
-        Object.entries(mapping).forEach(([cardId, catKey])=>{
-          const el = document.querySelector('#' + cardId + ' .card-body');
-          if(!el) return;
-          categories[catKey].forEach(item=>{
-            const row = createProductRow(item);
-            el.appendChild(row);
-          });
-        });
-      } catch (err) {
-        console.error("Error building product list:", err);
-      }
-
-      // Cart
-      let cart = [];
-      function collectCartFromDOM(){
-        cart = [];
-        document.querySelectorAll('.item-row').forEach(row=>{
-          const qty = parseInt(row.querySelector('.qty').value || 0, 10);
-          if(qty > 0){
-            const fullName = row.querySelector('.pname').textContent || row.querySelector('.item-name')?.textContent;
-            const name = (fullName || 'Item').split(' — ')[0].trim();
-            const size = row.querySelector('.size').value;
-            const price = parseFloat(row.dataset.price);
-            cart.push({ name, size, qty, price });
-          }
-        });
-      }
-
-      function renderCart(){
-        const tbody = document.getElementById('cartBody');
-        tbody.innerHTML = '';
-        if(cart.length === 0){
-          const tr = document.createElement('tr');
-          const td = document.createElement('td');
-          td.colSpan = 5;
-          td.className = 'muted';
-          td.textContent = 'No items';
-          tr.appendChild(td);
-          tbody.appendChild(tr);
-          document.getElementById('grandTotal').textContent = "Total: R0.00";
-          return;
-        }
-
-        let grand = 0;
-        cart.forEach((it, idx) => {
-          const tr = document.createElement('tr');
-          const tdItem = document.createElement('td');
-          tdItem.textContent = it.name;
-          const tdSize = document.createElement('td');
-          tdSize.textContent = it.size;
-          const tdQty = document.createElement('td');
-          tdQty.textContent = it.qty;
-          const line = it.qty * it.price;
-          grand += line;
-          const tdLine = document.createElement('td');
-          tdLine.textContent = `R${line.toFixed(2)}`;
-          const tdRemove = document.createElement('td');
-          const removeBtn = document.createElement('button');
-          removeBtn.className = 'btn btn-primary';
-          removeBtn.style.padding = '4px 6px';
-          removeBtn.style.background = '#fff';
-          removeBtn.style.color = '#d9534f';
-          removeBtn.style.border = '1px solid #f0a3a3';
-          removeBtn.textContent = 'X';
-          removeBtn.dataset.index = idx;
-          removeBtn.addEventListener('click', function(e){
-            e.preventDefault();
-            cart.splice(this.dataset.index, 1);
-            document.querySelectorAll('.item-row').forEach(r=>{
-              const name = r.querySelector('.pname').textContent.split(' — ')[0].trim();
-              const size = r.querySelector('.size').value;
-              if(name === it.name && size === it.size){
-                r.querySelector('.qty').value = 0;
-              }
-            });
-            collectCartFromDOM();
-            renderCart();
-          });
-          tdRemove.appendChild(removeBtn);
-
-          tr.appendChild(tdItem);
-          tr.appendChild(tdSize);
-          tr.appendChild(tdQty);
-          tr.appendChild(tdLine);
-          tr.appendChild(tdRemove);
-          tbody.appendChild(tr);
-        });
-
-        document.getElementById('grandTotal').textContent = `Total: R${grand.toFixed(2)}`;
-      }
-
-      document.addEventListener('input', function(e){
-        if(e.target.classList && (e.target.classList.contains('qty') || e.target.classList.contains('size'))){
-          collectCartFromDOM();
-          renderCart();
-        }
-      });
-
-      // LocalStorage Helpers
-      function getMasterOrders() {
-        const orders = localStorage.getItem('masterOrders');
-        return orders ? JSON.parse(orders) : [];
-      }
-
-      function saveMasterOrders(orders) {
-        localStorage.setItem('masterOrders', JSON.stringify(orders));
-      }
-
-      // 📊 AIRTABLE API INTEGRATION
-      async function sendToAirtable(orderData) {
-        try {
-          // Check if Airtable is configured
-          if (!AIRTABLE_CONFIG.apiKey || AIRTABLE_CONFIG.apiKey === 'YOUR_AIRTABLE_API_KEY') {
-            console.warn('⚠️ Airtable API Key not configured. Skipping Airtable sync.');
-            return { success: false, message: 'API Key not configured' };
-          }
-          
-          if (!AIRTABLE_CONFIG.baseId || AIRTABLE_CONFIG.baseId === 'YOUR_BASE_ID') {
-            console.warn('⚠️ Airtable Base ID not configured. Skipping Airtable sync.');
-            return { success: false, message: 'Base ID not configured' };
-          }
-
-          const url = `https://api.airtable.com/v0/${AIRTABLE_CONFIG.baseId}/${AIRTABLE_CONFIG.tableName}`;
-          
-          // Format cart items as JSON string for Airtable
-          const itemsJSON = JSON.stringify(orderData.items);
-          
-          // Calculate total
-          const orderTotal = orderData.items.reduce((sum, item) => sum + (item.qty * item.price), 0);
-          
-          // Prepare the record for Airtable
-          const record = {
-            fields: {
-              'Timestamp': orderData.timestamp,
-              'Admin Number': orderData.adminNumber,
-              'Learner Name': orderData.learnerName,
-              'Grade': orderData.grade,
-              'Parent Name': orderData.parentName,
-              'Contact Number': orderData.contactNumber,
-              'Email': orderData.email,
-              'Order Items': itemsJSON,
-              'Order Total': orderTotal,
-              'Status': 'Pending',
-              'Paid': false,
-              'Order Count': orderData.items.length
-            }
-          };
-
-          const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${AIRTABLE_CONFIG.apiKey}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(record)
-          });
-
-          if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(`Airtable API error: ${errorData.error?.message || response.statusText}`);
-          }
-
-          const result = await response.json();
-          console.log('✅ Successfully sent to Airtable:', result);
-          return { success: true, recordId: result.id };
-
-        } catch (error) {
-          console.error('❌ Airtable error:', error);
-          return { success: false, error: error.message };
-        }
-      }
-
-      // Optional: Function to send individual order items as separate records
-      async function sendOrderItemsToAirtable(orderData) {
-        try {
-          if (!AIRTABLE_CONFIG.apiKey || AIRTABLE_CONFIG.apiKey === 'YOUR_AIRTABLE_API_KEY') {
-            console.warn('⚠️ Airtable API Key not configured. Skipping Airtable sync.');
-            return { success: false, message: 'API Key not configured' };
-          }
-          
-          if (!AIRTABLE_CONFIG.baseId || AIRTABLE_CONFIG.baseId === 'YOUR_BASE_ID') {
-            console.warn('⚠️ Airtable Base ID not configured. Skipping Airtable sync.');
-            return { success: false, message: 'Base ID not configured' };
-          }
-
-          const url = `https://api.airtable.com/v0/${AIRTABLE_CONFIG.baseId}/${AIRTABLE_CONFIG.tableName}`;
-          
-          // Send each item as a separate record
-          const promises = orderData.items.map(async (item, index) => {
-            const record = {
-              fields: {
-                'Timestamp': orderData.timestamp,
-                'Admin Number': orderData.adminNumber,
-                'Learner Name': orderData.learnerName,
-                'Grade': orderData.grade,
-                'Parent Name': orderData.parentName,
-                'Contact Number': orderData.contactNumber,
-                'Email': orderData.email,
-                'Item Name': item.name,
-                'Item Size': item.size,
-                'Item Quantity': item.qty,
-                'Item Price': item.price,
-                'Line Total': item.qty * item.price,
-                'Status': 'Pending',
-                'Paid': false,
-                'Item Number': index + 1
-              }
-            };
-
-            const response = await fetch(url, {
-              method: 'POST',
-              headers: {
-                'Authorization': `Bearer ${AIRTABLE_CONFIG.apiKey}`,
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify(record)
-            });
-
-            if (!response.ok) {
-              throw new Error(`Failed to send item ${index + 1}`);
-            }
-
-            return await response.json();
-          });
-
-          const results = await Promise.all(promises);
-          console.log(`✅ Successfully sent ${results.length} items to Airtable`);
-          return { success: true, count: results.length };
-
-        } catch (error) {
-          console.error('❌ Airtable error:', error);
-          return { success: false, error: error.message };
-        }
-      }
-
-      // Excel Download from localStorage
-      async function downloadMasterExcel() {
-        try {
-          const orders = getMasterOrders();
-          if (orders.length === 0) {
-            alert('No orders yet!');
-            return;
-          }
-
-          const workbook = new ExcelJS.Workbook();
-          const worksheet = workbook.addWorksheet('ALL ORDERS');
-          
-          worksheet.mergeCells('A1:L1');
-          worksheet.getCell('A1').value = 'SA COLLEGE PRIVATE SCHOOL - ALL UNIFORM ORDERS';
-          worksheet.getCell('A1').font = { size: 18, bold: true, color: { argb: 'FF00274D' } };
-          worksheet.getCell('A1').alignment = { horizontal: 'center' };
-          
-          const headers = ['Timestamp', 'Admin #', 'Learner', 'Grade', 'Parent', 'Contact', 'Email', 'Item', 'Size', 'Qty', 'Total', 'PAID?'];
-          worksheet.addRow(headers);
-          worksheet.getRow(2).font = { bold: true, color: { argb: 'FF00274D' } };
-          worksheet.getRow(2).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFC107' } };
-          
-          orders.forEach(order => {
-            order.items.forEach(item => {
-              worksheet.addRow([
-                new Date(order.timestamp).toLocaleString('en-ZA'),
-                order.adminNumber,
-                order.learnerName,
-                order.grade,
-                order.parentName,
-                order.contactNumber,
-                order.email,
-                item.name,
-                item.size,
-                item.qty,
-                `R${(item.qty * item.price).toFixed(2)}`,
-                order.paid ? 'YES' : 'NO'
-              ]);
-            });
-            worksheet.addRow(['', '', '', '', '', '', '', '', '', 'ORDER TOTAL', `R${order.total.toFixed(2)}`, order.paid ? 'YES' : 'NO']);
-          });
-          
-          const totalOrders = orders.length;
-          const grandTotal = orders.reduce((sum, o) => sum + o.total, 0);
-          const paidOrders = orders.filter(o => o.paid).length;
-          worksheet.addRow([]);
-          worksheet.mergeCells(`A${worksheet.rowCount}:K${worksheet.rowCount}`);
-          worksheet.getCell(`A${worksheet.rowCount}`).value = `TOTAL ORDERS: ${totalOrders} | PAID: ${paidOrders} | GRAND TOTAL: R${grandTotal.toFixed(2)}`;
-          worksheet.getCell(`A${worksheet.rowCount}`).font = { bold: true, size: 14 };
-          
-          worksheet.columns = [
-            { width: 18 }, { width: 10 }, { width: 15 }, { width: 10 },
-            { width: 15 }, { width: 12 }, { width: 20 }, { width: 30 },
-            { width: 8 }, { width: 6 }, { width: 12 }, { width: 8 }
-          ];
-          
-          const buffer = await workbook.xlsx.writeBuffer();
-          const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-          saveAs(blob, `SACollege_ALL_ORDERS_${new Date().toISOString().split('T')[0]}.xlsx`);
-          alert(`✅ ${orders.length} orders downloaded!\n💰 ${paidOrders} PAID | R${grandTotal.toFixed(2)} TOTAL`);
-        } catch (err) {
-          console.error('Error downloading Excel:', err);
-          alert(`Error: ${err.message}`);
-        }
-      }
-
-      // PASSWORD CHECK
-      window.checkPassword = function() {
-        const pass = document.getElementById('adminPass').value;
-        if(pass === 'wzq81FIE') {
-          document.getElementById('passwordModal').classList.remove('show');
-          downloadMasterExcel();
-        } else {
-          alert('❌ Wrong password!');
-          document.getElementById('adminPass').value = '';
-        }
-      }
-
-      // SECRET BUTTON CLICK
-      document.getElementById('secretBtn').addEventListener('click', function() {
-        document.getElementById('passwordModal').classList.add('show');
-        document.getElementById('adminPass').focus();
-      });
-
-      // ESCAPE MODAL
-      document.addEventListener('keydown', function(e) {
-        if(e.key === 'Escape') {
-          document.getElementById('passwordModal').classList.remove('show');
-        }
-      });
-
-      // PDF generation - ORDER FORM
-      async function createReceiptPDF(details, cartItems){
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF({ unit: 'pt', format: 'a4' });
-
-        const pageWidth = doc.internal.pageSize.getWidth();
-        doc.setFillColor(0, 39, 77);
-        doc.rect(0, 0, pageWidth, 70, 'F');
-
-        try {
-          const logoImg = document.getElementById('schoolLogo');
-          if(logoImg && logoImg.complete){
-            const canvas = document.createElement('canvas');
-            canvas.width = logoImg.naturalWidth;
-            canvas.height = logoImg.naturalHeight;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(logoImg, 0, 0);
-            const imgData = canvas.toDataURL('image/png');
-            doc.addImage(imgData, 'PNG', 18, 12, 46, 46);
-          }
-        } catch(err){
-          console.warn('Could not add logo to PDF:', err);
-        }
-
-        doc.setFontSize(16);
-        doc.setTextColor(255,255,255);
-        doc.text("SA College Private School", 80, 28);
-
-        doc.setFillColor(255,193,7);
-        doc.rect(pageWidth - 200, 18, 180, 30, 'F');
-        doc.setFontSize(11);
-        doc.setTextColor(0,0,0);
-        doc.text("Uniform Order Form", pageWidth - 190, 38);
-
-        doc.setFontSize(10);
-        doc.setTextColor(35,35,35);
-        const left = 18;
-        let y = 100;
-        doc.text(`Parent: ${details.parentName}`, left, y); y += 16;
-        doc.text(`Contact: ${details.contactNumber}`, left, y); y += 16;
-        doc.text(`Email: ${details.email}`, left, y); y += 16;
-        doc.text(`Learner: ${details.learnerName}`, left, y); y += 16;
-        doc.text(`Grade: ${details.grade}`, left, y); y += 16;
-        doc.text(`Admin Number: ${details.adminNumber}`, left, y); y += 26;
-
-        const tableBody = cartItems.map(it => [it.name, it.size, String(it.qty), `R${it.price}`, `R${(it.qty*it.price).toFixed(2)}`]);
-        if(tableBody.length === 0) tableBody.push(['No items','','','','']);
-
-        doc.autoTable({
-          startY: y,
-          head: [['Item', 'Size', 'Qty', 'Unit Price', 'Line Total']],
-          body: tableBody,
-          styles: { fontSize: 10, cellPadding: 6 },
-          headStyles: { fillColor: [0,39,77], textColor: 255, halign: 'center' },
-          theme: 'grid',
-          margin: { left: 12, right: 12 }
-        });
-
-        const finalY = doc.lastAutoTable ? doc.lastAutoTable.finalY : y + 120;
-        const grand = cartItems.reduce((s, it) => s + (it.price * it.qty), 0);
-        doc.setFontSize(11);
-        doc.setTextColor(0,0,0);
-        doc.text(`Grand Total: R${grand.toFixed(2)}`, 18, finalY + 18);
-
-        doc.setFontSize(9);
-        doc.setTextColor(120,120,120);
-        doc.text("SA College Private School • uniform@sacps.co.za • Tel: 012 326 4580 / 064 548 9428", 18, doc.internal.pageSize.getHeight() - 30);
-
-        return {
-          doc,
-          base64: doc.output('datauribase64')
-        };
-      }
-
-      // Submit
-      document.getElementById('orderForm').addEventListener('submit', async function(e){
-        e.preventDefault();
-
-        const submitBtn = document.getElementById('submitBtn');
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Processing...';
-
-        try {
-          const parentName = document.getElementById('parentName').value.trim();
-          const contactNumber = document.getElementById('contactNumber').value.trim();
-          const email = document.getElementById('email').value.trim();
-          const learnerName = document.getElementById('learnerName').value.trim();
-          const grade = document.getElementById('grade').value.trim();
-          const adminNumber = document.getElementById('adminNumber').value.trim();
-
-          collectCartFromDOM();
-          if(cart.length === 0){
-            alert('Please add at least one uniform item before submitting.');
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Submit Order & Download Order Form';
-            return;
-          }
-
-          const details = { parentName, contactNumber, email, learnerName, grade, adminNumber };
-          const grand = cart.reduce((s, it) => s + (it.price * it.qty), 0);
-          const timestamp = new Date().toISOString();
-
-          // Save to localStorage
-          const masterOrders = getMasterOrders();
-          const newOrder = {
-            timestamp,
-            adminNumber,
-            learnerName,
-            grade,
-            parentName,
-            contactNumber,
-            email,
-            items: [...cart],
-            total: grand,
-            paid: false
-          };
-          masterOrders.push(newOrder);
-          saveMasterOrders(masterOrders);
-
-          // 📊 Send to Airtable (Individual Items Per Record)
-          const airtableResult = await sendOrderItemsToAirtable(newOrder);
-          if (airtableResult.success) {
-            console.log(`✅ ${airtableResult.count} items sent to Airtable successfully!`);
-          } else if (airtableResult.error) {
-            console.warn('⚠️ Airtable sync failed:', airtableResult.error);
-            // Don't block the submission if Airtable fails
-          }
-
-          // Generate and download PDF
-          const { doc, base64 } = await createReceiptPDF(details, cart);
-          const fileName = `SACollege_OrderForm_${learnerName || 'Order'}.pdf`;
-          doc.save(fileName);
-
-          // Send email
-          let orderDetails = '';
-          cart.forEach(it => {
-            const lineTotal = (it.qty * it.price).toFixed(2);
-            orderDetails += `${it.name} - Size: ${it.size}, Qty: ${it.qty}, Unit: R${it.price.toFixed(2)}, Line: R${lineTotal}\n`;
-          });
-
-          const templateParams = {
-            parentName: parentName,
-            contactNumber: contactNumber,
-            email: email,
-            learnerName: learnerName,
-            grade: grade,
-            adminNumber: adminNumber,
-            orderDetails: orderDetails,
-            cartTotal: `R${grand.toFixed(2)}`,
-            masterSummary: `***NEW ORDER*** | Admin: ${adminNumber} | Total: R${grand.toFixed(2)}`
-          };
-
-          await emailjs.send('service_myhmc1q', 'template_oq150rd', templateParams)
-            .then(response => console.log('EmailJS response:', response))
-            .catch(err => console.error('EmailJS error:', err));
-
-          alert(`✅ SUCCESS! Order saved and form downloaded!`);
-
-          document.getElementById('orderForm').reset();
-          document.querySelectorAll('.item-row .qty').forEach(q => q.value = 0);
-          collectCartFromDOM();
-          renderCart();
-
-        } catch (err) {
-          console.error("Submit error:", err);
-          alert(`An error occurred: ${err.message}`);
-        } finally {
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'Submit Order & Download Order Form';
-        }
-      });
-
-      // Initialize
-      collectCartFromDOM();
-      renderCart();
-
-    })();
-  </script>
+</p>
+</div>
+
+<!-- Submit button -->
+<button type="submit" class="btn btn-gold" id="submitBtn" style="margin-top:14px;">
+Submit Order & Download Order Form
+</button>
+
+<div class="spaced muted" style="font-size:13px;">
+PDF order form will download automatically!
+</div>
+</aside>
+</form>
+</main>
+
+<script>
+(function(){
+// Initialize EmailJS
+emailjs.init('AXfbwxKNy1g4wKAX8');
+
+// Data: sizes & items - REORGANIZED
+const primarySizes = ['5-6','6-7','7-8','8-9','9-10','10-11','11-12','12-13','13-14'];
+const highschoolSizes = ['13-14','14-15','15-16','16-17','17-18','18-20'];
+const blazerSizes = ['28','30','32','34','36','38','40','42'];
+const oneSize = ['One Size'];
+const allSizes = [...primarySizes, ...highschoolSizes];
+
+const categories = {
+"Reaora": [
+{id:"ts_jacket_primary",name:"Primary Tracksuit Jacket",price:440,sizes:primarySizes},
+{id:"ts_pants_primary",name:"Primary Tracksuit Pants",price:220,sizes:primarySizes},
+{id:"jersey_primary",name:"Primary Jersey",price:275,sizes:primarySizes},
+{id:"pullover_primary",name:"Primary Pullover",price:255,sizes:primarySizes},
+{id:"blazer",name:"Blazer (Compulsory Grade 4,8,9 - Reaora Only)",price:770,sizes:blazerSizes},
+{id:"tie",name:"School Tie",price:90,sizes:oneSize},
+{id:"skirt_primary",name:"Primary Girls Skirt",price:375,sizes:primarySizes},
+{id:"ts_jacket_hs",name:"Highschool Tracksuit Jacket",price:495,sizes:highschoolSizes},
+{id:"ts_pants_hs",name:"Highschool Tracksuit Pants",price:220,sizes:highschoolSizes},
+{id:"jersey_hs",name:"Highschool Jersey",price:285,sizes:highschoolSizes},
+{id:"pullover_hs",name:"Highschool Pullover",price:265,sizes:highschoolSizes},
+{id:"skirt_hs",name:"Highschool Girls Skirt",price:400,sizes:highschoolSizes},
+{id:"sport_shirt",name:"Sport Shirt",price:380,sizes:allSizes},
+{id:"green_socks",name:"Long Green Socks",price:60,sizes:oneSize},
+{id:"floppy_hat",name:"Floppy Hat",price:175,sizes:oneSize},
+{id:"beanie",name:"Beanie",price:55,sizes:oneSize}
+],
+"N2S": [
+{id:"soccer_shirt",name:"Soccer Practice Shirt",price:325,sizes:allSizes},
+{id:"soccer_short",name:"Soccer Shorts",price:315,sizes:allSizes},
+{id:"soccer_socks",name:"Soccer Socks",price:120,sizes:allSizes},
+{id:"rugby_jersey",name:"Rugby Jersey",price:435,sizes:allSizes},
+{id:"rugby_short",name:"Rugby Short",price:300,sizes:allSizes},
+{id:"rugby_socks",name:"Rugby Socks",price:120,sizes:allSizes},
+{id:"basketball_shirt",name:"Basketball Practice Shirt",price:315,sizes:allSizes},
+{id:"basketball_short",name:"Basketball Shorts",price:315,sizes:allSizes},
+{id:"netball_dress",name:"Netball Dress",price:340,sizes:allSizes},
+{id:"athletics_vest",name:"Athletics Vest",price:300,sizes:allSizes},
+{id:"athletics_short",name:"Athletics Shorts",price:290,sizes:allSizes}
+]
+};
+
+const imageMap = {
+"athletics_short": "athletics short.jpg",
+"athletics_vest": "athletics vest.jpg",
+"basketball_shirt": "basketball shirt.jpg",
+"basketball_short": "basketball shorts.jpg",
+"netball_dress": "netball dress.jpg",
+"rugby_jersey": "rugby jersey.jpg",
+"rugby_short": "rugby short.jpg",
+"rugby_socks": "rugby socks.jpg",
+"soccer_shirt": "soccer shirt.jpg",
+"soccer_short": "soccer short.jpg",
+"soccer_socks": "soccer socks.jpg",
+"jersey_primary": "jersey.jpg",
+"jersey_hs": "jersey.jpg",
+"ts_jacket_primary": "tracksuit jacket.jpg",
+"ts_jacket_hs": "tracksuit jacket.jpg",
+"ts_pants_primary": "tracksuit pants.jpg",
+"ts_pants_hs": "tracksuit pants.jpg",
+"pullover_primary": "pullover.jpg",
+"pullover_hs": "pullover.jpg",
+"skirt_primary": "skirt.jpg",
+"skirt_hs": "skirt.jpg",
+"sport_shirt": "sport shirt.jpg",
+"tie": "tie.jpg"
+};
+
+// Render products
+function createProductRow(item){
+const row = document.createElement('div');
+row.className = 'product-row item-row';
+row.dataset.itemId = item.id;
+row.dataset.price = item.price;
+
+const nameSpan = document.createElement('div');
+nameSpan.className = 'pname';
+nameSpan.textContent = `${item.name} — R${item.price}`;
+
+if(imageMap[item.id]){
+const img = document.createElement('img');
+img.src = imageMap[item.id];
+img.alt = `${item.name} image`;
+img.style.height = '60px';
+img.style.marginLeft = '10px';
+img.style.verticalAlign = 'middle';
+nameSpan.appendChild(img);
+}
+
+const sizeSel = document.createElement('select');
+sizeSel.className = 'size';
+item.sizes.forEach(s=>{
+const opt = document.createElement('option');
+opt.value = s;
+opt.textContent = s;
+sizeSel.appendChild(opt);
+});
+
+const qtyInput = document.createElement('input');
+qtyInput.className = 'qty';
+qtyInput.type = 'number';
+qtyInput.min = 0;
+qtyInput.value = 0;
+qtyInput.setAttribute('aria-label', `${item.name} quantity`);
+
+row.appendChild(nameSpan);
+row.appendChild(sizeSel);
+row.appendChild(qtyInput);
+
+return row;
+}
+
+// RENDER IN ORDER: Reaora (primary then hs) > Sports
+try {
+const mapping = { 
+"cat-reaora": "Reaora", 
+"cat-n2s": "N2S" 
+};
+Object.entries(mapping).forEach(([cardId, catKey])=>{
+const el = document.querySelector('#' + cardId + ' .card-body');
+if(!el) return;
+categories[catKey].forEach(item=>{
+const row = createProductRow(item);
+el.appendChild(row);
+});
+});
+} catch (err) {
+console.error("Error building product list:", err);
+}
+
+// Cart
+let cart = [];
+function collectCartFromDOM(){
+cart = [];
+document.querySelectorAll('.item-row').forEach(row=>{
+const qty = parseInt(row.querySelector('.qty').value || 0, 10);
+if(qty > 0){
+const fullName = row.querySelector('.pname').textContent || row.querySelector('.item-name')?.textContent;
+const name = (fullName || 'Item').split(' — ')[0].trim();
+const size = row.querySelector('.size').value;
+const price = parseFloat(row.dataset.price);
+cart.push({ name, size, qty, price });
+}
+});
+}
+
+function renderCart(){
+const tbody = document.getElementById('cartBody');
+tbody.innerHTML = '';
+if(cart.length === 0){
+const tr = document.createElement('tr');
+const td = document.createElement('td');
+td.colSpan = 5;
+td.className = 'muted';
+td.textContent = 'No items';
+tr.appendChild(td);
+tbody.appendChild(tr);
+document.getElementById('grandTotal').textContent = "Total: R0.00";
+return;
+}
+
+let grand = 0;
+cart.forEach((it, idx) => {
+const tr = document.createElement('tr');
+const tdItem = document.createElement('td');
+tdItem.textContent = it.name;
+const tdSize = document.createElement('td');
+tdSize.textContent = it.size;
+const tdQty = document.createElement('td');
+tdQty.textContent = it.qty;
+const line = it.qty * it.price;
+grand += line;
+const tdLine = document.createElement('td');
+tdLine.textContent = `R${line.toFixed(2)}`;
+const tdRemove = document.createElement('td');
+const removeBtn = document.createElement('button');
+removeBtn.className = 'btn btn-primary';
+removeBtn.style.padding = '4px 6px';
+removeBtn.style.background = '#fff';
+removeBtn.style.color = '#d9534f';
+removeBtn.style.border = '1px solid #f0a3a3';
+removeBtn.textContent = 'X';
+removeBtn.dataset.index = idx;
+removeBtn.addEventListener('click', function(e){
+e.preventDefault();
+cart.splice(this.dataset.index, 1);
+document.querySelectorAll('.item-row').forEach(r=>{
+const name = r.querySelector('.pname').textContent.split(' — ')[0].trim();
+const size = r.querySelector('.size').value;
+if(name === it.name && size === it.size){
+r.querySelector('.qty').value = 0;
+}
+});
+collectCartFromDOM();
+renderCart();
+});
+tdRemove.appendChild(removeBtn);
+
+tr.appendChild(tdItem);
+tr.appendChild(tdSize);
+tr.appendChild(tdQty);
+tr.appendChild(tdLine);
+tr.appendChild(tdRemove);
+tbody.appendChild(tr);
+});
+
+document.getElementById('grandTotal').textContent = `Total: R${grand.toFixed(2)}`;
+}
+
+document.addEventListener('input', function(e){
+if(e.target.classList && (e.target.classList.contains('qty') || e.target.classList.contains('size'))){
+collectCartFromDOM();
+renderCart();
+}
+});
+
+// LocalStorage Helpers
+function getMasterOrders() {
+const orders = localStorage.getItem('masterOrders');
+return orders ? JSON.parse(orders) : [];
+}
+
+function saveMasterOrders(orders) {
+localStorage.setItem('masterOrders', JSON.stringify(orders));
+}
+
+// 📊 AIRTABLE API INTEGRATION
+async function sendToAirtable(orderData) {
+try {
+// Check if Airtable is configured
+if (!AIRTABLE_CONFIG.apiKey || AIRTABLE_CONFIG.apiKey === 'YOUR_AIRTABLE_API_KEY') {
+console.warn('⚠️ Airtable API Key not configured. Skipping Airtable sync.');
+return { success: false, message: 'API Key not configured' };
+}
+
+if (!AIRTABLE_CONFIG.baseId || AIRTABLE_CONFIG.baseId === 'YOUR_BASE_ID') {
+console.warn('⚠️ Airtable Base ID not configured. Skipping Airtable sync.');
+return { success: false, message: 'Base ID not configured' };
+}
+
+const url = `https://api.airtable.com/v0/${AIRTABLE_CONFIG.baseId}/${AIRTABLE_CONFIG.tableName}`;
+
+// Format cart items as JSON string for Airtable
+const itemsJSON = JSON.stringify(orderData.items);
+
+// Calculate total
+const orderTotal = orderData.items.reduce((sum, item) => sum + (item.qty * item.price), 0);
+
+// Prepare the record for Airtable
+const record = {
+fields: {
+'Timestamp': orderData.timestamp,
+'Admin Number': orderData.adminNumber,
+'Learner Name': orderData.learnerName,
+'Grade': orderData.grade,
+'Parent Name': orderData.parentName,
+'Contact Number': orderData.contactNumber,
+'Email': orderData.email,
+'Order Items': itemsJSON,
+'Order Total': orderTotal,
+'Status': 'Pending',
+'Paid': false,
+'Order Count': orderData.items.length
+}
+};
+
+const response = await fetch(url, {
+method: 'POST',
+headers: {
+'Authorization': `Bearer ${AIRTABLE_CONFIG.apiKey}`,
+'Content-Type': 'application/json'
+},
+body: JSON.stringify(record)
+});
+
+if (!response.ok) {
+const errorData = await response.json();
+throw new Error(`Airtable API error: ${errorData.error?.message || response.statusText}`);
+}
+
+const result = await response.json();
+console.log('✅ Successfully sent to Airtable:', result);
+return { success: true, recordId: result.id };
+
+} catch (error) {
+console.error('❌ Airtable error:', error);
+return { success: false, error: error.message };
+}
+}
+
+// Optional: Function to send individual order items as separate records
+async function sendOrderItemsToAirtable(orderData) {
+try {
+if (!AIRTABLE_CONFIG.apiKey || AIRTABLE_CONFIG.apiKey === 'YOUR_AIRTABLE_API_KEY') {
+console.warn('⚠️ Airtable API Key not configured. Skipping Airtable sync.');
+return { success: false, message: 'API Key not configured' };
+}
+
+if (!AIRTABLE_CONFIG.baseId || AIRTABLE_CONFIG.baseId === 'YOUR_BASE_ID') {
+console.warn('⚠️ Airtable Base ID not configured. Skipping Airtable sync.');
+return { success: false, message: 'Base ID not configured' };
+}
+
+const url = `https://api.airtable.com/v0/${AIRTABLE_CONFIG.baseId}/${AIRTABLE_CONFIG.tableName}`;
+
+// Send each item as a separate record
+const promises = orderData.items.map(async (item, index) => {
+const record = {
+fields: {
+'Timestamp': orderData.timestamp,
+'Admin Number': orderData.adminNumber,
+'Learner Name': orderData.learnerName,
+'Grade': orderData.grade,
+'Parent Name': orderData.parentName,
+'Contact Number': orderData.contactNumber,
+'Email': orderData.email,
+'Item Name': item.name,
+'Item Size': item.size,
+'Item Quantity': item.qty,
+'Item Price': item.price,
+'Line Total': item.qty * item.price,
+'Status': 'Pending',
+'Paid': false,
+'Item Number': index + 1
+}
+};
+
+const response = await fetch(url, {
+method: 'POST',
+headers: {
+'Authorization': `Bearer ${AIRTABLE_CONFIG.apiKey}`,
+'Content-Type': 'application/json'
+},
+body: JSON.stringify(record)
+});
+
+if (!response.ok) {
+throw new Error(`Failed to send item ${index + 1}`);
+}
+
+return await response.json();
+});
+
+const results = await Promise.all(promises);
+console.log(`✅ Successfully sent ${results.length} items to Airtable`);
+return { success: true, count: results.length };
+
+} catch (error) {
+console.error('❌ Airtable error:', error);
+return { success: false, error: error.message };
+}
+}
+
+// Excel Download from localStorage
+async function downloadMasterExcel() {
+try {
+const orders = getMasterOrders();
+if (orders.length === 0) {
+alert('No orders yet!');
+return;
+}
+
+const workbook = new ExcelJS.Workbook();
+const worksheet = workbook.addWorksheet('ALL ORDERS');
+
+worksheet.mergeCells('A1:L1');
+worksheet.getCell('A1').value = 'SA COLLEGE PRIVATE SCHOOL - ALL UNIFORM ORDERS';
+worksheet.getCell('A1').font = { size: 18, bold: true, color: { argb: 'FF00274D' } };
+worksheet.getCell('A1').alignment = { horizontal: 'center' };
+
+const headers = ['Timestamp', 'Admin #', 'Learner', 'Grade', 'Parent', 'Contact', 'Email', 'Item', 'Size', 'Qty', 'Total', 'PAID?'];
+worksheet.addRow(headers);
+worksheet.getRow(2).font = { bold: true, color: { argb: 'FF00274D' } };
+worksheet.getRow(2).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFC107' } };
+
+orders.forEach(order => {
+order.items.forEach(item => {
+worksheet.addRow([
+new Date(order.timestamp).toLocaleString('en-ZA'),
+order.adminNumber,
+order.learnerName,
+order.grade,
+order.parentName,
+order.contactNumber,
+order.email,
+item.name,
+item.size,
+item.qty,
+`R${(item.qty * item.price).toFixed(2)}`,
+order.paid ? 'YES' : 'NO'
+]);
+});
+worksheet.addRow(['', '', '', '', '', '', '', '', '', 'ORDER TOTAL', `R${order.total.toFixed(2)}`, order.paid ? 'YES' : 'NO']);
+});
+
+const totalOrders = orders.length;
+const grandTotal = orders.reduce((sum, o) => sum + o.total, 0);
+const paidOrders = orders.filter(o => o.paid).length;
+worksheet.addRow([]);
+worksheet.mergeCells(`A${worksheet.rowCount}:K${worksheet.rowCount}`);
+worksheet.getCell(`A${worksheet.rowCount}`).value = `TOTAL ORDERS: ${totalOrders} | PAID: ${paidOrders} | GRAND TOTAL: R${grandTotal.toFixed(2)}`;
+worksheet.getCell(`A${worksheet.rowCount}`).font = { bold: true, size: 14 };
+
+worksheet.columns = [
+{ width: 18 }, { width: 10 }, { width: 15 }, { width: 10 },
+{ width: 15 }, { width: 12 }, { width: 20 }, { width: 30 },
+{ width: 8 }, { width: 6 }, { width: 12 }, { width: 8 }
+];
+
+const buffer = await workbook.xlsx.writeBuffer();
+const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+saveAs(blob, `SACollege_ALL_ORDERS_${new Date().toISOString().split('T')[0]}.xlsx`);
+alert(`✅ ${orders.length} orders downloaded!\n💰 ${paidOrders} PAID | R${grandTotal.toFixed(2)} TOTAL`);
+} catch (err) {
+console.error('Error downloading Excel:', err);
+alert(`Error: ${err.message}`);
+}
+}
+
+// PASSWORD CHECK
+window.checkPassword = function() {
+const pass = document.getElementById('adminPass').value;
+if(pass === 'wzq81FIE') {
+document.getElementById('passwordModal').classList.remove('show');
+downloadMasterExcel();
+} else {
+alert('❌ Wrong password!');
+document.getElementById('adminPass').value = '';
+}
+}
+
+// SECRET BUTTON CLICK
+document.getElementById('secretBtn').addEventListener('click', function() {
+document.getElementById('passwordModal').classList.add('show');
+document.getElementById('adminPass').focus();
+});
+
+// ESCAPE MODAL
+document.addEventListener('keydown', function(e) {
+if(e.key === 'Escape') {
+document.getElementById('passwordModal').classList.remove('show');
+}
+});
+
+// PDF generation - ORDER FORM
+async function createReceiptPDF(details, cartItems){
+const { jsPDF } = window.jspdf;
+const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+
+const pageWidth = doc.internal.pageSize.getWidth();
+doc.setFillColor(0, 39, 77);
+doc.rect(0, 0, pageWidth, 70, 'F');
+
+try {
+const logoImg = document.getElementById('schoolLogo');
+if(logoImg && logoImg.complete){
+const canvas = document.createElement('canvas');
+canvas.width = logoImg.naturalWidth;
+canvas.height = logoImg.naturalHeight;
+const ctx = canvas.getContext('2d');
+ctx.drawImage(logoImg, 0, 0);
+const imgData = canvas.toDataURL('image/png');
+doc.addImage(imgData, 'PNG', 18, 12, 46, 46);
+}
+} catch(err){
+console.warn('Could not add logo to PDF:', err);
+}
+
+doc.setFontSize(16);
+doc.setTextColor(255,255,255);
+doc.text("SA College Private School", 80, 28);
+
+doc.setFillColor(255,193,7);
+doc.rect(pageWidth - 200, 18, 180, 30, 'F');
+doc.setFontSize(11);
+doc.setTextColor(0,0,0);
+doc.text("Uniform Order Form", pageWidth - 190, 38);
+
+doc.setFontSize(10);
+doc.setTextColor(35,35,35);
+const left = 18;
+let y = 100;
+doc.text(`Parent: ${details.parentName}`, left, y); y += 16;
+doc.text(`Contact: ${details.contactNumber}`, left, y); y += 16;
+doc.text(`Email: ${details.email}`, left, y); y += 16;
+doc.text(`Learner: ${details.learnerName}`, left, y); y += 16;
+doc.text(`Grade: ${details.grade}`, left, y); y += 16;
+doc.text(`Admin Number: ${details.adminNumber}`, left, y); y += 26;
+
+const tableBody = cartItems.map(it => [it.name, it.size, String(it.qty), `R${it.price}`, `R${(it.qty*it.price).toFixed(2)}`]);
+if(tableBody.length === 0) tableBody.push(['No items','','','','']);
+
+doc.autoTable({
+startY: y,
+head: [['Item', 'Size', 'Qty', 'Unit Price', 'Line Total']],
+body: tableBody,
+styles: { fontSize: 10, cellPadding: 6 },
+headStyles: { fillColor: [0,39,77], textColor: 255, halign: 'center' },
+theme: 'grid',
+margin: { left: 12, right: 12 }
+});
+
+const finalY = doc.lastAutoTable ? doc.lastAutoTable.finalY : y + 120;
+const grand = cartItems.reduce((s, it) => s + (it.price * it.qty), 0);
+doc.setFontSize(11);
+doc.setTextColor(0,0,0);
+doc.text(`Grand Total: R${grand.toFixed(2)}`, 18, finalY + 18);
+
+doc.setFontSize(9);
+doc.setTextColor(120,120,120);
+doc.text("SA College Private School • uniform@sacps.co.za • Tel: 012 326 4580 / 064 548 9428", 18, doc.internal.pageSize.getHeight() - 30);
+
+return {
+doc,
+base64: doc.output('datauribase64')
+};
+}
+
+// Submit
+document.getElementById('orderForm').addEventListener('submit', async function(e){
+e.preventDefault();
+
+const submitBtn = document.getElementById('submitBtn');
+submitBtn.disabled = true;
+submitBtn.textContent = 'Processing...';
+
+try {
+const parentName = document.getElementById('parentName').value.trim();
+const contactNumber = document.getElementById('contactNumber').value.trim();
+const email = document.getElementById('email').value.trim();
+const learnerName = document.getElementById('learnerName').value.trim();
+const grade = document.getElementById('grade').value.trim();
+const adminNumber = document.getElementById('adminNumber').value.trim();
+
+collectCartFromDOM();
+if(cart.length === 0){
+alert('Please add at least one uniform item before submitting.');
+submitBtn.disabled = false;
+submitBtn.textContent = 'Submit Order & Download Order Form';
+return;
+}
+
+const details = { parentName, contactNumber, email, learnerName, grade, adminNumber };
+const grand = cart.reduce((s, it) => s + (it.price * it.qty), 0);
+const timestamp = new Date().toISOString();
+
+// Save to localStorage
+const masterOrders = getMasterOrders();
+const newOrder = {
+timestamp,
+adminNumber,
+learnerName,
+grade,
+parentName,
+contactNumber,
+email,
+items: [...cart],
+total: grand,
+paid: false
+};
+masterOrders.push(newOrder);
+saveMasterOrders(masterOrders);
+
+// 📊 Send to Airtable (Individual Items Per Record)
+const airtableResult = await sendOrderItemsToAirtable(newOrder);
+if (airtableResult.success) {
+console.log(`✅ ${airtableResult.count} items sent to Airtable successfully!`);
+} else if (airtableResult.error) {
+console.warn('⚠️ Airtable sync failed:', airtableResult.error);
+// Don't block the submission if Airtable fails
+}
+
+// Generate and download PDF
+const { doc, base64 } = await createReceiptPDF(details, cart);
+const fileName = `SACollege_OrderForm_${learnerName || 'Order'}.pdf`;
+doc.save(fileName);
+
+// Send email
+let orderDetails = '';
+cart.forEach(it => {
+const lineTotal = (it.qty * it.price).toFixed(2);
+orderDetails += `${it.name} - Size: ${it.size}, Qty: ${it.qty}, Unit: R${it.price.toFixed(2)}, Line: R${lineTotal}\n`;
+});
+
+const templateParams = {
+parentName: parentName,
+contactNumber: contactNumber,
+email: email,
+learnerName: learnerName,
+grade: grade,
+adminNumber: adminNumber,
+orderDetails: orderDetails,
+cartTotal: `R${grand.toFixed(2)}`,
+masterSummary: `***NEW ORDER*** | Admin: ${adminNumber} | Total: R${grand.toFixed(2)}`
+};
+
+await emailjs.send('service_myhmc1q', 'template_oq150rd', templateParams)
+.then(response => console.log('EmailJS response:', response))
+.catch(err => console.error('EmailJS error:', err));
+
+alert(`✅ SUCCESS! Order saved and form downloaded!`);
+
+document.getElementById('orderForm').reset();
+document.querySelectorAll('.item-row .qty').forEach(q => q.value = 0);
+collectCartFromDOM();
+renderCart();
+
+} catch (err) {
+console.error("Submit error:", err);
+alert(`An error occurred: ${err.message}`);
+} finally {
+submitBtn.disabled = false;
+submitBtn.textContent = 'Submit Order & Download Order Form';
+}
+});
+
+// Initialize
+collectCartFromDOM();
+renderCart();
+
+})();
+</script>
 </body>
 </html>
