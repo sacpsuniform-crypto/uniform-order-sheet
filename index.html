@@ -132,6 +132,31 @@ cursor: pointer;
 margin: 5px;
 }
 
+/* IMAGE ZOOM MODAL */
+.image-zoom-modal {
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: rgba(0,0,0,0.8);
+z-index: 2000;
+align-items: center;
+justify-content: center;
+}
+.image-zoom-modal.show {
+display: flex !important;
+}
+.image-zoom-modal img {
+max-width: 90%;
+max-height: 90%;
+object-fit: contain;
+border-radius: 8px;
+box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+cursor: pointer;
+}
+
 /* Braten notice */
 .braten-notice {
 background: var(--white);
@@ -237,14 +262,19 @@ border-bottom:1px dashed #eef3fb;
 .product-row .pname { flex:1; font-weight:600; color:#222; font-size:14px; }
 .product-row select.size { width:110px; padding:6px; border-radius:6px; border:1px solid #d7dbe0; }
 .product-row input.qty { width:70px; padding:6px; border-radius:6px; border:1px solid #d7dbe0; }
-            
+
 .product-row .pname img {
-    width: 60px; /* Set a fixed width */
-    height: 140px; /* Set a fixed height */
-    object-fit: cover; /* Ensures the image fills the space without distortion */
-    margin-left: 10px;
-    vertical-align: middle;
-    border-radius: 4px; /* Optional: adds a slight rounding for consistency */
+width: 100px;
+height: 200px;
+object-fit: cover;
+margin-left: 10px;
+vertical-align: middle;
+border-radius: 4px;
+cursor: pointer;
+transition: transform 0.2s;
+}
+.product-row .pname img:hover {
+transform: scale(1.05);
 }
 
 /* COMPULSORY NOTE */
@@ -321,6 +351,10 @@ width:100%;
 form#orderForm { grid-template-columns: 1fr; }
 .cart { position:relative; top:auto; }
 .secret-admin { bottom: 5px; right: 5px; font-size: 9px; }
+.product-row .pname img {
+width: 80px;
+height: 160px;
+}
 }
 
 .muted { color:#6b7280; font-size:13px; }
@@ -341,6 +375,11 @@ form#orderForm { grid-template-columns: 1fr; }
 <button class="password-btn" onclick="checkPassword()">Unlock</button>
 <button class="password-btn" onclick="document.getElementById('passwordModal').classList.remove('show')">Cancel</button>
 </div>
+</div>
+
+<!-- IMAGE ZOOM MODAL -->
+<div class="image-zoom-modal" id="imageZoomModal">
+<img id="zoomedImage" src="" alt="Zoomed item image">
 </div>
 
 <!-- Header -->
@@ -556,9 +595,7 @@ if(imageMap[item.id]){
 const img = document.createElement('img');
 img.src = imageMap[item.id];
 img.alt = `${item.name} image`;
-img.style.height = '60px';
-img.style.marginLeft = '10px';
-img.style.verticalAlign = 'middle';
+img.classList.add('zoomable');
 nameSpan.appendChild(img);
 }
 
@@ -601,6 +638,31 @@ el.appendChild(row);
 });
 } catch (err) {
 console.error("Error building product list:", err);
+}
+
+// Image Zoom Functionality
+function initializeImageZoom() {
+const modal = document.getElementById('imageZoomModal');
+const zoomedImage = document.getElementById('zoomedImage');
+const images = document.querySelectorAll('.zoomable');
+
+images.forEach(img => {
+img.addEventListener('click', () => {
+zoomedImage.src = img.src;
+zoomedImage.alt = img.alt;
+modal.classList.add('show');
+});
+});
+
+modal.addEventListener('click', () => {
+modal.classList.remove('show');
+});
+
+document.addEventListener('keydown', (e) => {
+if (e.key === 'Escape' && modal.classList.contains('show')) {
+modal.classList.remove('show');
+}
+});
 }
 
 // Cart
@@ -1092,6 +1154,7 @@ submitBtn.textContent = 'Submit Order & Download Order Form';
 // Initialize
 collectCartFromDOM();
 renderCart();
+initializeImageZoom();
 
 })();
 </script>
