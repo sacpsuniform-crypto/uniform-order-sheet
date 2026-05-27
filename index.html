@@ -391,22 +391,23 @@ height: 160px;
 </div>
 </header>
 
-<!-- Braten notice -->
+<!-- Important notice -->
 <div class="braten-notice">
 <h3>Important Uniform Order Information</h3>
-<p>SA College Private School is partnering with <strong>Reaora</strong> and <strong>N2S Suppliers</strong> to offer school uniforms and sportswear at more affordable prices for parents.</p>
-<p><strong>Note:</strong> Select Outfitters remains an approved supplier, and parents may continue purchasing from them if preferred.</p>
+<p>SA College Private School is partnering with <strong>Reaora</strong> to offer school uniforms at more affordable prices for parents.</p>
+<p><strong>Please note:</strong> As of <strong>1 June 2026</strong>, prices will be changing for all uniforms.</p>
 <h3><span class="emoji">🗓</span> Uniform Orders</h3>
 <ul>
-<li>Orders placed before <strong>15 November 2025</strong> will be delivered to the school and handed to your child before the last day of term, ensuring readiness for January 2026 without queuing.</li>
-<li>Orders placed between <strong>15 November and 30 December 2025</strong> will be delivered by <strong>9 January 2026</strong> for Reaora.</li>
+<li>After clicking <strong>Submit Order &amp; Download Order Form</strong>, purchasers/parents must email the downloaded order form to <strong>uniform@sacps.co.za</strong>.</li>
+<li>Uniform orders will only be processed once the completed order form has been received at <strong>uniform@sacps.co.za</strong>.</li>
+<li>All uniform orders are processed within <strong>7 - 14 working days</strong> from the day the order form is received via email.</li>
 </ul>
-<h3><span class="emoji">🏅</span> Sportswear Orders</h3>
+<h3><span class="emoji">🛍</span> New Products Coming Soon</h3>
 <ul>
-<li>All sportswear orders must be placed by <strong>15 November 2025</strong>.</li>
-<li>Expected delivery date: <strong>15 February 2026</strong>.</li>
-<li><strong>Further dates will be confirmed</strong>.</li>
+<li>New products will be available from <strong>October</strong>.</li>
+<li>Parents are welcome to begin placing orders in advance.</li>
 </ul>
+<p><strong>Note:</strong> Select Outfitters remains an approved supplier, and parents may continue purchasing from them if preferred.</p>
 </div>
 
 <!-- Main content -->
@@ -431,7 +432,7 @@ height: 160px;
 
 <!-- Products -->
 <div class="section" id="productsSection">
-<h2 style="margin-top:0; color:var(--navy)">Uniforms & Sports</h2>
+<h2 style="margin-top:0; color:var(--navy)">Uniforms & Bags</h2>
 
 <!-- REAORA COMBINED -->
 <div class="category-card" id="cat-reaora">
@@ -444,9 +445,9 @@ height: 160px;
 <div class="card-body"></div>
 </div>
 
-<!-- N2S -->
+<!-- BAGS -->
 <div class="category-card" id="cat-n2s">
-<div class="cat-header">N2S - Sportswear</div>
+<div class="cat-header">Coming Soon - Available from October</div>
 <div style="display:flex; gap:16px; font-weight:700; font-size:13px; margin-bottom:8px;">
 <div style="flex:1; text-align:left;">Item</div>
 <div style="width:120px; text-align:center;">Size</div>
@@ -519,36 +520,28 @@ const allSizes = [...primarySizes, ...highschoolSizes];
 
 const categories = {
 "Reaora": [
-{id:"ts_jacket_primary",name:"Primary Tracksuit Jacket",price:440,sizes:primarySizes},
-{id:"ts_pants_primary",name:"Primary Tracksuit Pants",price:220,sizes:primarySizes},
-{id:"jersey_primary",name:"Primary Jersey",price:275,sizes:primarySizes},
-{id:"pullover_primary",name:"Primary Pullover",price:255,sizes:primarySizes},
-{id:"blazer",name:"Blazer (Compulsory Grade 4,8,9 - Reaora Only)",price:770,sizes:blazerSizes},
-{id:"tie",name:"School Tie",price:90,sizes:oneSize},
-{id:"skirt_primary",name:"Primary Girls Skirt",price:375,sizes:primarySizes},
-{id:"ts_jacket_hs",name:"Highschool Tracksuit Jacket",price:495,sizes:highschoolSizes},
-{id:"ts_pants_hs",name:"Highschool Tracksuit Pants",price:220,sizes:highschoolSizes},
-{id:"jersey_hs",name:"Highschool Jersey",price:285,sizes:highschoolSizes},
-{id:"pullover_hs",name:"Highschool Pullover",price:265,sizes:highschoolSizes},
-{id:"skirt_hs",name:"Highschool Girls Skirt",price:400,sizes:highschoolSizes},
-{id:"matricpullover_hs",name:"Matric Pullover",price:285,sizes:pulloverSizes},
-{id:"sport_shirt",name:"Sport Shirt",price:380,sizes:allSizes},
-{id:"green_socks",name:"Long Green Socks",price:60,sizes:oneSize},
-{id:"floppy_hat",name:"Floppy Hat",price:175,sizes:oneSize},
-{id:"beanie",name:"Beanie",price:55,sizes:oneSize}
+{id:"ts_jacket_primary",name:"Primary Tracksuit Jacket",price:455,sizes:primarySizes},
+{id:"ts_pants_primary",name:"Primary Tracksuit Pants",price:228,sizes:primarySizes},
+{id:"jersey_primary",name:"Primary Jersey",price:285,sizes:primarySizes},
+{id:"pullover_primary",name:"Primary Pullover",price:264,sizes:primarySizes},
+{id:"blazer",name:"Blazer (Compulsory Grade 4,8,9 - Reaora Only)",price:797,sizes:blazerSizes},
+{id:"tie",name:"School Tie",price:93,sizes:oneSize},
+{id:"skirt_primary",name:"Primary Girls Skirt",price:388,sizes:primarySizes},
+{id:"ts_jacket_hs",name:"Highschool Tracksuit Jacket",price:512,sizes:highschoolSizes},
+{id:"ts_pants_hs",name:"Highschool Tracksuit Pants",price:228,sizes:highschoolSizes},
+{id:"jersey_hs",name:"Highschool Jersey",price:295,sizes:highschoolSizes},
+{id:"pullover_hs",name:"Highschool Pullover",price:274,sizes:highschoolSizes},
+{id:"skirt_hs",name:"Highschool Girls Skirt",price:414,sizes:highschoolSizes},
+{id:"matricpullover_hs",name:"Matric Pullover",price:295,sizes:pulloverSizes},
+{id:"sport_shirt",name:"Sport Shirt",price:393,sizes:allSizes},
+{id:"green_socks",name:"Long Green Socks",price:62,sizes:oneSize},
+{id:"floppy_hat",name:"Floppy Hat",price:181,sizes:oneSize},
+{id:"beanie",name:"Beanie",price:57,sizes:oneSize}
 ],
-"N2S": [
-{id:"soccer_shirt",name:"Soccer Practice Shirt",price:325,sizes:allSizes},
-{id:"soccer_short",name:"Soccer Shorts",price:315,sizes:allSizes},
-{id:"soccer_socks",name:"Soccer Socks",price:120,sizes:allSizes},
-{id:"rugby_jersey",name:"Rugby Practice Jersey",price:435,sizes:allSizes},
-{id:"rugby_short",name:"Rugby Short",price:300,sizes:allSizes},
-{id:"rugby_socks",name:"Rugby Socks",price:120,sizes:allSizes},
-{id:"basketball_shirt",name:"Basketball Practice Shirt",price:315,sizes:allSizes},
-{id:"basketball_short",name:"Basketball Shorts",price:315,sizes:allSizes},
-{id:"netball_dress",name:"Netball Dress",price:340,sizes:allSizes},
-{id:"athletics_vest",name:"Athletics Vest",price:300,sizes:allSizes},
-{id:"athletics_short",name:"Athletics Shorts",price:290,sizes:allSizes}
+"Bags": [
+{id:"lunchbag",name:"Lunchbag - Coming Soon, Available from October",price:165,sizes:oneSize},
+{id:"small_cooler_lunch_bag",name:"Small Cooler Lunch Bag - Coming Soon, Available from October",price:200,sizes:oneSize},
+{id:"sports_bag",name:"Sports Bag - Coming Soon, Available from October",price:275,sizes:oneSize}
 ]
 };
 
@@ -578,7 +571,10 @@ const imageMap = {
 "matricpullover_hs": "matric pullover.jpg",
 "bomber_hs": "matric bomber jacket.jpg",
 "sport_shirt": "sport shirt.jpg",
-"tie": "tie.jpg"
+"tie": "tie.jpg",
+"lunchbag": "lunchbag.jpg",
+"small_cooler_lunch_bag": "small cooler lunch bag.jpg",
+"sports_bag": "sports bag.jpg"
 };
 
 // Render products
@@ -623,11 +619,11 @@ row.appendChild(qtyInput);
 return row;
 }
 
-// RENDER IN ORDER: Reaora (primary then hs) > Sports
+// RENDER IN ORDER: Reaora (primary then hs) > Bags
 try {
 const mapping = { 
 "cat-reaora": "Reaora", 
-"cat-n2s": "N2S" 
+"cat-n2s": "Bags" 
 };
 Object.entries(mapping).forEach(([cardId, catKey])=>{
 const el = document.querySelector('#' + cardId + ' .card-body');
@@ -1072,7 +1068,7 @@ const adminNumber = document.getElementById('adminNumber').value.trim();
 
 collectCartFromDOM();
 if(cart.length === 0){
-alert('Please add at least one uniform item before submitting.');
+alert('Please add at least one uniform item or bag before submitting.');
 submitBtn.disabled = false;
 submitBtn.textContent = 'Submit Order & Download Order Form';
 return;
