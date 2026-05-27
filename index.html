@@ -401,6 +401,7 @@ height: 160px;
 <li>After clicking <strong>Submit Order &amp; Download Order Form</strong>, purchasers/parents must email the downloaded order form to <strong>uniform@sacps.co.za</strong>.</li>
 <li>Uniform orders will only be processed once the completed order form has been received at <strong>uniform@sacps.co.za</strong>.</li>
 <li>All uniform orders are processed within <strong>7 - 14 working days</strong> from the day the order form is received via email.</li>
+<li>Everything bought on this website has a <strong>one month warranty</strong> for manufacturer issues to be resolved.</li>
 </ul>
 <h3><span class="emoji">🛍</span> New Products Coming Soon</h3>
 <ul>
@@ -784,6 +785,7 @@ const orderTotal = orderData.items.reduce((sum, item) => sum + (item.qty * item.
 const record = {
 fields: {
 'Timestamp': orderData.timestamp,
+'Order Number': orderData.orderNumber,
 'Admin Number': orderData.adminNumber,
 'Learner Name': orderData.learnerName,
 'Grade': orderData.grade,
@@ -837,26 +839,28 @@ return { success: false, message: 'Base ID not configured' };
 
 const url = `https://api.airtable.com/v0/${AIRTABLE_CONFIG.baseId}/${AIRTABLE_CONFIG.tableName}`;
 
-// Send each item as a separate record
+// Send each item as a separate record. All items from the same order share one order number.
 const promises = orderData.items.map(async (item, index) => {
 const record = {
 fields: {
 'Timestamp': orderData.timestamp,
-'Admin Number': orderData.adminNumber,
-'Learner Name': orderData.learnerName,
-'Grade': orderData.grade,
-'Parent Name': orderData.parentName,
-'Contact Number': orderData.contactNumber,
-'Email': orderData.email,
-'Item Name': item.name,
-'Item Size': item.size,
-'Item Quantity': item.qty,
-'Item Price': item.price,
-'Line Total': item.qty * item.price,
+'Order Number': orderData.orderNumber,
+'Admin Number': String(orderData.adminNumber || ''),
+'Learner Name': String(orderData.learnerName || ''),
+'Grade': String(orderData.grade || ''),
+'Parent Name': String(orderData.parentName || ''),
+'Contact Number': String(orderData.contactNumber || ''),
+'Email': String(orderData.email || ''),
+'Item Name': String(item.name || ''),
+'Item Size': String(item.size || ''),
+'Item Quantity': Number(item.qty || 0),
+'Item Price': Number(item.price || 0),
+'Line Total': Number(item.qty || 0) * Number(item.price || 0),
 'Status': 'Pending',
 'Paid': false,
 'Item Number': index + 1
-}
+},
+typecast: true
 };
 
 const response = await fetch(url, {
@@ -869,10 +873,20 @@ body: JSON.stringify(record)
 });
 
 if (!response.ok) {
-throw new Error(`Failed to send item ${index + 1}`);
+let errorMessage = response.statusText;
+try {
+const errorData = await response.json();
+console.error('❌ Airtable rejected item:', errorData);
+errorMessage = errorData.error?.message || JSON.stringify(errorData);
+} catch (jsonError) {
+console.error('Could not read Airtable error response:', jsonError);
+}
+throw new Error(`Failed to send item ${index + 1}: ${errorMessage}`);
 }
 
-return await response.json();
+const result = await response.json();
+console.log(`✅ Airtable item ${index + 1} saved:`, result);
+return result;
 });
 
 const results = await Promise.all(promises);
@@ -948,13 +962,14 @@ return;
 const workbook = new ExcelJS.Workbook();
 const worksheet = workbook.addWorksheet('ALL ONLINE ORDERS');
 
-worksheet.mergeCells('A1:M1');
+worksheet.mergeCells('A1:N1');
 worksheet.getCell('A1').value = 'SA COLLEGE PRIVATE SCHOOL - ALL ONLINE UNIFORM ORDERS';
 worksheet.getCell('A1').font = { size: 18, bold: true, color: { argb: 'FF00274D' } };
 worksheet.getCell('A1').alignment = { horizontal: 'center' };
 
 const headers = [
 'Timestamp',
+'Order Number',
 'Admin #',
 'Learner',
 'Grade',
@@ -980,6 +995,7 @@ records.forEach(record => {
 const f = record.fields || {};
 
 const timestamp = f['Timestamp'] ? new Date(f['Timestamp']).toLocaleString('en-ZA') : '';
+const orderNumber = f['Order Number'] || '';
 const adminNumber = f['Admin Number'] || '';
 const learnerName = f['Learner Name'] || '';
 const grade = f['Grade'] || '';
@@ -1001,6 +1017,7 @@ paidCount++;
 
 worksheet.addRow([
 timestamp,
+orderNumber,
 adminNumber,
 learnerName,
 grade,
@@ -1019,13 +1036,14 @@ paid
 worksheet.addRow([]);
 
 const summaryRow = worksheet.rowCount + 1;
-worksheet.mergeCells(`A${summaryRow}:M${summaryRow}`);
+worksheet.mergeCells(`A${summaryRow}:N${summaryRow}`);
 worksheet.getCell(`A${summaryRow}`).value =
 `TOTAL ORDER ITEMS: ${records.length} | PAID ITEMS: ${paidCount} | GRAND TOTAL: R${grandTotal.toFixed(2)}`;
 worksheet.getCell(`A${summaryRow}`).font = { bold: true, size: 14, color: { argb: 'FF00274D' } };
 
 worksheet.columns = [
 { width: 20 },
+{ width: 22 },
 { width: 12 },
 { width: 18 },
 { width: 10 },
@@ -1085,6 +1103,28 @@ document.getElementById('passwordModal').classList.remove('show');
 }
 });
 
+// Generate a neat unique order number for each submission
+function generateOrderNumber() {
+const now = new Date();
+const year = String(now.getFullYear()).slice(-2);
+const month = String(now.getMonth() + 1).padStart(2, '0');
+const day = String(now.getDate()).padStart(2, '0');
+const hours = String(now.getHours()).padStart(2, '0');
+const minutes = String(now.getMinutes()).padStart(2, '0');
+const seconds = String(now.getSeconds()).padStart(2, '0');
+
+let randomPart = '';
+if (window.crypto && window.crypto.getRandomValues) {
+const array = new Uint32Array(1);
+window.crypto.getRandomValues(array);
+randomPart = array[0].toString(36).toUpperCase().slice(0, 5).padStart(5, '0');
+} else {
+randomPart = Math.random().toString(36).substring(2, 7).toUpperCase();
+}
+
+return `SACPS-${year}${month}${day}-${hours}${minutes}${seconds}-${randomPart}`;
+}
+
 // PDF generation - ORDER FORM
 async function createReceiptPDF(details, cartItems){
 const { jsPDF } = window.jspdf;
@@ -1119,10 +1159,19 @@ doc.setFontSize(11);
 doc.setTextColor(0,0,0);
 doc.text("Uniform Order Form", pageWidth - 190, 38);
 
+// Neat order number badge
+if (details.orderNumber) {
+doc.setFillColor(255, 193, 7);
+doc.roundedRect(18, 82, 210, 26, 4, 4, 'F');
+doc.setFontSize(10);
+doc.setTextColor(0, 39, 77);
+doc.text(`Order No: ${details.orderNumber}`, 28, 99);
+}
+
 doc.setFontSize(10);
 doc.setTextColor(35,35,35);
 const left = 18;
-let y = 100;
+let y = 125;
 doc.text(`Parent: ${details.parentName}`, left, y); y += 16;
 doc.text(`Contact: ${details.contactNumber}`, left, y); y += 16;
 doc.text(`Email: ${details.email}`, left, y); y += 16;
@@ -1183,7 +1232,9 @@ submitBtn.textContent = 'Submit Order & Download Order Form';
 return;
 }
 
-const details = { parentName, contactNumber, email, learnerName, grade, adminNumber };
+const orderNumber = generateOrderNumber();
+
+const details = { parentName, contactNumber, email, learnerName, grade, adminNumber, orderNumber };
 const grand = cart.reduce((s, it) => s + (it.price * it.qty), 0);
 const timestamp = new Date().toISOString();
 
@@ -1191,6 +1242,7 @@ const timestamp = new Date().toISOString();
 const masterOrders = getMasterOrders();
 const newOrder = {
 timestamp,
+orderNumber,
 adminNumber,
 learnerName,
 grade,
@@ -1205,17 +1257,20 @@ masterOrders.push(newOrder);
 saveMasterOrders(masterOrders);
 
 // 📊 Send to Airtable (Individual Items Per Record)
+// The PDF will still download even if Airtable fails.
 const airtableResult = await sendOrderItemsToAirtable(newOrder);
+let airtableWarning = '';
+
 if (airtableResult.success) {
 console.log(`✅ ${airtableResult.count} items sent to Airtable successfully!`);
-} else if (airtableResult.error) {
-console.warn('⚠️ Airtable sync failed:', airtableResult.error);
-// Don't block the submission if Airtable fails
+} else {
+airtableWarning = airtableResult.error || airtableResult.message || 'Unknown Airtable error';
+console.warn('⚠️ Airtable sync failed:', airtableWarning);
 }
 
 // Generate and download PDF
 const { doc, base64 } = await createReceiptPDF(details, cart);
-const fileName = `SACollege_OrderForm_${learnerName || 'Order'}.pdf`;
+const fileName = `SACollege_OrderForm_${orderNumber}_${learnerName || 'Order'}.pdf`;
 doc.save(fileName);
 
 // Send email
@@ -1226,22 +1281,40 @@ orderDetails += `${it.name} - Size: ${it.size}, Qty: ${it.qty}, Unit: R${it.pric
 });
 
 const templateParams = {
+orderNumber: orderNumber,
 parentName: parentName,
 contactNumber: contactNumber,
 email: email,
 learnerName: learnerName,
 grade: grade,
 adminNumber: adminNumber,
-orderDetails: orderDetails,
+orderDetails: `Order Number: ${orderNumber}
+
+${orderDetails}`,
 cartTotal: `R${grand.toFixed(2)}`,
-masterSummary: `***NEW ORDER*** | Admin: ${adminNumber} | Total: R${grand.toFixed(2)}`
+masterSummary: `***NEW ORDER*** | Order: ${orderNumber} | Admin: ${adminNumber} | Total: R${grand.toFixed(2)}`
 };
 
 await emailjs.send('service_myhmc1q', 'template_oq150rd', templateParams)
 .then(response => console.log('EmailJS response:', response))
 .catch(err => console.error('EmailJS error:', err));
 
-alert(`✅ SUCCESS! Order saved and form downloaded!`);
+if (airtableWarning) {
+alert(
+`✅ Order form downloaded successfully.
+
+Order Number: ${orderNumber}
+
+⚠️ Airtable did not receive this order.
+Reason: ${airtableWarning}
+
+Please email the downloaded order form to uniform@sacps.co.za.`
+);
+} else {
+alert(`✅ SUCCESS! Order saved to Airtable and form downloaded!
+
+Order Number: ${orderNumber}`);
+}
 
 document.getElementById('orderForm').reset();
 document.querySelectorAll('.item-row .qty').forEach(q => q.value = 0);
