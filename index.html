@@ -885,72 +885,181 @@ return { success: false, error: error.message };
 }
 }
 
-// Excel Download from localStorage
+// Excel Download from Airtable - pulls orders from all devices
 async function downloadMasterExcel() {
 try {
-const orders = getMasterOrders();
-if (orders.length === 0) {
-alert('No orders yet!');
+if (!AIRTABLE_CONFIG.apiKey || AIRTABLE_CONFIG.apiKey === 'YOUR_AIRTABLE_API_KEY') {
+alert('Airtable API Key is not configured.');
+return;
+}
+
+if (!AIRTABLE_CONFIG.baseId || AIRTABLE_CONFIG.baseId === 'YOUR_BASE_ID') {
+alert('Airtable Base ID is not configured.');
+return;
+}
+
+const records = [];
+let offset = null;
+
+do {
+let url = `https://api.airtable.com/v0/${AIRTABLE_CONFIG.baseId}/${AIRTABLE_CONFIG.tableName}`;
+
+const params = new URLSearchParams();
+params.append('pageSize', '100');
+
+if (AIRTABLE_CONFIG.viewId) {
+params.append('view', AIRTABLE_CONFIG.viewId);
+}
+
+if (offset) {
+params.append('offset', offset);
+}
+
+url += `?${params.toString()}`;
+
+const response = await fetch(url, {
+method: 'GET',
+headers: {
+'Authorization': `Bearer ${AIRTABLE_CONFIG.apiKey}`,
+'Content-Type': 'application/json'
+}
+});
+
+if (!response.ok) {
+const errorData = await response.json();
+throw new Error(`Airtable error: ${errorData.error?.message || response.statusText}`);
+}
+
+const data = await response.json();
+
+if (data.records && data.records.length > 0) {
+records.push(...data.records);
+}
+
+offset = data.offset;
+
+} while (offset);
+
+if (records.length === 0) {
+alert('No online orders found in Airtable yet.');
 return;
 }
 
 const workbook = new ExcelJS.Workbook();
-const worksheet = workbook.addWorksheet('ALL ORDERS');
+const worksheet = workbook.addWorksheet('ALL ONLINE ORDERS');
 
-worksheet.mergeCells('A1:L1');
-worksheet.getCell('A1').value = 'SA COLLEGE PRIVATE SCHOOL - ALL UNIFORM ORDERS';
+worksheet.mergeCells('A1:M1');
+worksheet.getCell('A1').value = 'SA COLLEGE PRIVATE SCHOOL - ALL ONLINE UNIFORM ORDERS';
 worksheet.getCell('A1').font = { size: 18, bold: true, color: { argb: 'FF00274D' } };
 worksheet.getCell('A1').alignment = { horizontal: 'center' };
 
-const headers = ['Timestamp', 'Admin #', 'Learner', 'Grade', 'Parent', 'Contact', 'Email', 'Item', 'Size', 'Qty', 'Total', 'PAID?'];
+const headers = [
+'Timestamp',
+'Admin #',
+'Learner',
+'Grade',
+'Parent',
+'Contact',
+'Email',
+'Item',
+'Size',
+'Qty',
+'Unit Price',
+'Line Total',
+'PAID?'
+];
+
 worksheet.addRow(headers);
 worksheet.getRow(2).font = { bold: true, color: { argb: 'FF00274D' } };
 worksheet.getRow(2).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFC107' } };
 
-orders.forEach(order => {
-order.items.forEach(item => {
+let grandTotal = 0;
+let paidCount = 0;
+
+records.forEach(record => {
+const f = record.fields || {};
+
+const timestamp = f['Timestamp'] ? new Date(f['Timestamp']).toLocaleString('en-ZA') : '';
+const adminNumber = f['Admin Number'] || '';
+const learnerName = f['Learner Name'] || '';
+const grade = f['Grade'] || '';
+const parentName = f['Parent Name'] || '';
+const contactNumber = f['Contact Number'] || '';
+const email = f['Email'] || '';
+const itemName = f['Item Name'] || '';
+const itemSize = f['Item Size'] || '';
+const itemQty = Number(f['Item Quantity'] || 0);
+const itemPrice = Number(f['Item Price'] || 0);
+const lineTotal = Number(f['Line Total'] || itemQty * itemPrice);
+const paid = f['Paid'] === true ? 'YES' : 'NO';
+
+grandTotal += lineTotal;
+
+if (f['Paid'] === true) {
+paidCount++;
+}
+
 worksheet.addRow([
-new Date(order.timestamp).toLocaleString('en-ZA'),
-order.adminNumber,
-order.learnerName,
-order.grade,
-order.parentName,
-order.contactNumber,
-order.email,
-item.name,
-item.size,
-item.qty,
-`R${(item.qty * item.price).toFixed(2)}`,
-order.paid ? 'YES' : 'NO'
+timestamp,
+adminNumber,
+learnerName,
+grade,
+parentName,
+contactNumber,
+email,
+itemName,
+itemSize,
+itemQty,
+`R${itemPrice.toFixed(2)}`,
+`R${lineTotal.toFixed(2)}`,
+paid
 ]);
 });
-worksheet.addRow(['', '', '', '', '', '', '', '', '', 'ORDER TOTAL', `R${order.total.toFixed(2)}`, order.paid ? 'YES' : 'NO']);
-});
 
-const totalOrders = orders.length;
-const grandTotal = orders.reduce((sum, o) => sum + o.total, 0);
-const paidOrders = orders.filter(o => o.paid).length;
 worksheet.addRow([]);
-worksheet.mergeCells(`A${worksheet.rowCount}:K${worksheet.rowCount}`);
-worksheet.getCell(`A${worksheet.rowCount}`).value = `TOTAL ORDERS: ${totalOrders} | PAID: ${paidOrders} | GRAND TOTAL: R${grandTotal.toFixed(2)}`;
-worksheet.getCell(`A${worksheet.rowCount}`).font = { bold: true, size: 14 };
+
+const summaryRow = worksheet.rowCount + 1;
+worksheet.mergeCells(`A${summaryRow}:M${summaryRow}`);
+worksheet.getCell(`A${summaryRow}`).value =
+`TOTAL ORDER ITEMS: ${records.length} | PAID ITEMS: ${paidCount} | GRAND TOTAL: R${grandTotal.toFixed(2)}`;
+worksheet.getCell(`A${summaryRow}`).font = { bold: true, size: 14, color: { argb: 'FF00274D' } };
 
 worksheet.columns = [
-{ width: 18 }, { width: 10 }, { width: 15 }, { width: 10 },
-{ width: 15 }, { width: 12 }, { width: 20 }, { width: 30 },
-{ width: 8 }, { width: 6 }, { width: 12 }, { width: 8 }
+{ width: 20 },
+{ width: 12 },
+{ width: 18 },
+{ width: 10 },
+{ width: 18 },
+{ width: 15 },
+{ width: 25 },
+{ width: 35 },
+{ width: 12 },
+{ width: 8 },
+{ width: 12 },
+{ width: 14 },
+{ width: 10 }
 ];
 
-const buffer = await workbook.xlsx.writeBuffer();
-const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-saveAs(blob, `SACollege_ALL_ORDERS_${new Date().toISOString().split('T')[0]}.xlsx`);
-alert(`✅ ${orders.length} orders downloaded!\n💰 ${paidOrders} PAID | R${grandTotal.toFixed(2)} TOTAL`);
-} catch (err) {
-console.error('Error downloading Excel:', err);
-alert(`Error: ${err.message}`);
-}
-}
+worksheet.eachRow((row) => {
+row.eachCell((cell) => {
+cell.alignment = { vertical: 'middle', wrapText: true };
+});
+});
 
+const buffer = await workbook.xlsx.writeBuffer();
+const blob = new Blob([buffer], {
+type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+});
+
+saveAs(blob, `SACollege_ONLINE_ORDERS_${new Date().toISOString().split('T')[0]}.xlsx`);
+
+alert(`✅ Online orders downloaded!\n📦 ${records.length} item records found\n💰 Grand Total: R${grandTotal.toFixed(2)}`);
+
+} catch (err) {
+console.error('Error downloading online Excel:', err);
+alert(`Error downloading online orders: ${err.message}`);
+}
+}
 // PASSWORD CHECK
 window.checkPassword = function() {
 const pass = document.getElementById('adminPass').value;
