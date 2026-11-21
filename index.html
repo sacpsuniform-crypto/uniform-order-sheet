@@ -448,7 +448,7 @@ height: 160px;
 
 <!-- BAGS -->
 <div class="category-card" id="cat-n2s">
-<div class="cat-header">Coming Soon - Available from October</div>
+<div class="cat-header">Now available</div>
 <div style="display:flex; gap:16px; font-weight:700; font-size:13px; margin-bottom:8px;">
 <div style="flex:1; text-align:left;">Item</div>
 <div style="width:120px; text-align:center;">Size</div>
@@ -514,9 +514,10 @@ emailjs.init('AXfbwxKNy1g4wKAX8');
 // Data: sizes & items - REORGANIZED
 const primarySizes = ['5-6','6-7','7-8','8-9','9-10','10-11','11-12','12-13','13-14'];
 const highschoolSizes = ['13-14','14-15','15-16','16-17','17-18','18-20'];
-const blazerSizes = ['26','28','30','32','34','36','38','40','42'];
+const blazerSizes = ['B8','B9','B10','B11','B12','M3','M4','M5','M6','M7','M8','M9','M10'];
 const pulloverSizes = ['XS','S','M','L','XL','2XL'];
 const oneSize = ['One Size'];
+const variable = [ 'S','M','L']            
 const allSizes = [...primarySizes, ...highschoolSizes];
 
 const categories = {
@@ -538,6 +539,8 @@ const categories = {
 {id:"green_socks",name:"Long Green Socks",price:60,sizes:oneSize},
 {id:"floppy_hat",name:"Floppy Hat",price:180,sizes:oneSize},
 {id:"beanie",name:"Beanie",price:60,sizes:oneSize}
+{id:"sports shorts",name:"Sports Shorts",price:155,sizes:allsizes},
+{id:"reversible bucket hat",name:"Reversible bucket hat",price:145,sizes:variable}
 ],
 "Bags": [
 {id:"lunchbag",name:"Lunchbag",price:165,sizes:oneSize},
@@ -575,7 +578,9 @@ const imageMap = {
 "tie": "tie.jpg",
 "lunchbag": "lunchbag.jpg",
 "small_cooler_lunch_bag": "small cooler lunch bag.jpg",
-"sports_bag": "sports bag.jpg"
+"sports_bag": "sports bag.jpg",
+"sports_shorts": "sports shorts.jpg",
+"reversible_bucket_hat": "reversible bucket hat.jpg"          
 };
 
 // Render products
